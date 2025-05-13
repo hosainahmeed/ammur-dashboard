@@ -1,0 +1,21 @@
+
+.ant-tabs-tab-active {
+  background-color: #dcfce7 !important;
+  color: #022C22 !important;
+  border: 1px solid #022C22 !important;
+  border-bottom: none !important;
+}
+.ant-tabs-tab {
+  margin: 0px !important;
+  color: #022C22 !important;
+  
+}
+.ant-tabs-tab:hover {
+  background-color: #dcfce7 !important;
+}
+.ant-tabs-tab-btn{
+    color: #022C22 !important;
+}
+.ant-tabs-nav-wrap{
+    border-bottom: 1px solid #022C22 !important;
+}
