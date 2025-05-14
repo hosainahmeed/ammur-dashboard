@@ -13,9 +13,9 @@ import PrivacyPolicy from '../pages/DashboardPages/privacy&policy/PrivacyPolicy'
 import FrequentlyAskedQuestions from '../pages/DashboardPages/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
 import EarningPage from '../pages/DashboardPages/EarningManage/EarningPage';
 import Subscription from '../pages/DashboardPages/Subscription/Subscription';
-import AllAgent from '../pages/DashboardPages/all-agent/AllAgent';
 import Inquiries from '../pages/DashboardPages/Inquiries/Inquiries';
 import Profile from '../pages/DashboardPages/ProfilePages/Profile';
+import HistoryTimeline from '../pages/DashboardPages/history-timeline/HistoryTimeline';
 
 export const Routes = createBrowserRouter([
   {
@@ -35,8 +35,8 @@ export const Routes = createBrowserRouter([
         element: <UsersManage />,
       },
       {
-        path: '/agent',
-        element: <AllAgent />,
+        path: '/timeline',
+        element: <HistoryTimeline />,
       },
       {
         path: '/subscription',

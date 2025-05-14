@@ -132,8 +132,8 @@ export const SidebarLink = [
     },
   },
   {
-    path: '/agent',
-    label: 'Agent',
+    path: '/timeline',
+    label: 'History Timeline',
     icon: {
       active: (
         <svg
