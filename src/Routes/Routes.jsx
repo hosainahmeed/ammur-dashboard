@@ -16,6 +16,7 @@ import Subscription from '../pages/DashboardPages/Subscription/Subscription';
 import Inquiries from '../pages/DashboardPages/Inquiries/Inquiries';
 import Profile from '../pages/DashboardPages/ProfilePages/Profile';
 import HistoryTimeline from '../pages/DashboardPages/history-timeline/HistoryTimeline';
+import CreatNewHistory from '../Components/tables/hisory-timeline-table/CreatNewHistory';
 
 export const Routes = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/timeline',
         element: <HistoryTimeline />,
+      },
+      {
+        path: '/timeline/create-new',
+        element: <CreatNewHistory />,
       },
       {
         path: '/subscription',
