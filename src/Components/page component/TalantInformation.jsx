@@ -99,7 +99,7 @@ function TalantInformation({ selectedUser }) {
           />
         </div>
       </div>
-      <h1 className="text-center text-xl">Talant/Landlord Name</h1>
+      <h1 className="text-center text-xl">User Name</h1>
       <Divider />
       <div className="mx-auto p-1 border rounded-sm !w-fit center-center my-3">
         {Tabs.map((item) => (

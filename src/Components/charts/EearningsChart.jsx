@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AreaChart,
   Area,
@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { Select } from 'antd'; // or import from your UI library
 
 const data2025 = [
   { uv: 4100, pv: 2750, amt: 2350, name: 'Jan' },
@@ -24,14 +25,48 @@ const data2025 = [
   { uv: 5200, pv: 3500, amt: 3500, name: 'Dec' },
 ];
 
-function EearningsChart() {
+// You might want to add data for other years too
+const dataByYear = {
+  2025: data2025,
+  // 2024: data2024,
+  // 2023: data2023,
+};
+
+const years = [2025, 2024, 2023]; // Add more years as needed
+
+function EarningsChart() {
+  const [year, setYear] = useState(2025);
+
   return (
     <div className="w-full h-[450px] max-h-[450px] bg-white p-4 rounded-xl shadow-xl">
-      <ResponsiveContainer width="100%" height="100%">
+      <h3
+        style={{
+          textAlign: 'left',
+          marginBottom: '15px',
+          color: '#333',
+          fontWeight: 'bold',
+          fontSize: '18px',
+        }}
+      >
+        📈 Subscriptions Growth Chart
+      </h3>
+      <Select
+        className="min-w-32"
+        value={year}
+        placeholder="Select year"
+        onChange={(value) => setYear(value)}
+        style={{
+          marginBottom: '15px',
+          width: '150px',
+          fontWeight: '500',
+        }}
+        options={years.map((item) => ({ value: item, label: item }))}
+      />
+      <ResponsiveContainer width="100%" height="85%">
         <AreaChart
           width={500}
           height={400}
-          data={data2025}
+          data={dataByYear[year]}
           margin={{
             top: 10,
             right: 30,
@@ -44,12 +79,10 @@ function EearningsChart() {
           <YAxis />
           <Tooltip />
           <Area type="monotone" dataKey="amt" stroke="#0C469D" fill="#0C469D" />
-          {/* <Area type="monotone" dataKey="pv" stroke="#ffa337" fill="#ffa337" /> */}
-          {/* <Area type="monotone" dataKey="amt" stroke="#ffa337" fill="pink" /> */}
         </AreaChart>
       </ResponsiveContainer>
     </div>
   );
 }
 
-export default EearningsChart;
+export default EarningsChart;

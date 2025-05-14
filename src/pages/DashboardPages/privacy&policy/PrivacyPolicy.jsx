@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { Button } from 'antd';
-import JoditComponent from '../../Components/Shared/JoditComponent.jsx';
 import PageHeading from '../../../Components/Shared/PageHeading.jsx';
+import JoditComponent from '../../../Components/Shared/JoditComponent.jsx';
 // import {
 //   useGetPrivacyPolicyQuery,
 //   useUpdatePrivacyPolicyMutation,

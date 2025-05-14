@@ -4,7 +4,7 @@ import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
 import logo from '../../assets/icons/brand.svg';
 import { IoMdNotificationsOutline } from 'react-icons/io';
-import Notify from '../../pages/Components/Notify_components/Notify';
+import Notify from '../Notify_components/Notify';
 
 function Header() {
   const [notifications, setNotifications] = useState(

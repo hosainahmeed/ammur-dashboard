@@ -36,8 +36,8 @@ export const SidebarLink = [
     },
   },
   {
-    path: '/landlord',
-    label: 'Talant/LandLord',
+    path: '/user',
+    label: 'User Management',
     icon: {
       active: (
         <svg

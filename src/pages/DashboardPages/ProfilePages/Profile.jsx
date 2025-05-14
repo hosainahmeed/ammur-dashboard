@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import ProfileEdit from '../../Components/ProfilePage/ProfileEdit.jsx';
-import ChangePassword from '../../Components/ProfilePage/ChangePassword.jsx';
 import { Button } from 'antd';
 import { FaCameraRetro } from 'react-icons/fa6';
+import ProfileEdit from '../../../Components/ProfilePage/ProfileEdit.jsx';
+import ChangePassword from '../../../Components/ProfilePage/ChangePassword.jsx';
 // import { useGetProfileDataQuery } from '../../../Redux/services/profileApis.js';
 // import { imageUrl } from '../../../Utils/server.js';
 

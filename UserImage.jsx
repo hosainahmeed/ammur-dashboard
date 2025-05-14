@@ -1,5 +1,5 @@
 import React from 'react';
-import { imageUrl } from '../server.js';
+import { imageUrl } from './src/Utils/server.js';
 import { Image } from 'antd';
 
 const UsernameImage = ({ name, email, image }) => {

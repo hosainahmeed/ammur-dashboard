@@ -286,8 +286,8 @@ const AllUsers = ({ recentUser }) => {
       )}
       {recentUser !== true && (
         <Tabs defaultActiveKey="1" type="card" onChange={handleTabChange}>
-          <Tabs.TabPane tab="Tenant / Landlord" key="1" />
-          <Tabs.TabPane tab="Blocked Tenant / Landlord" key="2" />
+          <Tabs.TabPane tab="All Users" key="1" />
+          <Tabs.TabPane tab="Requested User" key="2" />
         </Tabs>
       )}
 

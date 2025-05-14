@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
-import JoditComponent from '../../Components/Shared/JoditComponent.jsx';
 import PageHeading from '../../../Components/Shared/PageHeading.jsx';
 // import {
 //   useGetTermsAndConditionsQuery,
 //   useUpdateTermsAndConditionsMutation,
 // } from '../../../Redux/services/settings/termsAndConditionsApis.js';
 import toast from 'react-hot-toast';
+import JoditComponent from '../../../Components/Shared/JoditComponent.jsx';
 
 const TermsCondition = () => {
   const [content, setContent] = useState('Terms & Condition');
