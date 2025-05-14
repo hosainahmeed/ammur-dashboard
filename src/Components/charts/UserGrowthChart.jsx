@@ -19,28 +19,28 @@ const UserGrowthChart = () => {
     2024, 2025, 2026, 2027, 2028, 2029, 2030,
   ]);
   const [role] = useState('USER');
-
+  console.log(role);
   const dummyData = {
     data: {
       total_years: [2024, 2025, 2026, 2027],
       monthlyRegistration: {
-        January: 100,
-        February: 150,
-        March: 120,
-        April: 180,
+        Jan: 100,
+        Feb: 150,
+        Mar: 120,
+        Apr: 180,
         May: 200,
-        June: 220,
-        July: 250,
-        August: 240,
-        September: 230,
-        October: 210,
-        November: 190,
-        December: 220,
+        Jun: 220,
+        Jul: 250,
+        Aug: 240,
+        Sep: 230,
+        Oct: 210,
+        Nov: 190,
+        Dec: 220,
       },
     },
   };
 
-  const { data = dummyData, isLoading = false } = { data: dummyData }; 
+  const { data = dummyData, isLoading = false } = { data: dummyData };
 
   useEffect(() => {
     const years = data?.data?.total_years || [];

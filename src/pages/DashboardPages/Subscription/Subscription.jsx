@@ -5,10 +5,10 @@ import { CiWarning } from 'react-icons/ci';
 import PageHeading from '../../../Components/Shared/PageHeading.jsx';
 export default function SubscriptionManagement() {
   const initialPlans = {
-    bronze: {
-      id: 'bronze',
-      name: 'bronze',
-      displayName: 'Bronze Plan',
+    Basic: {
+      id: 'basic',
+      name: 'basic',
+      displayName: 'Basic Plan',
       price: '0.0',
       period: 'month',
       features: [
@@ -18,10 +18,24 @@ export default function SubscriptionManagement() {
         { id: 4, text: 'Email support' },
       ],
     },
-    gold: {
-      id: 'gold',
-      name: 'gold',
-      displayName: 'Gold Plan',
+    Standard: {
+      id: 'standard',
+      name: 'standard',
+      displayName: 'Standard Plan',
+      price: '120.99',
+      period: 'year',
+      features: [
+        { id: 1, text: 'Priority listing' },
+        { id: 2, text: 'Customer messaging' },
+        { id: 3, text: 'Advanced analytics' },
+        { id: 4, text: 'Premium support' },
+        { id: 5, text: 'Unlimited listings' },
+      ],
+    },
+    Primium: {
+      id: 'primium',
+      name: 'primium',
+      displayName: 'Primium Plan',
       price: '232.99',
       period: 'year',
       features: [
@@ -35,7 +49,7 @@ export default function SubscriptionManagement() {
     },
   };
 
-  const [selectedPlan, setSelectedPlan] = useState('bronze');
+  const [selectedPlan, setSelectedPlan] = useState('Basic');
   const [plans, setPlans] = useState(initialPlans);
 
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
@@ -143,7 +157,7 @@ export default function SubscriptionManagement() {
 
         {/* Plan Tabs */}
         <div className="w-full">
-          <div className="grid grid-cols-2 mb-8 border p-1 rounded-md overflow-hidden">
+          <div className="grid grid-cols-3 mb-8 border p-1 rounded-md overflow-hidden">
             {Object.keys(plans).map((planKey) => (
               <button
                 key={planKey}
@@ -254,8 +268,8 @@ export default function SubscriptionManagement() {
                     onChange={(e) => setSelectedPlan(e.target.value)}
                     className="w-full border rounded-md p-2"
                   >
-                    <option value="bronze">Bronze Plan</option>
-                    <option value="gold">Gold Plan</option>
+                    <option value="Basic">Basic Plan</option>
+                    <option value="Primium">Primium Plan</option>
                   </select>
                 </div>
 
@@ -325,7 +339,7 @@ export default function SubscriptionManagement() {
                 </div>
 
                 <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                  {tempFeatures.map((feature, index) => (
+                  {tempFeatures.map((feature) => (
                     <div
                       key={feature.id}
                       className={`flex items-center justify-between p-3 border rounded-md ${
