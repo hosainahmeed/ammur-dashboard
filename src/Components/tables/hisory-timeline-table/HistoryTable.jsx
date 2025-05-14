@@ -146,9 +146,8 @@ function HistoryTable() {
       <div className="flex items-center justify-between mb-4">
         <Link to={'/timeline/create-new'}>
           <Button
-            type="primary"
             icon={<FaPlus />}
-            className="!h-10 !px-6 !flex items-center"
+            className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
           >
             Create New History
           </Button>
