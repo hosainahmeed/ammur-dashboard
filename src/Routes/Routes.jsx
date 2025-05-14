@@ -1,26 +1,25 @@
-import React from 'react';
-import { createBrowserRouter } from 'react-router-dom';
-import Login from '../pages/Auth/Login';
-import ForgetPassword from '../pages/Auth/ForgetPassword';
-import Otp from '../pages/Auth/Otp';
-import ResetPassword from '../pages/Auth/ResetPassword';
-import Dashboard from '../Layout/Dashboard';
-import DashboardHome from '../pages/DashboardPages/DashboardHome/DashboardHome';
-import UsersManage from '../pages/DashboardPages/UsersManage/UsersManage';
-import TermsCondition from '../pages/DashboardPages/terms&condition/TermsCondition';
-import PrivateRoute from './PrivetRoute';
-import PrivacyPolicy from '../pages/DashboardPages/privacy&policy/PrivacyPolicy';
-import FrequentlyAskedQuestions from '../pages/DashboardPages/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
-import EarningPage from '../pages/DashboardPages/EarningManage/EarningPage';
-import Subscription from '../pages/DashboardPages/Subscription/Subscription';
-import Inquiries from '../pages/DashboardPages/Inquiries/Inquiries';
-import Profile from '../pages/DashboardPages/ProfilePages/Profile';
-import HistoryTimeline from '../pages/DashboardPages/history-timeline/HistoryTimeline';
-import CreatNewHistory from '../Components/tables/hisory-timeline-table/CreatNewHistory';
+import React from "react";
+import { createBrowserRouter } from "react-router-dom";
+import Login from "../pages/Auth/Login";
+import ForgetPassword from "../pages/Auth/ForgetPassword";
+import Otp from "../pages/Auth/Otp";
+import ResetPassword from "../pages/Auth/ResetPassword";
+import Dashboard from "../Layout/Dashboard";
+import DashboardHome from "../pages/DashboardPages/DashboardHome/DashboardHome";
+import UsersManage from "../pages/DashboardPages/UsersManage/UsersManage";
+import TermsCondition from "../pages/DashboardPages/terms&condition/TermsCondition";
+import PrivateRoute from "./PrivetRoute";
+import PrivacyPolicy from "../pages/DashboardPages/privacy&policy/PrivacyPolicy";
+import EarningPage from "../pages/DashboardPages/EarningManage/EarningPage";
+import Subscription from "../pages/DashboardPages/Subscription/Subscription";
+import ThingsToKnow from "../pages/DashboardPages/ThingsToKnow/ThingsToKnow";
+import Profile from "../pages/DashboardPages/ProfilePages/Profile";
+import HistoryTimeline from "../pages/DashboardPages/history-timeline/HistoryTimeline";
+import CreatNewHistory from "../Components/tables/hisory-timeline-table/CreatNewHistory";
 
 export const Routes = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: (
       <PrivateRoute>
         <Dashboard />
@@ -28,65 +27,61 @@ export const Routes = createBrowserRouter([
     ),
     children: [
       {
-        path: '/',
+        path: "/",
         element: <DashboardHome />,
       },
       {
-        path: '/user',
+        path: "/user",
         element: <UsersManage />,
       },
       {
-        path: '/timeline',
+        path: "/timeline",
         element: <HistoryTimeline />,
       },
       {
-        path: '/timeline/create-new',
+        path: "/timeline/create-new",
         element: <CreatNewHistory />,
       },
       {
-        path: '/subscription',
+        path: "/subscription",
         element: <Subscription />,
       },
       {
-        path: '/inquiries',
-        element: <Inquiries />,
+        path: "/things-to-know",
+        element: <ThingsToKnow />,
       },
       {
-        path: '/terms-condition',
+        path: "/terms-condition",
         element: <TermsCondition />,
       },
       {
-        path: '/privacy-policy',
+        path: "/privacy-policy",
         element: <PrivacyPolicy />,
       },
       {
-        path: '/earnings',
+        path: "/earnings",
         element: <EarningPage />,
       },
       {
-        path: '/profile-setting',
+        path: "/profile-setting",
         element: <Profile />,
-      },
-      {
-        path: '/faq-management',
-        element: <FrequentlyAskedQuestions />,
       },
     ],
   },
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/forgot-password',
+    path: "/forgot-password",
     element: <ForgetPassword />,
   },
   {
-    path: '/otp',
+    path: "/otp",
     element: <Otp />,
   },
   {
-    path: '/reset-password',
+    path: "/reset-password",
     element: <ResetPassword />,
   },
 ]);
