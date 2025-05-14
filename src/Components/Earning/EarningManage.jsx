@@ -14,7 +14,7 @@ function EarningManage() {
           />
         </div>
         <div className="flex flex-col items-start">
-          <div className="bg-[#14532D] rounded-md p-4 ">
+          <div className="bg-[#235FB7] rounded-md p-4 ">
             <svg
               width="24"
               height="24"

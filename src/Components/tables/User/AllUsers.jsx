@@ -1,21 +1,12 @@
 import React, { useState } from 'react';
-import {
-  Table,
-  Space,
-  Avatar,
-  Button,
-  Modal,
-  Select,
-  Tabs,
-  Form,
-  Input,
-} from 'antd';
+import { Table, Space, Avatar, Button, Modal, Tabs, Form, Input } from 'antd';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { CgBlock } from 'react-icons/cg';
 import { IoIosWarning, IoIosMail } from 'react-icons/io';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 import './alluserVanila.css';
 import TalantInformation from '../../page component/TalantInformation';
+
 const AllUsers = ({ recentUser }) => {
   const [showModal, setShowModal] = useState(false);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
@@ -23,160 +14,47 @@ const AllUsers = ({ recentUser }) => {
   const [blockUserId, setBlockUserId] = useState(null);
   const [isUserBlock, setUserBlock] = useState(false);
 
-  const users = [
+  // Example data for "All Users"
+  const allUsers = [
     {
       key: '1',
       id: '1',
       name: 'Theodore Mosciski',
       contactNumber: '901-474-6265',
       email: 'maka@yandex.ru',
+      familySide: 'Father',
+      subscription: 'Premium',
       joined: '2025-01-10',
       status: true,
       isBlocked: false,
       avatar: null,
     },
+    // Add other users here...
+  ];
+
+  // Example data for "Requested Users"
+  const requestedUsers = [
     {
-      key: '2',
-      id: '2',
+      key: '1',
+      id: '1',
       name: 'Russell Veum',
       contactNumber: '983-842-7095',
       email: 'Nigell6@hotmail.com',
+      familySide: 'Mother',
+      elderFamilyMember: 'Grandfather',
       joined: '2025-01-10',
       status: false,
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '3',
-      id: '3',
-      name: 'Tracy Grady',
-      contactNumber: '564-667-5097',
-      email: 'rrian@yandex.ru',
-      joined: '2025-01-10',
-      status: true,
       isBlocked: false,
       avatar: null,
     },
-    {
-      key: '4',
-      id: '4',
-      name: 'Dana Daniel',
-      contactNumber: '443-393-4346',
-      email: 'rrian@yandex.ru',
-      joined: '2025-01-10',
-      status: false,
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '5',
-      id: '5',
-      name: 'Gerardo Barrows',
-      contactNumber: '344-223-4982',
-      email: 'cido@gmail.com',
-      joined: '2025-01-10',
-      status: true,
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '6',
-      id: '6',
-      name: 'Sheryl Gusikowski',
-      contactNumber: '752-792-1071',
-      email: 'cedennar@gmail.com',
-      joined: '2025-01-10',
-      status: false,
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '7',
-      id: '7',
-      name: 'Lana Kiehn',
-      contactNumber: '234-567-8901',
-      email: 'lana.kiehn@example.com',
-      joined: '2025-01-11',
-      status: true,
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '8',
-      id: '8',
-      name: 'Sammy Bednar',
-      contactNumber: '345-678-9012',
-      email: 'sammy.bednar@example.com',
-      joined: '2025-01-12',
-      status: false,
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '9',
-      id: '9',
-      name: 'Kory Spinka',
-      contactNumber: '456-789-0123',
-      email: 'kory.spinka@example.com',
-      joined: '2025-01-13',
-      status: true,
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '10',
-      id: '10',
-      name: 'Rosa Kertzmann',
-      contactNumber: '567-890-1234',
-      email: 'rosa.kertzmann@example.com',
-      joined: '2025-01-14',
-      status: false,
-      isBlocked: true,
-      avatar: null,
-    },
-    {
-      key: '11',
-      id: '11',
-      name: 'Hollis Parisian',
-      contactNumber: '678-901-2345',
-      email: 'hollis.parisian@example.com',
-      joined: '2025-01-15',
-      status: true,
-      isBlocked: false,
-      avatar: null,
-    },
-    {
-      key: '12',
-      id: '12',
-      name: 'Kip Stark',
-      contactNumber: '789-012-3456',
-      email: 'kip.stark@example.com',
-      joined: '2025-01-16',
-      status: false,
-      isBlocked: true,
-      avatar: null,
-    },
+    // Add other requested users here...
   ];
 
-  const handleUnblockUser = async () => {
-    if (!blockUserId) {
-      return toast.error('Please select a user to block');
-    }
-    toast.success('User successfully unblocked');
-    setShowModal(false);
-  };
+  const [filteredUsers, setFilteredUsers] = useState(allUsers);
+  const [filteredRequestedUsers, setFilteredRequestedUsers] =
+    useState(requestedUsers);
 
-  const handleBlockUser = async () => {
-    if (!blockUserId) {
-      return toast.error('Please select a user to block');
-    }
-    toast.success('User successfully blocked');
-    setShowModal(false);
-  };
-
-  const [filteredUsers, setFilteredUsers] = useState(users);
-
-  const columns = [
+  const columnsAllUsers = [
     {
       title: 'User Name',
       dataIndex: 'name',
@@ -209,6 +87,16 @@ const AllUsers = ({ recentUser }) => {
           {email}
         </Space>
       ),
+    },
+    {
+      title: 'Family Side',
+      dataIndex: 'familySide',
+      key: 'familySide',
+    },
+    {
+      title: 'Subscription',
+      dataIndex: 'subscription',
+      key: 'subscription',
     },
     {
       title: 'Joined',
@@ -246,21 +134,89 @@ const AllUsers = ({ recentUser }) => {
     },
   ];
 
+  const columnsRequestedUsers = [
+    {
+      title: 'User Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text, record) => (
+        <Space size="middle">
+          <Avatar icon={<UserOutlined />} src={record.avatar} />
+          {text}
+        </Space>
+      ),
+    },
+    {
+      title: 'Contact Number',
+      dataIndex: 'contactNumber',
+      key: 'contactNumber',
+      render: (phone) => (
+        <Space>
+          <PhoneOutlined />
+          {phone}
+        </Space>
+      ),
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (email) => (
+        <Space>
+          <IoIosMail />
+          {email}
+        </Space>
+      ),
+    },
+    {
+      title: 'Family Side',
+      dataIndex: 'familySide',
+      key: 'familySide',
+    },
+    {
+      title: 'Elder Family Member',
+      dataIndex: 'elderFamilyMember',
+      key: 'elderFamilyMember',
+    },
+    {
+      title: 'Joined',
+      dataIndex: 'joined',
+      key: 'joined',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button
+            onClick={() => {
+              setSelectedUser(record);
+              setUserDetailsModal(true);
+            }}
+            className="ant-btn !bg-[var(--bg-green-high)] !text-white ant-btn-primary"
+          >
+            <UserOutlined />
+          </Button>
+          <Button className="!bg-yellow-300">Approve</Button>
+          <Button className="!bg-red-300">Reject</Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const [activeTab, setActiveTab] = useState('1');
+
   const handleTabChange = (key) => {
-    switch (key) {
-      case '1':
-        setFilteredUsers(users);
-        break;
-      case '2':
-        setFilteredUsers(users.filter((user) => user.isBlocked === true));
-        break;
-      default:
-        setFilteredUsers(users);
+    setActiveTab(key);
+    if (key === '1') {
+      setFilteredUsers(allUsers);
+    } else if (key === '2') {
+      setFilteredRequestedUsers(requestedUsers);
     }
   };
 
   const handleSearch = (value) => {
-    const filtered = users.filter(
+    const filtered = allUsers.filter(
       (user) =>
         user.name.toLowerCase().includes(value.toLowerCase()) ||
         user.email.toLowerCase().includes(value.toLowerCase()) ||
@@ -284,20 +240,37 @@ const AllUsers = ({ recentUser }) => {
           </Form>
         </div>
       )}
-      {recentUser !== true && (
-        <Tabs defaultActiveKey="1" type="card" onChange={handleTabChange}>
-          <Tabs.TabPane tab="All Users" key="1" />
-          <Tabs.TabPane tab="Requested User" key="2" />
-        </Tabs>
+
+      <Tabs
+        defaultActiveKey="1"
+        activeKey={activeTab}
+        type="card"
+        onChange={handleTabChange}
+      >
+        <Tabs.TabPane tab="All Users" key="1" />
+        <Tabs.TabPane tab="Requested User" key="2" />
+      </Tabs>
+
+      {/* Conditionally render tables based on selected tab */}
+      {activeTab === '1' && (
+        <Table
+          columns={columnsAllUsers}
+          dataSource={filteredUsers}
+          rowKey="id"
+          pagination={true}
+          bordered
+        />
       )}
 
-      <Table
-        columns={columns}
-        dataSource={filteredUsers}
-        rowKey="id"
-        pagination={true}
-        bordered
-      />
+      {activeTab === '2' && (
+        <Table
+          columns={columnsRequestedUsers}
+          dataSource={filteredRequestedUsers}
+          rowKey="id"
+          pagination={true}
+          bordered
+        />
+      )}
 
       {/* Modal to confirm block/unblock */}
       <Modal
@@ -317,7 +290,7 @@ const AllUsers = ({ recentUser }) => {
             <Button
               type="primary"
               className="!bg-[var(--bg-green-high)] !text-white"
-              onClick={isUserBlock ? handleUnblockUser : handleBlockUser}
+              // onClick={isUserBlock ? handleUnblockUser : handleBlockUser}
             >
               Yes
             </Button>
