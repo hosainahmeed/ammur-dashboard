@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import { Table, Space, Avatar, Button, Modal, Tabs, Form, Input } from 'antd';
+import {
+  Table,
+  Space,
+  Avatar,
+  Button,
+  Modal,
+  Tabs,
+  Form,
+  Input,
+  Popconfirm,
+} from 'antd';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { CgBlock } from 'react-icons/cg';
 import { IoIosWarning, IoIosMail } from 'react-icons/io';
 // import toast from 'react-hot-toast';
 import './alluserVanila.css';
-import TalantInformation from '../../page component/TalantInformation';
+import toast from 'react-hot-toast';
+import UserInformation from '../../page component/UserInformation';
 
 const AllUsers = ({ recentUser }) => {
-  const [showModal, setShowModal] = useState(false);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [blockUserId, setBlockUserId] = useState(null);
-  const [isUserBlock, setUserBlock] = useState(false);
 
   // Example data for "All Users"
   const allUsers = [
@@ -117,18 +125,19 @@ const AllUsers = ({ recentUser }) => {
           >
             <UserOutlined />
           </Button>
-          <Button
-            onClick={() => {
-              setBlockUserId(record?.id);
-              setUserBlock(record?.isBlocked);
-              setShowModal(true);
-            }}
-            className={`${
-              record?.isBlocked ? '!bg-red-300' : '!bg-green-200'
-            } ant-btn ant-btn-default`}
+          <Popconfirm
+            placement="bottomRight"
+            title="Are you sure you want block this user?"
+            onConfirm={() => toast.success('successfully blocked user')}
           >
-            <CgBlock />
-          </Button>
+            <Button
+              className={`${
+                record?.isBlocked ? '!bg-red-300' : '!bg-green-200'
+              } ant-btn ant-btn-default`}
+            >
+              <CgBlock />
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -272,33 +281,6 @@ const AllUsers = ({ recentUser }) => {
         />
       )}
 
-      {/* Modal to confirm block/unblock */}
-      <Modal
-        centered
-        visible={showModal}
-        onCancel={() => setShowModal(false)}
-        footer={null}
-      >
-        <div className="flex flex-col items-center">
-          <IoIosWarning size={60} color="#f6a112" />
-          <h1 className="text-2xl font-bold text-black">Warning</h1>
-          <p className="text-lg text-black">
-            Are you sure you want to {isUserBlock ? 'unblock' : 'block'} this
-            user?
-          </p>
-          <div className="flex justify-center gap-4 mt-4">
-            <Button
-              type="primary"
-              className="!bg-[var(--bg-green-high)] !text-white"
-              // onClick={isUserBlock ? handleUnblockUser : handleBlockUser}
-            >
-              Yes
-            </Button>
-            <Button onClick={() => setShowModal(false)}>Cancel</Button>
-          </div>
-        </div>
-      </Modal>
-
       {/* Modal for user details */}
       <Modal
         centered
@@ -307,7 +289,7 @@ const AllUsers = ({ recentUser }) => {
         footer={null}
         className="user-details-modal"
       >
-        <TalantInformation selectedUser={selectedUser} />
+        <UserInformation selectedUser={setUserDetailsModal} />
       </Modal>
     </div>
   );

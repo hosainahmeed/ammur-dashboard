@@ -3,13 +3,8 @@ import { Table, Tag, Space, Avatar, Button, Modal, Select } from 'antd';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { CgBlock } from 'react-icons/cg';
 import { IoIosMail, IoIosWarning } from 'react-icons/io';
-import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
 
 const TransactionTable = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [blockUserId, setBlockUserId] = useState(null);
-  console.log(blockUserId);
   const users = [
     {
       id: 1,
@@ -18,7 +13,7 @@ const TransactionTable = () => {
       date: '901-474-6265',
       email: 'maka@yandex.ru',
       paOn: 'Online',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -28,7 +23,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'Nigel16@hotmail.com',
       paOn: 'D coin',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -38,7 +33,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'rrian@yandex.ru',
       paOn: 'Handcash',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -48,7 +43,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'rrian@yandex.ru',
       paOn: 'Online',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -58,7 +53,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'rrian@yandex.ru',
       paOn: 'Online',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -68,7 +63,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'rrian@yandex.ru',
       paOn: 'Online',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -78,7 +73,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'rrian@yandex.ru',
       paOn: 'Online',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -88,7 +83,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'rrian@yandex.ru',
       paOn: 'Online',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
     {
@@ -98,7 +93,7 @@ const TransactionTable = () => {
       trId: 'TRX-84921A',
       email: 'rrian@yandex.ru',
       paOn: 'Online',
-      amount: 'MR 29',
+      amount: 'USD 29',
       avatar: `https://tinypng.com/images/social/website.jpg`,
     },
   ];
@@ -132,16 +127,6 @@ const TransactionTable = () => {
       key: 'date',
     },
     {
-      title: 'Pay On',
-      dataIndex: 'paOn',
-      key: 'paOn',
-    },
-    {
-      title: 'TR ID',
-      dataIndex: 'trId',
-      key: 'trId',
-    },
-    {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
@@ -155,13 +140,7 @@ const TransactionTable = () => {
             <UserOutlined className="!text-white" />
           </Button>
 
-          <Button
-            onClick={() => {
-              setBlockUserId(record.id);
-              setShowModal(true);
-            }}
-            className="ant-btn ant-btn-default"
-          >
+          <Button className="ant-btn ant-btn-default">
             <CgBlock />
           </Button>
         </Space>
@@ -185,34 +164,6 @@ const TransactionTable = () => {
         }
         bordered
       />
-      <Modal
-        visible={showModal}
-        onCancel={() => setShowModal(false)}
-        footer={null}
-      >
-        <div className="flex flex-col items-center">
-          <IoIosWarning size={60} color="#f6a112" />
-          <h1 className="text-2xl font-bold text-black">Warning</h1>
-          <p className="text-lg text-black">
-            Are you sure you want to block this user?
-          </p>
-          <div className="flex justify-center gap-4 mt-4">
-            <Button onClick={() => setShowModal(false)} type="primary" danger>
-              Cancel
-            </Button>
-            <Button
-              type="primary"
-              className="!bg-[var(--bg-green-high)] !text-white"
-              onClick={() => {
-                toast.success('User successfully blocked');
-                setShowModal(false);
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 };
