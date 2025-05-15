@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import locale from 'antd/locale/en_GB';
 import { FaEdit } from 'react-icons/fa';
+import PageHeading from '../../../Components/Shared/PageHeading';
 
 const { TextArea } = Input;
 
@@ -317,8 +318,8 @@ function Events() {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-4">Admin Dashboard - Events</h2>
-      <div className="mb-4">
+      <div className="bg-white flex items-center px-4 justify-between rounded-md shadow-md">
+        <PageHeading title={'Events'} />
         <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
           Add New Event
         </Button>
