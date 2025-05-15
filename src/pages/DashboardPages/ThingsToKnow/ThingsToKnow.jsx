@@ -142,7 +142,7 @@ function ThingsToKnow() {
           type="primary"
           icon={<FaPlus />}
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2"
+          className="!flex !items-center !bg-[#0C469D] !gap-2"
         >
           Add New
         </Button>
@@ -222,7 +222,7 @@ function ThingsToKnow() {
           </Button>,
           <Button
             key="submit"
-            type="primary"
+            className='!bg-[#0C469D] !text-white'
             onClick={handleSubmit}
             // loading={isLoading}
           >

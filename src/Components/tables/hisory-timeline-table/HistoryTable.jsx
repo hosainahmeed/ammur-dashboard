@@ -149,7 +149,7 @@ function HistoryTable() {
             icon={<FaPlus />}
             className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
           >
-            Create New History
+            Add New History
           </Button>
         </Link>
         <Input.Search

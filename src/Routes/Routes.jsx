@@ -17,6 +17,9 @@ import Profile from "../pages/DashboardPages/ProfilePages/Profile";
 import HistoryTimeline from "../pages/DashboardPages/history-timeline/HistoryTimeline";
 import CreatNewHistory from "../Components/tables/hisory-timeline-table/CreatNewHistory";
 import InterViews from "../pages/DashboardPages/InterViews/InterViews";
+import Recipe from "../pages/DashboardPages/recipes/Recipe";
+import LegacyTribute from "../pages/DashboardPages/Legacy & tribute/LegacyTribute";
+import FamilyArchive from "../pages/DashboardPages/Family Archive/FamilyArchive";
 
 export const Routes = createBrowserRouter([
   {
@@ -66,6 +69,18 @@ export const Routes = createBrowserRouter([
       {
         path: "/interviews",
         element: <InterViews />,
+      },
+      {
+        path: "/legacy-tribute",
+        element: <LegacyTribute />,
+      },
+      {
+        path: "/family-archive",
+        element: <FamilyArchive />,
+      },
+      {
+        path: "/recipe",
+        element: <Recipe />,
       },
       {
         path: "/profile-setting",
