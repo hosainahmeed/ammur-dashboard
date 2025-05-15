@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import PageHeading from "../../../Components/Shared/PageHeading";
+/* eslint-disable no-unused-vars */
+import React, { useState } from 'react';
+import PageHeading from '../../../Components/Shared/PageHeading';
 import {
   Button,
   Card,
@@ -11,9 +12,9 @@ import {
   Upload,
   message,
   Spin,
-} from "antd";
-import { FaEdit, FaTrash, FaPlus, FaUpload } from "react-icons/fa";
-import toast from "react-hot-toast";
+} from 'antd';
+import { FaEdit, FaTrash, FaPlus, FaUpload } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 // import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation, useGetCategoriesQuery } from "./categoriesApiSlice";
 
 const { Dragger } = Upload;
@@ -32,23 +33,23 @@ function ThingsToKnow() {
   const categories = [
     {
       id: 1,
-      title: "Life Lessons & Values",
+      title: 'Life Lessons & Values',
       image:
-        "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWx8ZW58MHx8MHx8fDA%3D",
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWx8ZW58MHx8MHx8fDA%3D',
     },
     {
       id: 2,
-      title: "Spirituality & Beliefs",
+      title: 'Spirituality & Beliefs',
 
       image:
-        "https://images.unsplash.com/photo-1582719471387-9c060cce8e38?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhvdGVsfGVufDB8fDB8fHww",
+        'https://images.unsplash.com/photo-1582719471387-9c060cce8e38?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhvdGVsfGVufDB8fDB8fHww',
     },
     {
       id: 3,
-      title: "Family & Relationships",
+      title: 'Family & Relationships',
 
       image:
-        "https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHBldHN8ZW58MHx8MHx8fDA%3D",
+        'https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHBldHN8ZW58MHx8MHx8fDA%3D',
     },
   ];
   const handleEdit = (category) => {
@@ -60,9 +61,9 @@ function ThingsToKnow() {
       category.image
         ? [
             {
-              uid: "-1",
-              name: "current-image.png",
-              status: "done",
+              uid: '-1',
+              name: 'current-image.png',
+              status: 'done',
               url: category.image,
             },
           ]
@@ -85,9 +86,9 @@ function ThingsToKnow() {
       const values = await form.validateFields();
       const formData = new FormData();
 
-      formData.append("title", values.title);
+      formData.append('title', values.title);
       if (fileList.length > 0 && fileList[0].originFileObj) {
-        formData.append("image", fileList[0].originFileObj);
+        formData.append('image', fileList[0].originFileObj);
       }
 
       if (editData) {
@@ -102,7 +103,7 @@ function ThingsToKnow() {
 
       handleCloseModal();
     } catch (err) {
-      toast.error(err.data?.message || "Failed to save category");
+      toast.error(err.data?.message || 'Failed to save category');
     }
   };
 
@@ -118,9 +119,9 @@ function ThingsToKnow() {
       setFileList([]);
     },
     beforeUpload: (file) => {
-      const isImage = file.type.startsWith("image/");
+      const isImage = file.type.startsWith('image/');
       if (!isImage) {
-        message.error("You can only upload image files!");
+        message.error('You can only upload image files!');
         return Upload.LIST_IGNORE;
       }
       setFileList([file]);
@@ -136,7 +137,7 @@ function ThingsToKnow() {
   return (
     <div className="p-5 container mx-auto">
       <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
-        <PageHeading title={"Things To Know"} />
+        <PageHeading title={'Things To Know'} />
         <Button
           type="primary"
           icon={<FaPlus />}
@@ -156,7 +157,7 @@ function ThingsToKnow() {
               cover={
                 <img
                   alt={item.title}
-                  src={item.image || "https://via.placeholder.com/150"}
+                  src={item.image || 'https://via.placeholder.com/150'}
                   className="h-[180px] w-full object-cover"
                 />
               }
@@ -212,7 +213,7 @@ function ThingsToKnow() {
       )}
 
       <Modal
-        title={editData ? "Edit Category" : "Add New Category"}
+        title={editData ? 'Edit Category' : 'Add New Category'}
         open={showModal}
         onCancel={handleCloseModal}
         footer={[
@@ -225,7 +226,7 @@ function ThingsToKnow() {
             onClick={handleSubmit}
             // loading={isLoading}
           >
-            {editData ? "Update" : "Save"}
+            {editData ? 'Update' : 'Save'}
           </Button>,
         ]}
       >
@@ -234,7 +235,7 @@ function ThingsToKnow() {
             name="title"
             label="Category Title"
             rules={[
-              { required: true, message: "Please input the category title!" },
+              { required: true, message: 'Please input the category title!' },
             ]}
           >
             <Input placeholder="Enter category title" />
@@ -243,9 +244,9 @@ function ThingsToKnow() {
           <Form.Item label="Category Image">
             <Dragger
               {...uploadProps}
-              className="!d-flex !flex-col !items-center !justify-center !p-4 !border-2 !border-dashed !border-gray-300 !rounded-lg"
+              className="!flex !flex-col !items-center !justify-center !p-4 !border-2 !border-dashed !border-gray-300 !rounded-lg"
             >
-              <p className="ant-upload-drag-icon">
+              <p className="ant-upload-drag-icon !flex !items-center !justify-center">
                 <FaUpload className="text-gray-400 text-2xl" />
               </p>
               <p className="ant-upload-text">
