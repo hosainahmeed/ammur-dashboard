@@ -14,7 +14,9 @@ import {
   Spin,
 } from 'antd';
 import { FaEdit, FaTrash, FaPlus, FaUpload } from 'react-icons/fa';
+import { GoArrowUpRight } from 'react-icons/go';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 // import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation, useGetCategoriesQuery } from "./categoriesApiSlice";
 
 const { Dragger } = Upload;
@@ -35,21 +37,21 @@ function ThingsToKnow() {
       id: 1,
       title: 'Life Lessons & Values',
       image:
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWx8ZW58MHx8MHx8fDA%3D',
+        'https://picsum.photos/600/300',
     },
     {
       id: 2,
       title: 'Spirituality & Beliefs',
 
       image:
-        'https://images.unsplash.com/photo-1582719471387-9c060cce8e38?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhvdGVsfGVufDB8fDB8fHww',
+        'https://picsum.photos/600/300',
     },
     {
       id: 3,
       title: 'Family & Relationships',
 
       image:
-        'https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHBldHN8ZW58MHx8MHx8fDA%3D',
+        'https://picsum.photos/600/300',
     },
   ];
   const handleEdit = (category) => {
@@ -182,6 +184,13 @@ function ThingsToKnow() {
                     className="!flex !w-full !items-center !justify-center"
                   />
                 </Popconfirm>,
+                <Link to={`/things-to-know/blogs/${item.title}`}>
+                  <Button
+                    type="text"
+                    icon={<GoArrowUpRight />}
+                    className="!flex !w-full !items-center !justify-center"
+                  />
+                </Link>,
               ]}
             >
               <Card.Meta
@@ -222,7 +231,7 @@ function ThingsToKnow() {
           </Button>,
           <Button
             key="submit"
-            className='!bg-[#0C469D] !text-white'
+            className="!bg-[#0C469D] !text-white"
             onClick={handleSubmit}
             // loading={isLoading}
           >

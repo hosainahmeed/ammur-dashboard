@@ -20,6 +20,10 @@ import InterViews from "../pages/DashboardPages/InterViews/InterViews";
 import Recipe from "../pages/DashboardPages/recipes/Recipe";
 import LegacyTribute from "../pages/DashboardPages/Legacy & tribute/LegacyTribute";
 import FamilyArchive from "../pages/DashboardPages/Family Archive/FamilyArchive";
+import Blogs from "../pages/DashboardPages/ThingsToKnow/SpacaficOne/Blogs";
+import Events from "../pages/DashboardPages/events/Events";
+import ManageAdmins from "../pages/DashboardPages/ManageAdmins/ManageAdmins";
+import AboutUs from "../pages/DashboardPages/about-us/AboutUs";
 
 export const Routes = createBrowserRouter([
   {
@@ -55,8 +59,20 @@ export const Routes = createBrowserRouter([
         element: <ThingsToKnow />,
       },
       {
+        path: "/things-to-know/blogs/:slug",
+        element: <Blogs />,
+      },
+      {
         path: "/terms-condition",
         element: <TermsCondition />,
+      },
+      {
+        path: "/contact-us",
+        element: <AboutUs />,
+      },
+      {
+        path: "/about-us",
+        element: <AboutUs />,
       },
       {
         path: "/privacy-policy",
@@ -77,6 +93,14 @@ export const Routes = createBrowserRouter([
       {
         path: "/family-archive",
         element: <FamilyArchive />,
+      },
+      {
+        path: "/manage-admins",
+        element: <ManageAdmins />,
+      },
+      {
+        path: "/events",
+        element: <Events />,
       },
       {
         path: "/recipe",
