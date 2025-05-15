@@ -1,0 +1,37 @@
+.contact-table {
+  margin-top: 8px;
+}
+
+/* Override Ant Design styles for better aesthetics */
+.ant-tabs-nav {
+  margin-bottom: 16px !important;
+}
+
+.ant-card-head {
+  background-color: #fafafa;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #f5f7fa !important;
+}
+
+.ant-form-item-label > label {
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .contact-dashboard {
+    padding: 12px;
+  }
+
+  .contact-tabs {
+    padding: 12px 8px;
+  }
+
+  .ant-card-body {
+    padding: 16px 8px;
+  }
+}

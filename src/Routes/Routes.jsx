@@ -24,6 +24,7 @@ import Blogs from "../pages/DashboardPages/ThingsToKnow/SpacaficOne/Blogs";
 import Events from "../pages/DashboardPages/events/Events";
 import ManageAdmins from "../pages/DashboardPages/ManageAdmins/ManageAdmins";
 import AboutUs from "../pages/DashboardPages/about-us/AboutUs";
+import Contact from "../pages/DashboardPages/contact-us/Contact";
 
 export const Routes = createBrowserRouter([
   {
@@ -68,7 +69,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: "/contact-us",
-        element: <AboutUs />,
+        element: <Contact />,
       },
       {
         path: "/about-us",
