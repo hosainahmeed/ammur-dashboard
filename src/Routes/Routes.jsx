@@ -16,6 +16,7 @@ import ThingsToKnow from "../pages/DashboardPages/ThingsToKnow/ThingsToKnow";
 import Profile from "../pages/DashboardPages/ProfilePages/Profile";
 import HistoryTimeline from "../pages/DashboardPages/history-timeline/HistoryTimeline";
 import CreatNewHistory from "../Components/tables/hisory-timeline-table/CreatNewHistory";
+import InterViews from "../pages/DashboardPages/InterViews/InterViews";
 
 export const Routes = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ export const Routes = createBrowserRouter([
       {
         path: "/earnings",
         element: <EarningPage />,
+      },
+      {
+        path: "/interviews",
+        element: <InterViews />,
       },
       {
         path: "/profile-setting",
