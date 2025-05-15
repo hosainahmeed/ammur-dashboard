@@ -15,7 +15,8 @@ import {
 } from 'antd';
 import { FaEdit, FaTrash, FaPlus, FaUpload } from 'react-icons/fa';
 import toast from 'react-hot-toast';
-// import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation, useGetCategoriesQuery } from "./categoriesApiSlice";
+// Uncomment these when you connect to your API
+// import { useCreateInterviewMutation, useUpdateInterviewMutation, useDeleteInterviewMutation, useGetCategoriesQuery } from "./categoriesApiSlice";
 
 const { Dragger } = Upload;
 
@@ -23,94 +24,160 @@ function InterViews() {
   const [form] = Form.useForm();
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
-  const [fileList, setFileList] = useState([]);
+  const [thumbnailList, setThumbnailList] = useState([]);
+  const [videoList, setVideoList] = useState([]);
 
-  // RTK Query hooks
+  // RTK Query hooks (commented out)
   // const { data: categories = [], isLoading, isError } = useGetCategoriesQuery();
-  // const [createCategory] = useCreateCategoryMutation();
-  // const [updateCategory] = useUpdateCategoryMutation();
-  // const [deleteCategory] = useDeleteCategoryMutation();
-  const categories = [
+  // const [createInterview, { isLoading: isCreating }] = useCreateInterviewMutation();
+  // const [updateInterview, { isLoading: isUpdating }] = useUpdateInterviewMutation();
+  // const [deleteInterview] = useDeleteInterviewMutation();
+
+  // For demo/testing, using local state categories
+  const [categories, setCategories] = useState([
     {
       id: 1,
       title: 'Life Lessons & Values',
-      duration: '12 min',
-      descriptions:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Autem adipisci voluptatem, qui placeat quo consequuntur perspiciatis ad repellendus fuga deserunt in.',
-      image:
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWx8ZW58MHx8MHx8fDA%3D',
+      duration: '12:34',
+      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      thumbnail:
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
     },
     {
       id: 2,
       title: 'Spirituality & Beliefs',
-      duration: '12 min',
-      descriptions:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Autem adipisci voluptatem, qui placeat quo consequuntur perspiciatis ad repellendus fuga deserunt in.',
-      image:
-        'https://images.unsplash.com/photo-1582719471387-9c060cce8e38?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGhvdGVsfGVufDB8fDB8fHww',
+      duration: '15:10',
+      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+      videoUrl: 'https://www.w3schools.com/html/movie.mp4',
+      thumbnail:
+        'https://images.unsplash.com/photo-1582719471387-9c060cce8e38?w=500&auto=format&fit=crop&q=60',
     },
-    {
-      id: 3,
-      title: 'Family & Relationships',
-      duration: '12 min',
-      descriptions:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Autem adipisci voluptatem, qui placeat quo consequuntur perspiciatis ad repellendus fuga deserunt in.',
-      image:
-        'https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHBldHN8ZW58MHx8MHx8fDA%3D',
-    },
-  ];
-  const handleEdit = (category) => {
-    setEditData(category);
+  ]);
+
+  const handleEdit = (interview) => {
+    setEditData(interview);
     form.setFieldsValue({
-      title: category.title,
+      title: interview.title,
+      description: interview.description,
+      duration: interview.duration,
     });
-    setFileList(
-      category.image
+
+    setThumbnailList(
+      interview.thumbnail
         ? [
             {
               uid: '-1',
-              name: 'current-image.png',
+              name: 'thumbnail.png',
               status: 'done',
-              url: category.image,
+              url: interview.thumbnail,
             },
           ]
         : []
     );
+    setVideoList(
+      interview.videoUrl
+        ? [
+            {
+              uid: '-2',
+              name: 'video.mp4',
+              status: 'done',
+              url: interview.videoUrl,
+            },
+          ]
+        : []
+    );
+
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
+    // Uncomment to use RTK Query API call
     // try {
-    //   await deleteCategory(id).unwrap();
-    //   toast.success('Category deleted successfully');
+    //   await deleteInterview(id).unwrap();
+    //   toast.success('Interview deleted successfully');
     // } catch (err) {
-    //   toast.error('Failed to delete category');
+    //   toast.error('Failed to delete interview');
     // }
+
+    // For demo, remove locally:
+    setCategories((prev) => prev.filter((item) => item.id !== id));
+    toast.success('Interview deleted');
   };
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const formData = new FormData();
 
-      formData.append('title', values.title);
-      if (fileList.length > 0 && fileList[0].originFileObj) {
-        formData.append('image', fileList[0].originFileObj);
+      const thumbnailFile = thumbnailList[0]?.originFileObj || null;
+      const videoFile = videoList[0]?.originFileObj || null;
+
+      // For demo, use local URL objects
+      let thumbnailUrl = editData?.thumbnail || '';
+      let videoUrl = editData?.videoUrl || '';
+
+      if (thumbnailFile) {
+        thumbnailUrl = URL.createObjectURL(thumbnailFile);
+      }
+
+      if (videoFile) {
+        videoUrl = URL.createObjectURL(videoFile);
       }
 
       if (editData) {
-        // Update existing category
-        // await updateCategory({ id: editData.id, data: formData }).unwrap();
-        // toast.success('Category updated successfully');
+        // Uncomment to use RTK Query update call
+        // const formData = new FormData();
+        // formData.append('title', values.title);
+        // formData.append('description', values.description);
+        // formData.append('duration', values.duration || '');
+        // if (thumbnailFile) formData.append('thumbnail', thumbnailFile);
+        // if (videoFile) formData.append('video', videoFile);
+        // await updateInterview({ id: editData.id, data: formData }).unwrap();
+        // toast.success('Interview updated successfully');
+
+        // Demo local update
+        setCategories((prev) =>
+          prev.map((item) =>
+            item.id === editData.id
+              ? {
+                  ...item,
+                  title: values.title,
+                  description: values.description,
+                  duration: values.duration || item.duration,
+                  thumbnail: thumbnailUrl,
+                  videoUrl: videoUrl,
+                }
+              : item
+          )
+        );
+        toast.success('Interview updated');
       } else {
-        // Create new category
-        // await createCategory(formData).unwrap();
-        // toast.success('Category created successfully');
+        // Uncomment to use RTK Query create call
+        // const formData = new FormData();
+        // formData.append('title', values.title);
+        // formData.append('description', values.description);
+        // formData.append('duration', values.duration || '');
+        // if (thumbnailFile) formData.append('thumbnail', thumbnailFile);
+        // if (videoFile) formData.append('video', videoFile);
+        // await createInterview(formData).unwrap();
+        // toast.success('Interview created successfully');
+
+        // Demo local create
+        const newItem = {
+          id: Date.now(),
+          title: values.title,
+          description: values.description,
+          duration: values.duration || '00:00',
+          thumbnail: thumbnailUrl,
+          videoUrl: videoUrl,
+        };
+        setCategories((prev) => [newItem, ...prev]);
+        toast.success('Interview created');
       }
 
       handleCloseModal();
     } catch (err) {
-      toast.error(err.data?.message || 'Failed to save category');
+      toast.error(err.data?.message || 'Failed to save interview');
     }
   };
 
@@ -118,23 +185,37 @@ function InterViews() {
     setShowModal(false);
     setEditData(null);
     form.resetFields();
-    setFileList([]);
+    setThumbnailList([]);
+    setVideoList([]);
   };
 
-  const uploadProps = {
-    onRemove: (file) => {
-      setFileList([]);
-    },
+  const thumbnailUploadProps = {
+    onRemove: () => setThumbnailList([]),
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
         message.error('You can only upload image files!');
         return Upload.LIST_IGNORE;
       }
-      setFileList([file]);
+      setThumbnailList([file]);
       return false;
     },
-    fileList,
+    fileList: thumbnailList,
+    maxCount: 1,
+  };
+
+  const videoUploadProps = {
+    onRemove: () => setVideoList([]),
+    beforeUpload: (file) => {
+      const isVideo = file.type.startsWith('video/');
+      if (!isVideo) {
+        message.error('You can only upload video files!');
+        return Upload.LIST_IGNORE;
+      }
+      setVideoList([file]);
+      return false;
+    },
+    fileList: videoList,
     maxCount: 1,
   };
 
@@ -149,7 +230,7 @@ function InterViews() {
           type="primary"
           icon={<FaPlus />}
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2"
+          className="!flex !items-center !gap-2 !bg-[#0C469D] !text-white"
         >
           Add New
         </Button>
@@ -164,7 +245,7 @@ function InterViews() {
               cover={
                 <img
                   alt={item.title}
-                  src={item.image || 'https://via.placeholder.com/150'}
+                  src={item.thumbnail || 'https://via.placeholder.com/150'}
                   className="h-[180px] w-full object-cover"
                 />
               }
@@ -192,14 +273,19 @@ function InterViews() {
               ]}
             >
               <Card.Meta
-                title={[
+                title={
                   <div>
-                    <span className="!text-lg !font-semibold">
-                      {item.title}
-                    </span>
-                    <span className="text-black/70">{item.descriptions}</span>
-                  </div>,
-                ]}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="!text-lg !font-semibold">
+                        {item.title}
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        {item.duration}
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{item.description}</p>
+                  </div>
+                }
               />
             </Card>
           ))}
@@ -225,8 +311,9 @@ function InterViews() {
       )}
 
       <Modal
-        title={editData ? 'Edit Category' : 'Add New Category'}
+        title={editData ? 'Edit interview' : 'Add New interview'}
         open={showModal}
+        width={800}
         onCancel={handleCloseModal}
         footer={[
           <Button key="back" onClick={handleCloseModal}>
@@ -234,38 +321,71 @@ function InterViews() {
           </Button>,
           <Button
             key="submit"
-            type="primary"
             onClick={handleSubmit}
-            // loading={isLoading}
+            className="!bg-[#0C469D] !text-white"
+            // loading={isCreating || isUpdating}
           >
             {editData ? 'Update' : 'Save'}
           </Button>,
         ]}
       >
-        <Form form={form} layout="vertical">
+        <Form requiredMark={false} form={form} layout="vertical">
           <Form.Item
             name="title"
-            label="Category Title"
-            rules={[
-              { required: true, message: 'Please input the category title!' },
-            ]}
+            label="Title"
+            rules={[{ required: true, message: 'Please input the title!' }]}
           >
-            <Input placeholder="Enter category title" />
+            <Input placeholder="Enter title" />
           </Form.Item>
 
-          <Form.Item label="Category Image">
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              { required: true, message: 'Please input the description!' },
+            ]}
+          >
+            <Input.TextArea placeholder="Enter description" rows={3} />
+          </Form.Item>
+
+          <Form.Item
+            name="duration"
+            label="Duration (e.g., 12:30)"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="Enter video duration" />
+          </Form.Item>
+
+          <Form.Item label="Upload Thumbnail Image">
             <Dragger
-              {...uploadProps}
+              {...thumbnailUploadProps}
               className="!flex !flex-col !items-center !justify-center !p-4 !border-2 !border-dashed !border-gray-300 !rounded-lg"
             >
               <p className="ant-upload-drag-icon !flex !items-center !justify-center">
                 <FaUpload className="text-gray-400 text-2xl" />
               </p>
               <p className="ant-upload-text">
-                Click or drag file to this area to upload
+                Click or drag image file to this area to upload
               </p>
               <p className="ant-upload-hint">
-                Support for a single image upload
+                Support for a single thumbnail image upload
+              </p>
+            </Dragger>
+          </Form.Item>
+
+          <Form.Item label="Upload Video File">
+            <Dragger
+              {...videoUploadProps}
+              className="!flex !flex-col !items-center !justify-center !p-4 !border-2 !border-dashed !border-gray-300 !rounded-lg"
+            >
+              <p className="ant-upload-drag-icon !flex !items-center !justify-center">
+                <FaUpload className="text-gray-400 text-2xl" />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag video file to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Support for a single video upload
               </p>
             </Dragger>
           </Form.Item>
