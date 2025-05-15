@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PageHeading from '../../../Components/Shared/PageHeading';
 import {
   Button,
@@ -13,7 +12,14 @@ import {
   message,
   Spin,
 } from 'antd';
-import { FaEdit, FaTrash, FaPlus, FaUpload } from 'react-icons/fa';
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaUpload,
+  FaPlay,
+  FaPause,
+} from 'react-icons/fa';
 import toast from 'react-hot-toast';
 // Uncomment these when you connect to your API
 // import { useCreateInterviewMutation, useUpdateInterviewMutation, useDeleteInterviewMutation, useGetCategoriesQuery } from "./categoriesApiSlice";
@@ -26,6 +32,12 @@ function InterViews() {
   const [editData, setEditData] = useState(null);
   const [thumbnailList, setThumbnailList] = useState([]);
   const [videoList, setVideoList] = useState([]);
+  const [thumbnailPreview, setThumbnailPreview] = useState('');
+  const [videoPreview, setVideoPreview] = useState('');
+  const [hoveredCardId, setHoveredCardId] = useState(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
+  const videoRefs = useRef({});
 
   // RTK Query hooks (commented out)
   // const { data: categories = [], isLoading, isError } = useGetCategoriesQuery();
@@ -51,7 +63,7 @@ function InterViews() {
       description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
       videoUrl: 'https://www.w3schools.com/html/movie.mp4',
       thumbnail:
-        'https://images.unsplash.com/photo-1582719471387-9c060cce8e38?w=500&auto=format&fit=crop&q=60',
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
     },
   ]);
 
@@ -62,6 +74,10 @@ function InterViews() {
       description: interview.description,
       duration: interview.duration,
     });
+
+    // Set the preview URLs for the existing media
+    setThumbnailPreview(interview.thumbnail || '');
+    setVideoPreview(interview.videoUrl || '');
 
     setThumbnailList(
       interview.thumbnail
@@ -112,29 +128,11 @@ function InterViews() {
       const thumbnailFile = thumbnailList[0]?.originFileObj || null;
       const videoFile = videoList[0]?.originFileObj || null;
 
-      // For demo, use local URL objects
-      let thumbnailUrl = editData?.thumbnail || '';
-      let videoUrl = editData?.videoUrl || '';
-
-      if (thumbnailFile) {
-        thumbnailUrl = URL.createObjectURL(thumbnailFile);
-      }
-
-      if (videoFile) {
-        videoUrl = URL.createObjectURL(videoFile);
-      }
+      // For demo, use local URL objects or keep existing URLs
+      let thumbnailUrl = thumbnailPreview || editData?.thumbnail || '';
+      let videoUrl = videoPreview || editData?.videoUrl || '';
 
       if (editData) {
-        // Uncomment to use RTK Query update call
-        // const formData = new FormData();
-        // formData.append('title', values.title);
-        // formData.append('description', values.description);
-        // formData.append('duration', values.duration || '');
-        // if (thumbnailFile) formData.append('thumbnail', thumbnailFile);
-        // if (videoFile) formData.append('video', videoFile);
-        // await updateInterview({ id: editData.id, data: formData }).unwrap();
-        // toast.success('Interview updated successfully');
-
         // Demo local update
         setCategories((prev) =>
           prev.map((item) =>
@@ -152,16 +150,6 @@ function InterViews() {
         );
         toast.success('Interview updated');
       } else {
-        // Uncomment to use RTK Query create call
-        // const formData = new FormData();
-        // formData.append('title', values.title);
-        // formData.append('description', values.description);
-        // formData.append('duration', values.duration || '');
-        // if (thumbnailFile) formData.append('thumbnail', thumbnailFile);
-        // if (videoFile) formData.append('video', videoFile);
-        // await createInterview(formData).unwrap();
-        // toast.success('Interview created successfully');
-
         // Demo local create
         const newItem = {
           id: Date.now(),
@@ -187,17 +175,74 @@ function InterViews() {
     form.resetFields();
     setThumbnailList([]);
     setVideoList([]);
+    setThumbnailPreview('');
+    setVideoPreview('');
+  };
+
+  const handleCardMouseEnter = (id) => {
+    setHoveredCardId(id);
+    const videoRef = videoRefs.current[id];
+    if (videoRef) {
+      videoRef.play().catch((err) => {
+        // Autoplay was prevented, show play button
+        console.log('Autoplay prevented:', err);
+      });
+      setIsVideoPlaying(true);
+    }
+  };
+
+  const handleCardMouseLeave = (id) => {
+    setHoveredCardId(null);
+    const videoRef = videoRefs.current[id];
+    if (videoRef) {
+      videoRef.pause();
+      videoRef.currentTime = 0;
+      setIsVideoPlaying(false);
+    }
+  };
+
+  const toggleVideoPlay = (id, e) => {
+    e.stopPropagation();
+    const videoRef = videoRefs.current[id];
+    if (videoRef) {
+      if (videoRef.paused) {
+        videoRef.play();
+        setIsVideoPlaying(true);
+      } else {
+        videoRef.pause();
+        setIsVideoPlaying(false);
+      }
+    }
   };
 
   const thumbnailUploadProps = {
-    onRemove: () => setThumbnailList([]),
+    onRemove: () => {
+      setThumbnailList([]);
+      setThumbnailPreview('');
+    },
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
         message.error('You can only upload image files!');
         return Upload.LIST_IGNORE;
       }
-      setThumbnailList([file]);
+
+      // Create preview URL for the uploaded image
+      const previewUrl = URL.createObjectURL(file);
+      setThumbnailPreview(previewUrl);
+
+      // Add to upload list
+      setThumbnailList([
+        {
+          ...file,
+          uid: file.uid,
+          name: file.name,
+          status: 'done',
+          url: previewUrl,
+          originFileObj: file,
+        },
+      ]);
+
       return false;
     },
     fileList: thumbnailList,
@@ -205,14 +250,33 @@ function InterViews() {
   };
 
   const videoUploadProps = {
-    onRemove: () => setVideoList([]),
+    onRemove: () => {
+      setVideoList([]);
+      setVideoPreview('');
+    },
     beforeUpload: (file) => {
       const isVideo = file.type.startsWith('video/');
       if (!isVideo) {
         message.error('You can only upload video files!');
         return Upload.LIST_IGNORE;
       }
-      setVideoList([file]);
+
+      // Create preview URL for the uploaded video
+      const previewUrl = URL.createObjectURL(file);
+      setVideoPreview(previewUrl);
+
+      // Add to upload list
+      setVideoList([
+        {
+          ...file,
+          uid: file.uid,
+          name: file.name,
+          status: 'done',
+          url: previewUrl,
+          originFileObj: file,
+        },
+      ]);
+
       return false;
     },
     fileList: videoList,
@@ -243,11 +307,48 @@ function InterViews() {
               key={item.id}
               className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
               cover={
-                <img
-                  alt={item.title}
-                  src={item.thumbnail || 'https://via.placeholder.com/150'}
-                  className="h-[180px] w-full object-cover"
-                />
+                <div
+                  className="relative h-[180px] cursor-pointer"
+                  onMouseEnter={() => handleCardMouseEnter(item.id)}
+                  onMouseLeave={() => handleCardMouseLeave(item.id)}
+                >
+                  {/* Thumbnail/Video container */}
+                  {hoveredCardId === item.id && item.videoUrl ? (
+                    <div className="relative h-full w-full">
+                      <video
+                        ref={(el) => {
+                          if (el) videoRefs.current[item.id] = el;
+                        }}
+                        src={item.videoUrl}
+                        className="h-full w-full object-cover"
+                        muted
+                        loop
+                      />
+                      <div
+                        className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
+                        onClick={(e) => toggleVideoPlay(item.id, e)}
+                      >
+                        <button className="p-3 bg-white bg-opacity-70 rounded-full text-blue-600 hover:bg-opacity-90 transition-all">
+                          {isVideoPlaying ? (
+                            <FaPause size={18} />
+                          ) : (
+                            <FaPlay size={18} />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      alt={item.title}
+                      src={item.thumbnail || 'https://via.placeholder.com/150'}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                  {/* Duration badge */}
+                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 text-xs rounded">
+                    {item.duration}
+                  </div>
+                </div>
               }
               actions={[
                 <Button
@@ -279,9 +380,6 @@ function InterViews() {
                       <span className="!text-lg !font-semibold">
                         {item.title}
                       </span>
-                      <span className="text-sm text-gray-600">
-                        {item.duration}
-                      </span>
                     </div>
                     <p className="text-gray-700">{item.description}</p>
                   </div>
@@ -294,7 +392,7 @@ function InterViews() {
         <Empty
           description={
             <span className="!text-gray-400 !text-base">
-              No things to know yet. Add your first item!
+              No interviews yet. Add your first item!
             </span>
           }
           className="!flex !flex-col !items-center !justify-center !p-10 !bg-white !rounded-lg !shadow-sm"
@@ -311,7 +409,7 @@ function InterViews() {
       )}
 
       <Modal
-        title={editData ? 'Edit interview' : 'Add New interview'}
+        title={editData ? 'Edit Interview' : 'Add New Interview'}
         open={showModal}
         width={800}
         onCancel={handleCloseModal}
@@ -371,6 +469,22 @@ function InterViews() {
                 Support for a single thumbnail image upload
               </p>
             </Dragger>
+
+            {/* Image Preview */}
+            {thumbnailPreview && (
+              <div className="mt-4">
+                <h4 className="mb-2 text-sm font-medium text-gray-700">
+                  Thumbnail Preview:
+                </h4>
+                <div className="w-full h-40 rounded overflow-hidden border border-gray-200">
+                  <img
+                    src={thumbnailPreview}
+                    alt="Thumbnail Preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </Form.Item>
 
           <Form.Item label="Upload Video File">
@@ -388,6 +502,22 @@ function InterViews() {
                 Support for a single video upload
               </p>
             </Dragger>
+
+            {/* Video Preview */}
+            {videoPreview && (
+              <div className="mt-4">
+                <h4 className="mb-2 text-sm font-medium text-gray-700">
+                  Video Preview:
+                </h4>
+                <div className="w-full h-56 rounded overflow-hidden border border-gray-200">
+                  <video
+                    src={videoPreview}
+                    controls
+                    className="w-full h-full object-contain bg-black"
+                  />
+                </div>
+              </div>
+            )}
           </Form.Item>
         </Form>
       </Modal>
