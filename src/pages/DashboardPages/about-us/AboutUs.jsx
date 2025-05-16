@@ -48,7 +48,7 @@ const AboutUs = () => {
   return (
     <>
       {/* heading and back button */}
-      <PageHeading title="Privacy Policy" />
+      <PageHeading title="About us" />
       <JoditComponent setContent={setContent} content={content} />
 
       {/* Button to log content */}

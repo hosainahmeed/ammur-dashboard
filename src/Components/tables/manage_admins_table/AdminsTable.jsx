@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import Success from '../../Shared/Success';
 import CreateNewAdmin from './CreateNewAdmin';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
+import PageHeading from '../../Shared/PageHeading';
 
 const AdminsTable = () => {
   const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
@@ -122,7 +123,7 @@ const AdminsTable = () => {
   const handleSearch = () => {};
   return (
     <div className="admin-table">
-      <h1 className="text-2xl font-bold">Admins</h1>
+      <PageHeading title={'Admins Manage'} />
       <div className="flex !items-start justify-between">
         <div className="max-w-[400px] min-w-[400px]">
           <Form className="!w-full !h-fit">

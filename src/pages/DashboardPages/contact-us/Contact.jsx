@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Table,
   Button,
@@ -12,7 +12,7 @@ import {
   message,
   Typography,
   Card,
-} from 'antd';
+} from "antd";
 import {
   MailOutlined,
   PhoneOutlined,
@@ -27,8 +27,9 @@ import {
   SaveOutlined,
   CopyOutlined,
   CheckOutlined,
-} from '@ant-design/icons';
-import './Contact.css';
+} from "@ant-design/icons";
+import "./Contact.css";
+import PageHeading from "../../../Components/Shared/PageHeading";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -37,46 +38,46 @@ const { TabPane } = Tabs;
 function Contact() {
   // States for managing data
   const [emails, setEmails] = useState([
-    { id: 1, address: 'primary@example.com', label: 'Primary' },
-    { id: 2, address: 'work@example.com', label: 'Work' },
-    { id: 3, address: 'personal@example.com', label: 'Personal' },
+    { id: 1, address: "primary@example.com", label: "Primary" },
+    { id: 2, address: "work@example.com", label: "Work" },
+    { id: 3, address: "personal@example.com", label: "Personal" },
   ]);
 
   const [phones, setPhones] = useState([
-    { id: 1, number: '+1 (555) 123-4567', label: 'Mobile' },
-    { id: 2, number: '+1 (555) 987-6543', label: 'Work' },
+    { id: 1, number: "+1 (555) 123-4567", label: "Mobile" },
+    { id: 2, number: "+1 (555) 987-6543", label: "Work" },
   ]);
 
   const [socials, setSocials] = useState([
     {
       id: 1,
-      platform: 'LinkedIn',
-      url: 'https://linkedin.com/in/yourusername',
-      icon: 'linkedin',
+      platform: "LinkedIn",
+      url: "https://linkedin.com/in/yourusername",
+      icon: "linkedin",
     },
     {
       id: 2,
-      platform: 'GitHub',
-      url: 'https://github.com/yourusername',
-      icon: 'github',
+      platform: "GitHub",
+      url: "https://github.com/yourusername",
+      icon: "github",
     },
     {
       id: 3,
-      platform: 'Twitter',
-      url: 'https://twitter.com/yourusername',
-      icon: 'twitter',
+      platform: "Twitter",
+      url: "https://twitter.com/yourusername",
+      icon: "twitter",
     },
     {
       id: 4,
-      platform: 'Instagram',
-      url: 'https://instagram.com/yourusername',
-      icon: 'instagram',
+      platform: "Instagram",
+      url: "https://instagram.com/yourusername",
+      icon: "instagram",
     },
     {
       id: 5,
-      platform: 'Facebook',
-      url: 'https://facebook.com/yourusername',
-      icon: 'facebook',
+      platform: "Facebook",
+      url: "https://facebook.com/yourusername",
+      icon: "facebook",
     },
   ]);
 
@@ -110,7 +111,7 @@ function Contact() {
   const copyToClipboard = (text, id) => {
     navigator.clipboard.writeText(text);
     setCopied(id);
-    message.success('Copied to clipboard!');
+    message.success("Copied to clipboard!");
     setTimeout(() => setCopied(null), 2000);
   };
 
@@ -129,7 +130,7 @@ function Contact() {
 
   const deleteEmail = (id) => {
     setEmails(emails.filter((item) => item.id !== id));
-    message.success('Email deleted successfully');
+    message.success("Email deleted successfully");
   };
 
   const handleEmailOk = () => {
@@ -141,7 +142,7 @@ function Contact() {
             item.id === editingItem.id ? { ...item, ...values } : item
           )
         );
-        message.success('Email updated successfully');
+        message.success("Email updated successfully");
       } else {
         // Add new email
         const newId =
@@ -149,7 +150,7 @@ function Contact() {
             ? Math.max(...emails.map((item) => item.id)) + 1
             : 1;
         setEmails([...emails, { id: newId, ...values }]);
-        message.success('Email added successfully');
+        message.success("Email added successfully");
       }
       setEmailModalVisible(false);
     });
@@ -170,7 +171,7 @@ function Contact() {
 
   const deletePhone = (id) => {
     setPhones(phones.filter((item) => item.id !== id));
-    message.success('Phone number deleted successfully');
+    message.success("Phone number deleted successfully");
   };
 
   const handlePhoneOk = () => {
@@ -182,7 +183,7 @@ function Contact() {
             item.id === editingItem.id ? { ...item, ...values } : item
           )
         );
-        message.success('Phone number updated successfully');
+        message.success("Phone number updated successfully");
       } else {
         // Add new phone
         const newId =
@@ -190,7 +191,7 @@ function Contact() {
             ? Math.max(...phones.map((item) => item.id)) + 1
             : 1;
         setPhones([...phones, { id: newId, ...values }]);
-        message.success('Phone number added successfully');
+        message.success("Phone number added successfully");
       }
       setPhoneModalVisible(false);
     });
@@ -211,7 +212,7 @@ function Contact() {
 
   const deleteSocial = (id) => {
     setSocials(socials.filter((item) => item.id !== id));
-    message.success('Social media account deleted successfully');
+    message.success("Social media account deleted successfully");
   };
 
   const handleSocialOk = () => {
@@ -223,7 +224,7 @@ function Contact() {
             item.id === editingItem.id ? { ...item, ...values } : item
           )
         );
-        message.success('Social media account updated successfully');
+        message.success("Social media account updated successfully");
       } else {
         // Add new social
         const newId =
@@ -231,7 +232,7 @@ function Contact() {
             ? Math.max(...socials.map((item) => item.id)) + 1
             : 1;
         setSocials([...socials, { id: newId, ...values }]);
-        message.success('Social media account added successfully');
+        message.success("Social media account added successfully");
       }
       setSocialModalVisible(false);
     });
@@ -240,18 +241,18 @@ function Contact() {
   // Table column definitions
   const emailColumns = [
     {
-      title: 'Email Address',
-      dataIndex: 'address',
-      key: 'address',
+      title: "Email Address",
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: 'Label',
-      dataIndex: 'label',
-      key: 'label',
+      title: "Label",
+      dataIndex: "label",
+      key: "label",
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       width: 200,
       render: (_, record) => (
         <Space size="small">
@@ -292,18 +293,18 @@ function Contact() {
 
   const phoneColumns = [
     {
-      title: 'Phone Number',
-      dataIndex: 'number',
-      key: 'number',
+      title: "Phone Number",
+      dataIndex: "number",
+      key: "number",
     },
     {
-      title: 'Label',
-      dataIndex: 'label',
-      key: 'label',
+      title: "Label",
+      dataIndex: "label",
+      key: "label",
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       width: 200,
       render: (_, record) => (
         <Space size="small">
@@ -344,9 +345,9 @@ function Contact() {
 
   const socialColumns = [
     {
-      title: 'Platform',
-      dataIndex: 'platform',
-      key: 'platform',
+      title: "Platform",
+      dataIndex: "platform",
+      key: "platform",
       render: (text) => (
         <Space>
           {getIconComponent(text)}
@@ -355,14 +356,14 @@ function Contact() {
       ),
     },
     {
-      title: 'URL',
-      dataIndex: 'url',
-      key: 'url',
+      title: "URL",
+      dataIndex: "url",
+      key: "url",
       ellipsis: true,
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       width: 200,
       render: (_, record) => (
         <Space size="small">
@@ -401,19 +402,16 @@ function Contact() {
 
   // Social media platform options
   const platformOptions = [
-    { label: 'LinkedIn', value: 'LinkedIn', icon: <LinkedinOutlined /> },
-    { label: 'GitHub', value: 'GitHub', icon: <GithubOutlined /> },
-    { label: 'Twitter', value: 'Twitter', icon: <TwitterOutlined /> },
-    { label: 'Instagram', value: 'Instagram', icon: <InstagramOutlined /> },
-    { label: 'Facebook', value: 'Facebook', icon: <FacebookOutlined /> },
+    { label: "LinkedIn", value: "LinkedIn", icon: <LinkedinOutlined /> },
+    { label: "GitHub", value: "GitHub", icon: <GithubOutlined /> },
+    { label: "Twitter", value: "Twitter", icon: <TwitterOutlined /> },
+    { label: "Instagram", value: "Instagram", icon: <InstagramOutlined /> },
+    { label: "Facebook", value: "Facebook", icon: <FacebookOutlined /> },
   ];
 
   return (
     <div className="contact-dashboard">
-      <Title level={2} className="dashboard-title">
-        Contact Information
-      </Title>
-     
+      <PageHeading title={"Contact Information"} />
       <Tabs defaultActiveKey="1" type="card" className="contact-tabs">
         <TabPane
           tab={
@@ -511,20 +509,20 @@ function Contact() {
 
       {/* Email Modal */}
       <Modal
-        title={editingItem ? 'Edit Email Address' : 'Add Email Address'}
+        title={editingItem ? "Edit Email Address" : "Add Email Address"}
         visible={emailModalVisible}
         onOk={handleEmailOk}
         onCancel={() => setEmailModalVisible(false)}
         destroyOnClose
-        okText={editingItem ? 'Update' : 'Add'}
+        okText={editingItem ? "Update" : "Add"}
       >
         <Form requiredMark={false} form={emailForm} layout="vertical">
           <Form.Item
             label="Email Address"
             name="address"
             rules={[
-              { required: true, message: 'Please enter an email address' },
-              { type: 'email', message: 'Please enter a valid email address' },
+              { required: true, message: "Please enter an email address" },
+              { type: "email", message: "Please enter a valid email address" },
             ]}
           >
             <Input prefix={<MailOutlined />} placeholder="Email Address" />
@@ -532,7 +530,7 @@ function Contact() {
           <Form.Item
             label="Label"
             name="label"
-            rules={[{ required: true, message: 'Please enter a label' }]}
+            rules={[{ required: true, message: "Please enter a label" }]}
           >
             <Input placeholder="e.g. Work, Personal, etc." />
           </Form.Item>
@@ -541,25 +539,25 @@ function Contact() {
 
       {/* Phone Modal */}
       <Modal
-        title={editingItem ? 'Edit Phone Number' : 'Add Phone Number'}
+        title={editingItem ? "Edit Phone Number" : "Add Phone Number"}
         visible={phoneModalVisible}
         onOk={handlePhoneOk}
         onCancel={() => setPhoneModalVisible(false)}
         destroyOnClose
-        okText={editingItem ? 'Update' : 'Add'}
+        okText={editingItem ? "Update" : "Add"}
       >
         <Form requiredMark={false} form={phoneForm} layout="vertical">
           <Form.Item
             label="Phone Number"
             name="number"
-            rules={[{ required: true, message: 'Please enter a phone number' }]}
+            rules={[{ required: true, message: "Please enter a phone number" }]}
           >
             <Input prefix={<PhoneOutlined />} placeholder="Phone Number" />
           </Form.Item>
           <Form.Item
             label="Label"
             name="label"
-            rules={[{ required: true, message: 'Please enter a label' }]}
+            rules={[{ required: true, message: "Please enter a label" }]}
           >
             <Input placeholder="e.g. Mobile, Work, Home, etc." />
           </Form.Item>
@@ -568,18 +566,18 @@ function Contact() {
 
       {/* Social Media Modal */}
       <Modal
-        title={editingItem ? 'Edit Social Media' : 'Add Social Media'}
+        title={editingItem ? "Edit Social Media" : "Add Social Media"}
         visible={socialModalVisible}
         onOk={handleSocialOk}
         onCancel={() => setSocialModalVisible(false)}
         destroyOnClose
-        okText={editingItem ? 'Update' : 'Add'}
+        okText={editingItem ? "Update" : "Add"}
       >
         <Form requiredMark={false} form={socialForm} layout="vertical">
           <Form.Item
             label="Platform"
             name="platform"
-            rules={[{ required: true, message: 'Please select a platform' }]}
+            rules={[{ required: true, message: "Please select a platform" }]}
           >
             <Select placeholder="Select platform">
               {platformOptions.map((option) => (
@@ -596,8 +594,8 @@ function Contact() {
             label="URL"
             name="url"
             rules={[
-              { required: true, message: 'Please enter a URL' },
-              { type: 'url', message: 'Please enter a valid URL' },
+              { required: true, message: "Please enter a URL" },
+              { type: "url", message: "Please enter a valid URL" },
             ]}
           >
             <Input placeholder="https://..." />
