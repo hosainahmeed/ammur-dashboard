@@ -17,7 +17,6 @@ import Profile from "../pages/DashboardPages/ProfilePages/Profile";
 import HistoryTimeline from "../pages/DashboardPages/history-timeline/HistoryTimeline";
 import CreatNewHistory from "../Components/tables/hisory-timeline-table/CreatNewHistory";
 import InterViews from "../pages/DashboardPages/InterViews/InterViews";
-import Recipe from "../pages/DashboardPages/recipes/Recipe";
 import LegacyTribute from "../pages/DashboardPages/Legacy & tribute/LegacyTribute";
 import FamilyArchive from "../pages/DashboardPages/Family Archive/FamilyArchive";
 import Blogs from "../pages/DashboardPages/ThingsToKnow/SpacaficOne/Blogs";
@@ -25,6 +24,7 @@ import Events from "../pages/DashboardPages/events/Events";
 import ManageAdmins from "../pages/DashboardPages/ManageAdmins/ManageAdmins";
 import AboutUs from "../pages/DashboardPages/about-us/AboutUs";
 import Contact from "../pages/DashboardPages/contact-us/Contact";
+import RecipePage from "../pages/DashboardPages/recipes/RecipePage";
 
 export const Routes = createBrowserRouter([
   {
@@ -105,7 +105,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: "/recipe",
-        element: <Recipe />,
+        element: <RecipePage />,
       },
       {
         path: "/profile-setting",
