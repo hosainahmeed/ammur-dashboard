@@ -127,7 +127,7 @@ function InterViews() {
 
       const thumbnailFile = thumbnailList[0]?.originFileObj || null;
       const videoFile = videoList[0]?.originFileObj || null;
-
+      console.log(thumbnailFile, videoFile);
       // For demo, use local URL objects or keep existing URLs
       let thumbnailUrl = thumbnailPreview || editData?.thumbnail || '';
       let videoUrl = videoPreview || editData?.videoUrl || '';
@@ -325,7 +325,7 @@ function InterViews() {
                         loop
                       />
                       <div
-                        className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
+                        className="absolute inset-0 flex items-center justify-center bg-transparent bg-opacity-30"
                         onClick={(e) => toggleVideoPlay(item.id, e)}
                       >
                         <button className="p-3 bg-white bg-opacity-70 rounded-full text-blue-600 hover:bg-opacity-90 transition-all">

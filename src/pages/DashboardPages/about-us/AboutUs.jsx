@@ -8,7 +8,7 @@ import JoditComponent from '../../../Components/Shared/JoditComponent.jsx';
 // } from '../../../Redux/services/settings/privacyPolicyApis.js';
 
 const AboutUs = () => {
-  const [content, setContent] = useState('Privacy Policy');
+  const [content, setContent] = useState('About Us');
   // const { data, isLoading } = useGetPrivacyPolicyQuery({});
   // const [setDescription, { isLoading: isSubmitting }] =
   //   useUpdatePrivacyPolicyMutation();
