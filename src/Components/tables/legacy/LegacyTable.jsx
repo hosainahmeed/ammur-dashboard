@@ -109,7 +109,7 @@ function LegacyTable() {
       dataIndex: 'dob',
       key: 'dob',
       render: (dob) => (
-        <Tag color="red" className="text-nowrap">
+        <Tag color="green" className="text-nowrap">
           {dob}
         </Tag>
       ),
