@@ -65,6 +65,9 @@ const RecipePage = lazy(() =>
 const CreateNewArchive = lazy(() =>
   import('../Components/tables/FamilyArchive/CreateNewArchive')
 );
+const CreateNewLegacy = lazy(() =>
+  import('../Components/tables/legacy/CreateNewLegacy')
+);
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen w-full">
@@ -192,6 +195,14 @@ export const Routes = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <LegacyTribute />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/family-legacy/create-new',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <CreateNewLegacy />
           </Suspense>
         ),
       },

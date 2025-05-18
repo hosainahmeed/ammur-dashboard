@@ -44,7 +44,8 @@ function CreateNewLegacy() {
     formData.append('name', values.name);
     formData.append('category_image', file);
     formData.append('family_name', file);
-    formData.append('date', values.date.format('YYYY-MM-DD'));
+    formData.append('dob', values.date.format('YYYY-MM-DD'));
+    formData.append('dod', values.date.format('YYYY-MM-DD'));
     formData.append('description', description);
 
     try {
@@ -67,7 +68,7 @@ function CreateNewLegacy() {
     <div className="history-form-container">
       <div className="page-header">
         <div className="flex mb-4 items-center justify-between bg-white shadow-sm pr-12 rounded-md w-full">
-          <PageHeading title="Create New History Timeline" />
+          <PageHeading title="Create New Legacy" />
         </div>
       </div>
 
@@ -119,14 +120,14 @@ function CreateNewLegacy() {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={14}>
+              <Col xs={24} md={13}>
                 <Form.Item
                   label={
                     <span className="form-label">
-                      <FaCalendarAlt className="label-icon" /> Date
+                      <FaCalendarAlt className="label-icon" /> Date of Birth
                     </span>
                   }
-                  name="date"
+                  name="dob"
                   rules={[{ required: true, message: 'Please select a date' }]}
                 >
                   <DatePicker
@@ -136,7 +137,37 @@ function CreateNewLegacy() {
                   />
                 </Form.Item>
               </Col>
-              <Col xs={24} md={10}>
+              <Col xs={24} md={11}>
+                <Form.Item
+                  label={
+                    <span className="form-label">
+                      <FaCalendarAlt className="label-icon" /> RIP
+                    </span>
+                  }
+                  name="dod"
+                  rules={[{ required: true, message: 'Please select a date' }]}
+                >
+                  <DatePicker
+                    placeholder="Select event date"
+                    className="custom-datepicker"
+                    suffixIcon={<FaCalendarAlt className="text-gray-400" />}
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label={<span className="form-label">Title</span>}
+                  name="name"
+                  rules={[{ required: true, message: 'Please enter a title' }]}
+                >
+                  <Input
+                    placeholder="Enter timeline event title"
+                    className="custom-input"
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
                 <Form.Item
                   label={<span className="form-label">Select Family</span>}
                   name="family"
@@ -152,18 +183,6 @@ function CreateNewLegacy() {
                       { value: 'Yiminghe', label: 'yiminghe' },
                       { value: 'disabled', label: 'Disabled', disabled: true },
                     ]}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={24}>
-                <Form.Item
-                  label={<span className="form-label">Title</span>}
-                  name="name"
-                  rules={[{ required: true, message: 'Please enter a title' }]}
-                >
-                  <Input
-                    placeholder="Enter timeline event title"
-                    className="custom-input"
                   />
                 </Form.Item>
               </Col>

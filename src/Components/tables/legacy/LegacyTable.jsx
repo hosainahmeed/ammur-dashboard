@@ -31,10 +31,10 @@ function LegacyTable() {
           sint eos unde esse! Lorem ipsum dolor sit amet consectetur adipisicing elit. 
           Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. 
           Quisquam, voluptatum.`,
-      date: '2025-01-10',
+      dob: '1972-01-10',
+      dod: '1972-01-10',
       family: 'Brown family',
-      banner:
-        'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
+      banner: 'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
     },
     {
       key: '2',
@@ -43,10 +43,10 @@ function LegacyTable() {
           quod odio, in commodi blanditiis dolorum assumenda ipsam quasi ad
           soluta iste similique! Odio iusto ratione vero recusandae, tempora
           sint eos unde esse!`,
-      date: '2025-01-10',
+      dob: '1972-01-10',
+      dod: '1972-01-10',
       family: 'Brown family',
-      banner:
-        'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
+      banner: 'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
     },
   ];
 
@@ -89,7 +89,7 @@ function LegacyTable() {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
-      width: 500,
+      width: 400,
       render: (_, record) => (
         <p className="text-gray-700">{record.description.slice(0, 150)}...</p>
       ),
@@ -105,12 +105,22 @@ function LegacyTable() {
       ),
     },
     {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      render: (date) => (
-        <Tag color="blue" className="text-nowrap">
-          {date}
+      title: 'Date of birth',
+      dataIndex: 'dob',
+      key: 'dob',
+      render: (dob) => (
+        <Tag color="red" className="text-nowrap">
+          {dob}
+        </Tag>
+      ),
+    },
+    {
+      title: 'RIP',
+      dataIndex: 'dod',
+      key: 'dod',
+      render: (dod) => (
+        <Tag color="red" className="text-nowrap">
+          {dod}
         </Tag>
       ),
     },

@@ -67,7 +67,7 @@ function CreateNewArchive() {
     <div className="history-form-container">
       <div className="page-header">
         <div className="flex mb-4 items-center justify-between bg-white shadow-sm pr-12 rounded-md w-full">
-          <PageHeading title="Create New History Timeline" />
+          <PageHeading title="Create New Archive" />
         </div>
       </div>
 
