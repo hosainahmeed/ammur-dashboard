@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Form, Input, Button, Typography, Card } from 'antd';
 import { EyeTwoTone } from '@ant-design/icons';
 import 'antd/dist/reset.css';
@@ -124,4 +124,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default memo(Login);

@@ -17,7 +17,7 @@ import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
-function FamilyArchiveTable() {
+function LegacyTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
 
@@ -34,7 +34,7 @@ function FamilyArchiveTable() {
       date: '2025-01-10',
       family: 'Brown family',
       banner:
-        'https://mbsbham.wordpress.com/wp-content/uploads/2015/03/family-archive.jpg',
+        'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
     },
     {
       key: '2',
@@ -46,7 +46,7 @@ function FamilyArchiveTable() {
       date: '2025-01-10',
       family: 'Brown family',
       banner:
-        'https://mbsbham.wordpress.com/wp-content/uploads/2015/03/family-archive.jpg',
+        'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
     },
   ];
 
@@ -156,12 +156,12 @@ function FamilyArchiveTable() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <Link to={'/family-archive/create-new'}>
+        <Link to={'/family-legacy/create-new'}>
           <Button
             icon={<FaPlus />}
             className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
           >
-            Add New Archive
+            Add New Legacy
           </Button>
         </Link>
         <Input.Search
@@ -241,4 +241,4 @@ function FamilyArchiveTable() {
   );
 }
 
-export default FamilyArchiveTable;
+export default LegacyTable;

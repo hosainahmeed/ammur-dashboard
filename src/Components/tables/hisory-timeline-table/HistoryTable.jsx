@@ -144,6 +144,11 @@ function HistoryTable() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
+        <Input.Search
+          placeholder="Search by title"
+          className="!w-[300px]"
+          allowClear
+        />
         <Link to={'/timeline/create-new'}>
           <Button
             icon={<FaPlus />}
@@ -152,11 +157,6 @@ function HistoryTable() {
             Add New History
           </Button>
         </Link>
-        <Input.Search
-          placeholder="Search by title"
-          className="!w-[300px]"
-          allowClear
-        />
       </div>
 
       <Table

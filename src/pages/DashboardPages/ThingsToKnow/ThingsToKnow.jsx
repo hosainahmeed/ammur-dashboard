@@ -36,22 +36,19 @@ function ThingsToKnow() {
     {
       id: 1,
       title: 'Life Lessons & Values',
-      image:
-        'https://picsum.photos/600/300',
+      image: 'https://picsum.photos/600/300',
     },
     {
       id: 2,
       title: 'Spirituality & Beliefs',
 
-      image:
-        'https://picsum.photos/600/300',
+      image: 'https://picsum.photos/600/300',
     },
     {
       id: 3,
       title: 'Family & Relationships',
 
-      image:
-        'https://picsum.photos/600/300',
+      image: 'https://picsum.photos/600/300',
     },
   ];
   const handleEdit = (category) => {
@@ -140,14 +137,22 @@ function ThingsToKnow() {
     <div className="p-5 container mx-auto">
       <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
         <PageHeading title={'Things To Know'} />
-        <Button
-          type="primary"
-          icon={<FaPlus />}
-          onClick={() => setShowModal(true)}
-          className="!flex !items-center !bg-[#0C469D] !gap-2"
-        >
-          Add New
-        </Button>
+      </div>
+      <div className="flex items-center justify-between mb-4">
+        <Input.Search
+          placeholder="Search by title"
+          className="!w-[300px]"
+          allowClear
+        />
+        <Link to={'/timeline/create-new'}>
+          <Button
+            type="primary"
+            icon={<FaPlus />}
+            className="!flex !items-center !bg-[#0C469D] !gap-2"
+          >
+            Add New
+          </Button>
+        </Link>
       </div>
 
       {categories.length > 0 ? (
