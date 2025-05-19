@@ -131,21 +131,6 @@ const TransactionTable = () => {
       dataIndex: 'amount',
       key: 'amount',
     },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button className="!bg-[var(--bg-green-high)]">
-            <UserOutlined className="!text-white" />
-          </Button>
-
-          <Button className="ant-btn ant-btn-default">
-            <CgBlock />
-          </Button>
-        </Space>
-      ),
-    },
   ];
 
   return (

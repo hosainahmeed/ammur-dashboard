@@ -70,7 +70,7 @@ const CreateNewLegacy = lazy(() =>
 );
 
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center h-screen w-full">
+  <div className="flex items-center justify-center w-[calc(100vw-300px)] h-[calc(100vh-64px)]">
     <div class="spinner"></div>
   </div>
 );
