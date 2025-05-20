@@ -108,11 +108,13 @@ function HistoryTable() {
       width: 200,
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
-            icon={<CiEdit />}
-            title="Edit"
-          />
+          <Link to={'/timeline/create-new'}>
+            <Button
+              className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
+              icon={<CiEdit />}
+              title="Edit"
+            />
+          </Link>
           <Button
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<FaEye />}

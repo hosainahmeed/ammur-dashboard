@@ -144,15 +144,14 @@ function ThingsToKnow() {
           className="!w-[300px]"
           allowClear
         />
-        <Link to={'/timeline/create-new'}>
-          <Button
-            type="primary"
-            icon={<FaPlus />}
-            className="!flex !items-center !bg-[#0C469D] !gap-2"
-          >
-            Add New
-          </Button>
-        </Link>
+        <Button
+          onClick={() => setShowModal(true)}
+          type="primary"
+          icon={<FaPlus />}
+          className="!flex !items-center !bg-[#0C469D] !gap-2"
+        >
+          Add New
+        </Button>
       </div>
 
       {categories.length > 0 ? (

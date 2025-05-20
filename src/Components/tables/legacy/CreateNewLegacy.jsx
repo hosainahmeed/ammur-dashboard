@@ -215,7 +215,7 @@ function CreateNewLegacy() {
                 className="submit-button"
                 size="large"
               >
-                {isSubmitting ? 'Creating...' : 'Create New Archive'}
+                {isSubmitting ? 'Creating...' : 'Create New Legacy'}
               </Button>
 
               <Button

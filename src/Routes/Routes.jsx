@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import PrivateRoute from './PrivetRoute';
+import Dashboard from '../Layout/Dashboard';
 
 // Lazy imports for pages
 const Login = lazy(() => import('../pages/Auth/Login'));
@@ -8,12 +9,14 @@ const ForgetPassword = lazy(() => import('../pages/Auth/ForgetPassword'));
 const Otp = lazy(() => import('../pages/Auth/Otp'));
 const ResetPassword = lazy(() => import('../pages/Auth/ResetPassword'));
 
-const Dashboard = lazy(() => import('../Layout/Dashboard'));
 const DashboardHome = lazy(() =>
   import('../pages/DashboardPages/DashboardHome/DashboardHome')
 );
 const UsersManage = lazy(() =>
   import('../pages/DashboardPages/UsersManage/UsersManage')
+);
+const AddFamily = lazy(() =>
+  import('../pages/DashboardPages/add-family/AddFamily')
 );
 const TermsCondition = lazy(() =>
   import('../pages/DashboardPages/terms&condition/TermsCondition')
@@ -69,6 +72,11 @@ const CreateNewLegacy = lazy(() =>
   import('../Components/tables/legacy/CreateNewLegacy')
 );
 
+const LoadingFallbackFullpage = () => (
+  <div className="flex items-center justify-center w-full h-screen overflow-hidden">
+    <div class="spinner"></div>
+  </div>
+);
 const LoadingFallback = () => (
   <div className="flex items-center justify-center w-[calc(100vw-300px)] h-[calc(100vh-64px)]">
     <div class="spinner"></div>
@@ -80,9 +88,7 @@ export const Routes = createBrowserRouter([
     path: '/',
     element: (
       <PrivateRoute>
-        <Suspense fallback={<LoadingFallback />}>
           <Dashboard />
-        </Suspense>
       </PrivateRoute>
     ),
     children: [
@@ -163,6 +169,14 @@ export const Routes = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <AboutUs />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/add-family',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AddFamily />
           </Suspense>
         ),
       },

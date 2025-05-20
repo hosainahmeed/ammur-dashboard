@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   Button,
@@ -291,6 +292,7 @@ function Events() {
         <Space size="middle">
           <Button
             type="primary"
+            className='!bg-[#0C469D]'
             icon={<EditOutlined />}
             size="small"
             onClick={() => handleEdit(record)}
@@ -320,7 +322,7 @@ function Events() {
     <div className="container mx-auto p-6">
       <div className="bg-white flex items-center px-4 justify-between rounded-md shadow-md">
         <PageHeading title={'Events'} />
-        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+        <Button className='!bg-[#0C469D]' type="primary" icon={<PlusOutlined />} onClick={showModal}>
           Add New Event
         </Button>
       </div>
@@ -421,7 +423,7 @@ function Events() {
               showUploadList={false}
               accept="video/*"
             >
-              <Button icon={<UploadOutlined />}>
+              <Button className='!bg-[#0C469D] !text-white' icon={<UploadOutlined />}>
                 {videoPreviewUrl ? 'Change Video' : 'Upload Video'}
               </Button>
             </Upload>
