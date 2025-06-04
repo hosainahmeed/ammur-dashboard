@@ -188,14 +188,14 @@ export const Routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
-        path: '/earnings',
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <EarningPage />
-          </Suspense>
-        ),
-      },
+      // {
+      //   path: '/earnings',
+      //   element: (
+      //     <Suspense fallback={<LoadingFallback />}>
+      //       <EarningPage />
+      //     </Suspense>
+      //   ),
+      // },
       {
         path: '/interviews',
         element: (
