@@ -124,14 +124,14 @@ export const Routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
-        path: '/subscription',
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <Subscription />
-          </Suspense>
-        ),
-      },
+      // {
+      //   path: '/subscription',
+      //   element: (
+      //     <Suspense fallback={<LoadingFallback />}>
+      //       <Subscription />
+      //     </Suspense>
+      //   ),
+      // },
       {
         path: '/things-to-know',
         element: (
