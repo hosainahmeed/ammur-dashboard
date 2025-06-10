@@ -4,8 +4,11 @@ export const profileApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getProfileData: builder.query({
       query: () => ({
-        url: '/admin/profile',
+        url: '/users/me',
         method: 'GET',
+        headers: {
+          Authorization: `${localStorage.getItem('accessToken')}`,
+        },
       }),
       providesTags: ['profile'],
     }),
@@ -16,7 +19,7 @@ export const profileApis = baseApis.injectEndpoints({
           method: 'PATCH',
           body: data,
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            Authorization: `${localStorage.getItem('accessToken')}`,
           },
         };
       },

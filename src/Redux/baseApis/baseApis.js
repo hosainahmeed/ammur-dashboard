@@ -6,7 +6,7 @@ const baseApis = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: url,
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      Authorization: `${localStorage.getItem('accessToken')}`,
     },
   }),
   tagTypes: ['car', 'profile', 'privacyPolicy', 'termsAndConditions', 'dCoins'],

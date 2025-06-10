@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   Space,
@@ -12,55 +12,88 @@ import {
 } from 'antd';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { CgBlock } from 'react-icons/cg';
-import { IoIosWarning, IoIosMail } from 'react-icons/io';
-// import toast from 'react-hot-toast';
-import './alluserVanila.css';
+import { IoIosMail } from 'react-icons/io';
 import toast from 'react-hot-toast';
 import UserInformation from '../../page component/UserInformation';
+import {
+  useGetAllUserQuery,
+  useRequiestUserQuery,
+} from '../../../Redux/services/dashboard apis/userApis/userApis';
 
 const AllUsers = ({ recentUser }) => {
   const [userDetailsModal, setUserDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const { data: allUsersData, isLoading } = useGetAllUserQuery({
+    role: 'member',
+  });
+  const { data: requestedUserData, isLoading: requestedUsersLoading } =
+    useRequiestUserQuery();
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteredRequestedUsers, setFilteredRequestedUsers] = useState([]);
 
-  // Example data for "All Users"
-  const allUsers = [
-    {
-      key: '1',
-      id: '1',
-      name: 'Theodore Mosciski',
-      contactNumber: '901-474-6265',
-      email: 'maka@yandex.ru',
-      familySide: 'Father',
-      subscription: 'Premium',
-      joined: '2025-01-10',
-      status: true,
-      isBlocked: false,
-      avatar: null,
-    },
-    // Add other users here...
-  ];
+  const [activeTab, setActiveTab] = useState('1');
 
-  // Example data for "Requested Users"
-  const requestedUsers = [
-    {
-      key: '1',
-      id: '1',
-      name: 'Russell Veum',
-      contactNumber: '983-842-7095',
-      email: 'Nigell6@hotmail.com',
-      familySide: 'Mother',
-      elderFamilyMember: 'Grandfather',
-      joined: '2025-01-10',
-      status: false,
-      isBlocked: false,
-      avatar: null,
-    },
-    // Add other requested users here...
-  ];
+  // Transform API data into table-friendly format when data changes
+  useEffect(() => {
+    if (allUsersData?.data) {
+      const users = allUsersData.data.map((user) => ({
+        key: user?._id,
+        id: user?._id,
+        name: user?.fullName,
+        contactNumber: user?.contactNo,
+        email: user?.email,
+        familySide: user?.familySide,
+        subscription: user?.subscription,
+        joined: user?.createdAt.split('T')[0],
+        status: user?.status === 'active',
+        isBlocked: user?.isDeleted,
+        avatar: user?.img || null,
+        fullUser: user,
+      }));
+      setFilteredUsers(users);
+    }
+  }, [allUsersData]);
 
-  const [filteredUsers, setFilteredUsers] = useState(allUsers);
-  const [filteredRequestedUsers, setFilteredRequestedUsers] =
-    useState(requestedUsers);
+  useEffect(() => {
+    if (requestedUserData?.data) {
+      const reqUsers = requestedUserData.data.map((user) => ({
+        key: user?._id,
+        id: user?._id,
+        name: user?.fullName,
+        contactNumber: user?.contactNo,
+        email: user?.email,
+        familySide: user?.familySide,
+        elderFamilyMember: user?.eldestRelative || '',
+        joined: user?.createdAt.split('T')[0],
+        status: user?.status === 'active',
+        isBlocked: false,
+        avatar: user?.img || null,
+        fullUser: user,
+      }));
+      setFilteredRequestedUsers(reqUsers);
+    }
+  }, [requestedUserData]);
+
+  // Search handler for all users
+  const handleSearch = (value) => {
+    if (activeTab === '1') {
+      const filtered = filteredUsers.filter(
+        (user) =>
+          user?.name.toLowerCase().includes(value.toLowerCase()) ||
+          user?.email.toLowerCase().includes(value.toLowerCase()) ||
+          user?.contactNumber.includes(value)
+      );
+      setFilteredUsers(filtered);
+    } else if (activeTab === '2') {
+      const filtered = filteredRequestedUsers.filter(
+        (user) =>
+          user?.name.toLowerCase().includes(value.toLowerCase()) ||
+          user?.email.toLowerCase().includes(value.toLowerCase()) ||
+          user?.contactNumber.includes(value)
+      );
+      setFilteredRequestedUsers(filtered);
+    }
+  };
 
   const columnsAllUsers = [
     {
@@ -118,7 +151,7 @@ const AllUsers = ({ recentUser }) => {
         <Space size="middle">
           <Button
             onClick={() => {
-              setSelectedUser(record);
+              setSelectedUser(record.fullUser);
               setUserDetailsModal(true);
             }}
             className="ant-btn !bg-[var(--bg-green-high)] !text-white ant-btn-primary"
@@ -128,7 +161,7 @@ const AllUsers = ({ recentUser }) => {
           <Popconfirm
             placement="bottomRight"
             title="Are you sure you want block this user?"
-            onConfirm={() => toast.success('successfully blocked user')}
+            onConfirm={() => toast.success('Successfully blocked user')}
           >
             <Button
               className={`${
@@ -199,7 +232,7 @@ const AllUsers = ({ recentUser }) => {
         <Space size="middle">
           <Button
             onClick={() => {
-              setSelectedUser(record);
+              setSelectedUser(record.fullUser);
               setUserDetailsModal(true);
             }}
             className="ant-btn !bg-[var(--bg-green-high)] !text-white ant-btn-primary"
@@ -213,25 +246,8 @@ const AllUsers = ({ recentUser }) => {
     },
   ];
 
-  const [activeTab, setActiveTab] = useState('1');
-
   const handleTabChange = (key) => {
     setActiveTab(key);
-    if (key === '1') {
-      setFilteredUsers(allUsers);
-    } else if (key === '2') {
-      setFilteredRequestedUsers(requestedUsers);
-    }
-  };
-
-  const handleSearch = (value) => {
-    const filtered = allUsers.filter(
-      (user) =>
-        user.name.toLowerCase().includes(value.toLowerCase()) ||
-        user.email.toLowerCase().includes(value.toLowerCase()) ||
-        user.contactNumber.includes(value)
-    );
-    setFilteredUsers(filtered);
   };
 
   return (
@@ -260,7 +276,6 @@ const AllUsers = ({ recentUser }) => {
         <Tabs.TabPane tab="Requested User" key="2" />
       </Tabs>
 
-      {/* Conditionally render tables based on selected tab */}
       {activeTab === '1' && (
         <Table
           columns={columnsAllUsers}
@@ -268,6 +283,7 @@ const AllUsers = ({ recentUser }) => {
           rowKey="id"
           pagination={true}
           bordered
+          loading={isLoading}
         />
       )}
 
@@ -278,10 +294,10 @@ const AllUsers = ({ recentUser }) => {
           rowKey="id"
           pagination={true}
           bordered
+          loading={requestedUsersLoading}
         />
       )}
 
-      {/* Modal for user details */}
       <Modal
         centered
         visible={userDetailsModal}
@@ -289,7 +305,7 @@ const AllUsers = ({ recentUser }) => {
         footer={null}
         className="user-details-modal"
       >
-        <UserInformation selectedUser={setUserDetailsModal} />
+        {selectedUser && <UserInformation user={selectedUser} />}
       </Modal>
     </div>
   );

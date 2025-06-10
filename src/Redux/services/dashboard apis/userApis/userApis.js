@@ -2,11 +2,19 @@ import baseApis from '../../../baseApis/baseApis';
 
 export const userApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
-    getAllUserOrDriver: builder.query({
-      query: ({ params }) => ({
-        url: '/dashboard/get-all-drivers-or-users',
+    getAllUser: builder.query({
+      query: ({ role }) => ({
+        url: '/users',
         method: 'GET',
-        params: params,
+        params: {
+          role: role,
+        },
+      }),
+    }),
+    requiestUser: builder.query({
+      query: () => ({
+        url: '/users/sign-up-request',
+        method: 'GET',
       }),
     }),
     updateUserStatus: builder.mutation({
@@ -27,7 +35,8 @@ export const userApis = baseApis.injectEndpoints({
 });
 
 export const {
-  useGetAllUserOrDriverQuery,
+  useGetAllUserQuery,
   useUpdateUserStatusMutation,
+  useRequiestUserQuery,
   useGetSingleUserOrDriverQuery,
 } = userApis;

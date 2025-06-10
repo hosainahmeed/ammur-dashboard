@@ -38,7 +38,7 @@ function EarningsChart() {
   const [year, setYear] = useState(2025);
 
   return (
-    <div className="w-full h-[450px] max-h-[450px] bg-white p-4 rounded-xl shadow-xl">
+    <div className="w-full h-[500px] max-h-[500px] bg-white p-4 rounded-xl shadow-xl">
       <h3
         style={{
           textAlign: 'left',

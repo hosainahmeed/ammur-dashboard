@@ -1,39 +1,40 @@
 import React, { memo } from 'react';
-import { Form, Input, Button, Typography, Card } from 'antd';
+import { Form, Input, Button, Card } from 'antd';
 import { EyeTwoTone } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { Link } from 'react-router';
 import { useNavigate } from 'react-router';
 import BrandLogo from '../../Components/Shared/BrandLogo';
 import Logo from '../../assets/icons/brand.svg';
-// import { useLoginUserMutation } from '../../Redux/services/AuthApis/authApis';
-// import toast from 'react-hot-toast';
+import { useLoginUserMutation } from '../../Redux/services/AuthApis/authApis';
+import toast from 'react-hot-toast';
 
-const { Title, Text } = Typography;
 const Login = () => {
   const route = useNavigate();
-  // const [loginUser, { isLoading: isSubmitting }] = useLoginUserMutation();
+  const [loginUser, { isLoading: isSubmitting }] =
+    useLoginUserMutation();
 
   const onFinish = async (values) => {
     const data = { email: values.email, password: values.password };
-    console.log(data);
-    route('/');
-    // try {
-    //   localStorage.removeItem('accessToken');
-    //   const res = await loginUser({ data });
-    //   if (res?.data?.success) {
-    //     const accessToken = res?.data?.data?.accessToken;
-    //     if (accessToken) {
-    //       localStorage.setItem('accessToken', accessToken);
-    //       toast.success(res.data.message);
-    //       route('/');
-    //     } else {
-    //       toast.error(res.data.message || 'Something went wrong');
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      localStorage.removeItem('accessToken');
+      await loginUser({ data })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            const accessToken = res?.data?.accessToken;
+            if (accessToken) {
+              localStorage.setItem('accessToken', accessToken);
+              toast.success(res?.message);
+              route('/');
+            } else {
+              toast.error(res?.data?.message || 'Something went wrong');
+            }
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -115,8 +116,7 @@ const Login = () => {
             className="w-full !bg-[var(--bg-green-high)] hover:!bg-[var(--bg-green-high)] !text-white"
             style={{ marginTop: 10 }}
           >
-            {/* {isSubmitting ? 'Loading...' : 'Continue with Email'} */}
-            Continue with Email
+            {isSubmitting ? 'Loading...' : 'Continue with Email'}
           </Button>
         </Form>
       </Card>

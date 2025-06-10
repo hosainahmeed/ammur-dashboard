@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { Avatar, Badge, Button, Dropdown, Image, Menu } from 'antd';
+import { Avatar, Badge, Button, Dropdown, Image, Menu, Spin } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
 import logo from '../../assets/icons/brand.svg';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import Notify from '../Notify_components/Notify';
+import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
+import { imageUrl } from '../../Utils/server';
 
 function Header() {
+  const { data, isLoading, error } = useGetProfileDataQuery();
+
   const [notifications, setNotifications] = useState(
     Array.from({ length: 5 }).map((_, i) => ({
       id: i,
@@ -15,16 +19,12 @@ function Header() {
     }))
   );
 
-  const user = {
-    photoURL:
-      'https://wallpapercat.com/w/full/b/9/2/2144467-1920x1080-desktop-full-hd-hinata-naruto-wallpaper.jpg',
-    displayName: 'Hinata Hyuga',
-    email: 'hinata@yandex',
-    role: 'admin',
-  };
+  const user = data?.data;
+  const defaultAvatar =
+    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
   const handleSignOut = () => {
-    console.log('sign out');
+    localStorage.removeItem('accessToken');
     window.location.href = '/login';
   };
 
@@ -39,10 +39,11 @@ function Header() {
       <div className="p-4 flex items-center gap-3">
         <Image
           className="!w-12 !h-12 object-cover overflow-hidden rounded-full"
-          src={user?.photoURL}
+          src={imageUrl(user?.img) || defaultAvatar}
+          fallback={defaultAvatar}
         />
         <div>
-          <h1 className="font-semibold text-base">{user?.displayName}</h1>
+          <h1 className="font-semibold text-base">{user?.fullName}</h1>
           <h1 className="font-normal opacity-75 text-sm">{user?.email}</h1>
         </div>
       </div>
@@ -70,6 +71,22 @@ function Header() {
     </Menu>
   );
 
+  if (isLoading) {
+    return (
+      <div className="px-10 h-16 flex items-center justify-center shadow-md">
+        <Spin />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="px-10 h-16 flex items-center justify-center shadow-md text-red-500">
+        Failed to load user data
+      </div>
+    );
+  }
+
   return (
     <div className="px-10 shadow-md mb-1 !z-[999] h-16 flex justify-between items-center">
       <div className="flex items-center gap-2 font-semibold">
@@ -88,12 +105,14 @@ function Header() {
         </Dropdown>
         <div className="flex items-center gap-3">
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
-            <Avatar size={40} src={user?.photoURL} className="cursor-pointer" />
+            <Avatar
+              size={40}
+              src={user?.img || defaultAvatar}
+              className="cursor-pointer"
+            />
           </Dropdown>
           <div>
-            <h1 className="text-sm font-normal leading-3">
-              {user?.displayName}
-            </h1>
+            <h1 className="text-sm font-normal leading-3">{user?.fullName}</h1>
             <div className="rounded-md flex items-center justify-center px-1 text-sm font-normal py-1 leading-3 bg-[#DCFCE7]">
               {user?.role}
             </div>
