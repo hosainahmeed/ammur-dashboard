@@ -18,6 +18,7 @@ import UserInformation from '../../page component/UserInformation';
 import {
   useGetAllUserQuery,
   useRequiestUserQuery,
+  useUpdateUserStatusMutation,
 } from '../../../Redux/services/dashboard apis/userApis/userApis';
 
 const AllUsers = ({ recentUser }) => {
@@ -26,6 +27,7 @@ const AllUsers = ({ recentUser }) => {
   const { data: allUsersData, isLoading } = useGetAllUserQuery({
     role: 'member',
   });
+  const [updateUserStatus] = useUpdateUserStatusMutation();
   const { data: requestedUserData, isLoading: requestedUsersLoading } =
     useRequiestUserQuery();
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -37,16 +39,16 @@ const AllUsers = ({ recentUser }) => {
   useEffect(() => {
     if (allUsersData?.data) {
       const users = allUsersData.data.map((user) => ({
-        key: user?._id,
-        id: user?._id,
-        name: user?.fullName,
-        contactNumber: user?.contactNo,
-        email: user?.email,
-        familySide: user?.familySide,
-        subscription: user?.subscription,
-        joined: user?.createdAt.split('T')[0],
-        status: user?.status === 'active',
-        isBlocked: user?.isDeleted,
+        key: user?._id || 'N/A',
+        id: user?._id || 'N/A',
+        name: user?.fullName || 'N/A',
+        contactNumber: user?.contactNo || 'N/A',
+        email: user?.email || 'N/A',
+        familySide: user?.familySide || 'N/A',
+        subscription: user?.subscription || 'N/A',
+        joined: user?.createdAt.split('T')[0] || 'N/A',
+        status: user?.status === 'active' || 'N/A',
+        isBlocked: user?.isDeleted || 'N/A',
         avatar: user?.img || null,
         fullUser: user,
       }));
@@ -57,22 +59,41 @@ const AllUsers = ({ recentUser }) => {
   useEffect(() => {
     if (requestedUserData?.data) {
       const reqUsers = requestedUserData.data.map((user) => ({
-        key: user?._id,
-        id: user?._id,
-        name: user?.fullName,
-        contactNumber: user?.contactNo,
-        email: user?.email,
-        familySide: user?.familySide,
-        elderFamilyMember: user?.eldestRelative || '',
-        joined: user?.createdAt.split('T')[0],
-        status: user?.status === 'active',
-        isBlocked: false,
+        key: user?._id || 'N/A',
+        id: user?._id || 'N/A',
+        name: user?.fullName || 'N/A',
+        contactNumber: user?.contactNo || 'N/A',
+        email: user?.email || 'N/A',
+        familySide: user?.familySide || 'N/A',
+        elderFamilyMember: user?.eldestRelative || 'N/A', // from API data key
+        joined: user?.createdAt.split('T')[0] || 'N/A',
+        status: user?.status || 'N/A',
+        isBlocked: user?.isDeleted || 'N/A',
         avatar: user?.img || null,
         fullUser: user,
       }));
       setFilteredRequestedUsers(reqUsers);
     }
   }, [requestedUserData]);
+
+  const updateUserStatusHandler = async (record) => {
+    console.log(record?.id);
+    const id = record?.id;
+    const status = record?.status === 'active' ? 'inactive' : 'active';
+    const data = {
+      approvalStatus: true,
+    };
+    try {
+      await updateUserStatus({ id, data })
+        .unwrap()
+        .then((res) => {
+          console.log(res);
+          toast.success('User status updated successfully!');
+        });
+    } catch (error) {
+      toast.error('Failed to update user status. Please try again.');
+    }
+  };
 
   // Search handler for all users
   const handleSearch = (value) => {
@@ -165,7 +186,7 @@ const AllUsers = ({ recentUser }) => {
           >
             <Button
               className={`${
-                record?.isBlocked ? '!bg-red-300' : '!bg-green-200'
+                record?.isBlocked ? '!bg-green-200' : '!bg-red-300'
               } ant-btn ant-btn-default`}
             >
               <CgBlock />
@@ -239,7 +260,12 @@ const AllUsers = ({ recentUser }) => {
           >
             <UserOutlined />
           </Button>
-          <Button className="!bg-yellow-300">Approve</Button>
+          <Button
+            onClick={() => updateUserStatusHandler(record)}
+            className="!bg-yellow-300"
+          >
+            Approve
+          </Button>
           <Button className="!bg-red-300">Reject</Button>
         </Space>
       ),

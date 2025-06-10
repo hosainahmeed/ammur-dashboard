@@ -18,9 +18,9 @@ export const userApis = baseApis.injectEndpoints({
       }),
     }),
     updateUserStatus: builder.mutation({
-      query: ({ data }) => ({
-        url: `/dashboard/block-unblock-user-driver`,
-        method: 'PATCH',
+      query: ({ data, id }) => ({
+        url: `/users/change-status/${id}`,
+        method: 'POST',
         body: data,
       }),
     }),
