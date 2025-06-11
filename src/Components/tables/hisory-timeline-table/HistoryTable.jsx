@@ -24,7 +24,6 @@ function HistoryTable() {
   const [selectedHistory, setSelectedHistory] = useState(null);
   const { data, isLoading } = useGetTimelineQuery();
 
-  // Transform API data to fit table format
   const history =
     data?.data?.map((item) => ({
       key: item._id,
@@ -75,7 +74,15 @@ function HistoryTable() {
       key: 'description',
       width: 500,
       render: (_, record) => (
-        <p className="text-gray-700">{record.description.slice(0, 150)}...</p>
+        <div
+          className="text-gray-700"
+          dangerouslySetInnerHTML={{
+            __html:
+              record.description.length > 150
+                ? `${record.description.slice(0, 150)}...`
+                : record.description,
+          }}
+        />
       ),
     },
     {
@@ -201,9 +208,12 @@ function HistoryTable() {
             </Divider>
 
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-700 whitespace-pre-line">
-                {selectedHistory.description}
-              </p>
+              <div
+                className="text-gray-700 whitespace-pre-line"
+                dangerouslySetInnerHTML={{
+                  __html: selectedHistory.description,
+                }}
+              />
             </div>
           </div>
         )}

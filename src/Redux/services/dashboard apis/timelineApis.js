@@ -9,7 +9,15 @@ const timelineApis = baseApis.injectEndpoints({
       }),
       providesTags: ['timeline'],
     }),
+    createTimeline: builder.mutation({
+      query: ({ data }) => ({
+        url: `/timelines/create-timeline`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['timeline'],
+    }),
   }),
 });
 
-export const { useGetTimelineQuery } = timelineApis;
+export const { useGetTimelineQuery, useCreateTimelineMutation } = timelineApis;

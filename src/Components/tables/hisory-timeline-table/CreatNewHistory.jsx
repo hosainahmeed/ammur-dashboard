@@ -17,23 +17,22 @@ import { MdTitle, MdDescription } from 'react-icons/md';
 import PageHeading from '../../Shared/PageHeading';
 import './HistoryForm.css';
 import JoditComponent from '../../Shared/JoditComponent';
+import { useCreateTimelineMutation } from '../../../Redux/services/dashboard apis/timelineApis';
 
 function CreatNewHistory() {
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
   const [fileList, setFileList] = useState([]);
   const [description, setDescription] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [content, setContent] = useState('');
   const [initialData, setInitialData] = useState({
     name: '',
   });
+  const [createTimeline, { isLoading }] = useCreateTimelineMutation();
 
   useEffect(() => {
     setInitialData({ name: 'History Timeline' });
-    setContent(
-      ''
-    );
+    setContent('');
   }, []);
 
   const handleFileChange = ({ fileList }) => {
@@ -52,27 +51,28 @@ function CreatNewHistory() {
       return;
     }
 
-    console.log('Form data:', {
-      ...values,
-      date: values.date.format('YYYY-MM-DD'),
-      description,
-      image: file,
-    });
-
-    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append('title', values.name);
+    formData.append('date', values.date.format('YYYY-MM-DD'));
+    formData.append('description', description);
+    formData.append('file', file);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success('History timeline created successfully!');
-      form.resetFields();
-      setFileList([]);
-      setDescription('');
-      setContent(''); // Reset editor content
+      await createTimeline({ data: formData })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(
+              res?.message || 'History timeline created successfully!'
+            );
+            form.resetFields();
+            setFileList([]);
+            setDescription('');
+            setContent('');
+          }
+        });
     } catch (error) {
       toast.error('Failed to create history timeline');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -103,7 +103,7 @@ function CreatNewHistory() {
         }
         bordered={false}
       >
-        <Spin spinning={isSubmitting} tip="Creating timeline...">
+        <Spin spinning={isLoading} tip="Creating timeline...">
           <div className="max-w-screen-xl mx-auto">
             <Form
               form={form}
@@ -216,19 +216,19 @@ function CreatNewHistory() {
                   onClick={onReset}
                   className="reset-button"
                   size="large"
-                  disabled={isSubmitting}
+                  disabled={isLoading}
                 >
                   Clear Form
                 </Button>
 
                 <Button
                   htmlType="submit"
-                  loading={isSubmitting}
+                  loading={isLoading}
                   className="submit-button"
                   size="large"
                   type="primary"
                 >
-                  {isSubmitting ? 'Creating...' : 'Create Timeline'}
+                  {isLoading ? 'Creating...' : 'Create Timeline'}
                 </Button>
               </div>
             </Form>
