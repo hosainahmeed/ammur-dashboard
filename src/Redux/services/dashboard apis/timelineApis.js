@@ -30,6 +30,14 @@ const timelineApis = baseApis.injectEndpoints({
         method: 'GET',
       }),
     }),
+    updateTimeline: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/timelines/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['timeline'],
+    })
   }),
 });
 
