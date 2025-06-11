@@ -17,7 +17,18 @@ const timelineApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['timeline'],
     }),
+    deleteTimeline: builder.mutation({
+      query: (id) => ({
+        url: `/timelines/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['timeline'],
+    }),
   }),
 });
 
-export const { useGetTimelineQuery, useCreateTimelineMutation } = timelineApis;
+export const {
+  useGetTimelineQuery,
+  useCreateTimelineMutation,
+  useDeleteTimelineMutation,
+} = timelineApis;
