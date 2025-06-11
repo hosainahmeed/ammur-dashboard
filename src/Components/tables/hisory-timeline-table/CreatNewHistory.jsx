@@ -8,7 +8,7 @@ import {
   Row,
   Col,
   Spin,
-  Alert,
+  ConfigProvider,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -17,23 +17,52 @@ import { MdTitle, MdDescription } from 'react-icons/md';
 import PageHeading from '../../Shared/PageHeading';
 import './HistoryForm.css';
 import JoditComponent from '../../Shared/JoditComponent';
-import { useCreateTimelineMutation } from '../../../Redux/services/dashboard apis/timelineApis';
+import {
+  useCreateTimelineMutation,
+  useGetSingleTimelineQuery,
+  useUpdateTimelineMutation,
+} from '../../../Redux/services/dashboard apis/timelineApis';
+import { useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 function CreatNewHistory() {
+  const location = useLocation();
+  const id = location.state;
+  const { data: singleTimeLine } = useGetSingleTimelineQuery(
+    { id: id },
+    {
+      skip: !id,
+    }
+  );
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
   const [fileList, setFileList] = useState([]);
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
-  const [initialData, setInitialData] = useState({
-    name: '',
-  });
   const [createTimeline, { isLoading }] = useCreateTimelineMutation();
+  const [updateTimeline] = useUpdateTimelineMutation();
 
   useEffect(() => {
-    setInitialData({ name: 'History Timeline' });
-    setContent('');
-  }, []);
+    if (singleTimeLine?.data) {
+      form.setFieldsValue({
+        name: singleTimeLine?.data?.title,
+        date: dayjs(singleTimeLine?.data?.date),
+      });
+      setContent(singleTimeLine?.data?.description);
+      setDescription(singleTimeLine?.data?.description);
+
+      if (singleTimeLine?.data?.img) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'timeline-image',
+            status: 'done',
+            url: singleTimeLine?.data?.img,
+          },
+        ]);
+      }
+    }
+  }, [singleTimeLine, form]);
 
   const handleFileChange = ({ fileList }) => {
     setFileList(fileList);
@@ -41,7 +70,7 @@ function CreatNewHistory() {
   };
 
   const onFinish = async (values) => {
-    if (!file) {
+    if (!file && !id) {
       toast.error('Please upload a timeline image');
       return;
     }
@@ -55,24 +84,37 @@ function CreatNewHistory() {
     formData.append('title', values.name);
     formData.append('date', values.date.format('YYYY-MM-DD'));
     formData.append('description', description);
-    formData.append('file', file);
-
+    if (file !== null) {
+      formData.append('img', file);
+    }
     try {
-      await createTimeline({ data: formData })
-        .unwrap()
-        .then((res) => {
-          if (res?.success) {
-            toast.success(
-              res?.message || 'History timeline created successfully!'
-            );
-            form.resetFields();
-            setFileList([]);
-            setDescription('');
-            setContent('');
-          }
-        });
+      if (!id) {
+        await createTimeline({ data: formData })
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              toast.success(
+                res?.message || 'History timeline created successfully!'
+              );
+              form.resetFields();
+              setFileList([]);
+              setDescription('');
+              setContent('');
+            }
+          });
+      } else {
+        await updateTimeline({ id, data: formData })
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              toast.success(
+                res?.message || 'History timeline updated successfully!'
+              );
+            }
+          });
+      }
     } catch (error) {
-      toast.error('Failed to create history timeline');
+      toast.error(error?.data?.message || 'Failed to create history timeline');
     }
   };
 
@@ -101,14 +143,13 @@ function CreatNewHistory() {
             Timeline Details
           </span>
         }
-        bordered={false}
+        bordered={true}
       >
         <Spin spinning={isLoading} tip="Creating timeline...">
           <div className="max-w-screen-xl mx-auto">
             <Form
               form={form}
               onFinish={onFinish}
-              initialValues={initialData}
               layout="vertical"
               requiredMark="optional"
             >
@@ -118,16 +159,10 @@ function CreatNewHistory() {
                     label={
                       <span className="form-label flex items-center">
                         <FaImage className="label-icon mr-2" />
-                        Timeline Image (Required)
+                        Timeline Image
                       </span>
                     }
                     name="category_image"
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Please upload a timeline image',
-                      },
-                    ]}
                   >
                     <Upload
                       beforeUpload={() => false}
@@ -136,16 +171,12 @@ function CreatNewHistory() {
                       maxCount={1}
                       accept="image/*"
                       fileList={fileList}
-                      className="image-uploader"
                     >
                       {fileList.length === 0 && (
                         <div className="upload-content">
                           <FaImage className="upload-icon text-3xl text-blue-400" />
                           <p className="upload-text mt-2 font-medium text-gray-600">
                             Click to upload timeline image
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            JPG, PNG (Max 5MB)
                           </p>
                         </div>
                       )}
@@ -154,25 +185,38 @@ function CreatNewHistory() {
                 </Col>
 
                 <Col xs={24} md={24}>
-                  <Form.Item
-                    label={
-                      <span className="form-label flex items-center">
-                        <FaCalendarAlt className="label-icon mr-2" />
-                        Event Date (Required)
-                      </span>
-                    }
-                    name="date"
-                    rules={[
-                      { required: true, message: 'Please select a date' },
-                    ]}
+                  <ConfigProvider
+                    theme={{
+                      components: {
+                        DatePicker: {
+                          activeBorderColor: 'rgb(14,239,239)',
+                          algorithm: true,
+                          hoverBorderColor: 'rgb(82,196,26)',
+                          colorPrimary: 'rgb(82,196,26)',
+                        },
+                      },
+                    }}
                   >
-                    <DatePicker
-                      placeholder="Select event date"
-                      className="w-full custom-datepicker"
-                      suffixIcon={<FaCalendarAlt className="text-gray-400" />}
-                      style={{ height: '40px' }}
-                    />
-                  </Form.Item>
+                    <Form.Item
+                      label={
+                        <span className="form-label flex items-center">
+                          <FaCalendarAlt className="label-icon mr-2" />
+                          Event Date (Required)
+                        </span>
+                      }
+                      name="date"
+                      rules={[
+                        { required: true, message: 'Please select a date' },
+                      ]}
+                    >
+                      <DatePicker
+                        placeholder="Select event date"
+                        className="w-full custom-datepicker"
+                        suffixIcon={<FaCalendarAlt className="text-gray-400" />}
+                        style={{ height: '40px' }}
+                      />
+                    </Form.Item>
+                  </ConfigProvider>
                 </Col>
 
                 <Col xs={24}>
@@ -212,14 +256,16 @@ function CreatNewHistory() {
               </Form.Item>
 
               <div className="form-actions flex justify-end space-x-4 mt-8">
-                <Button
-                  onClick={onReset}
-                  className="reset-button"
-                  size="large"
-                  disabled={isLoading}
-                >
-                  Clear Form
-                </Button>
+                {!id && (
+                  <Button
+                    onClick={onReset}
+                    className="reset-button"
+                    size="large"
+                    disabled={isLoading}
+                  >
+                    Clear Form
+                  </Button>
+                )}
 
                 <Button
                   htmlType="submit"
@@ -228,7 +274,13 @@ function CreatNewHistory() {
                   size="large"
                   type="primary"
                 >
-                  {isLoading ? 'Creating...' : 'Create Timeline'}
+                  {isLoading
+                    ? id
+                      ? 'Updating...'
+                      : 'Creating...'
+                    : id
+                    ? 'Update Timeline'
+                    : 'Create Timeline'}
                 </Button>
               </div>
             </Form>

@@ -117,7 +117,7 @@ export const Routes = createBrowserRouter([
         ),
       },
       {
-        path: '/timeline/create-new',
+        path: '/timeline/timeline-handle',
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <CreatNewHistory />
