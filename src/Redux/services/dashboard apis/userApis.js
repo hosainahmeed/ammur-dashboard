@@ -1,4 +1,5 @@
-import baseApis from '../../../baseApis/baseApis';
+import baseApis from "../../baseApis/baseApis";
+
 
 export const userApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,18 +11,27 @@ export const userApis = baseApis.injectEndpoints({
           role: role,
         },
       }),
+      providesTags: ['user'],
     }),
     requiestUser: builder.query({
       query: () => ({
         url: '/users/sign-up-request',
         method: 'GET',
       }),
+      providesTags: ['requiestUser'],
     }),
     updateUserStatus: builder.mutation({
       query: ({ data, id }) => ({
         url: `/users/change-status/${id}`,
         method: 'POST',
         body: data,
+      }),
+      invalidatesTags: ['user', 'requiestUser'],
+    }),
+    blockUser: builder.mutation({
+      query: ({ id }) => ({
+        url: `/users/${id}`,
+        method: 'DELETE',
       }),
     }),
     getSingleUserOrDriver: builder.query({

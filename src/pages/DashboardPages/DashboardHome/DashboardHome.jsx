@@ -2,8 +2,8 @@ import React from 'react';
 import user from '../../../assets/icons/man.png';
 import blockUser from '../../../assets/icons/block-user.png';
 import GrowthChart from '../../../Components/charts/UserGrowthChart';
-import { useGetTotalOverviewQuery } from '../../../Redux/services/dashboard apis/total-overview/totalOverviewApis';
 import Loader from '../../../Components/Shared/Loaders/Loader';
+import { useGetTotalOverviewQuery } from '../../../Redux/services/dashboard apis/totalOverviewApis';
 // import EearningsChart from '../../../Components/charts/EearningsChart';
 function DashboardHome() {
   const { data, isLoading } = useGetTotalOverviewQuery();

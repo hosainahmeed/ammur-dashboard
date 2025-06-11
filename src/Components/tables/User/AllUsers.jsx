@@ -19,7 +19,7 @@ import {
   useGetAllUserQuery,
   useRequiestUserQuery,
   useUpdateUserStatusMutation,
-} from '../../../Redux/services/dashboard apis/userApis/userApis';
+} from '../../../Redux/services/dashboard apis/userApis';
 
 const AllUsers = ({ recentUser }) => {
   const [userDetailsModal, setUserDetailsModal] = useState(false);
@@ -27,7 +27,8 @@ const AllUsers = ({ recentUser }) => {
   const { data: allUsersData, isLoading } = useGetAllUserQuery({
     role: 'member',
   });
-  const [updateUserStatus] = useUpdateUserStatusMutation();
+  const [updateUserStatus, { isLoading: updateUserStatusLoading }] =
+    useUpdateUserStatusMutation();
   const { data: requestedUserData, isLoading: requestedUsersLoading } =
     useRequiestUserQuery();
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -84,7 +85,6 @@ const AllUsers = ({ recentUser }) => {
       await updateUserStatus({ id, data })
         .unwrap()
         .then((res) => {
-          console.log(res);
           if (res?.success) {
             toast.success(res?.message || 'User status updated successfully!');
           }
@@ -201,7 +201,8 @@ const AllUsers = ({ recentUser }) => {
           <Popconfirm
             placement="bottomRight"
             title="Are you sure you want block this user?"
-            onConfirm={() => handleUserBlock(record)}
+            // onConfirm={() => handleUserBlock(record)}
+            onConfirm={() => blockUser(record)}
           >
             <Button
               className={`${
@@ -282,6 +283,8 @@ const AllUsers = ({ recentUser }) => {
           <Button
             onClick={() => updateUserStatusHandler(record)}
             className="!bg-yellow-300"
+            disabled={updateUserStatusLoading && selectedUser?.id === record.id}
+            loading={updateUserStatusLoading && selectedUser?.id === record.id}
           >
             Approve
           </Button>

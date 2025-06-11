@@ -16,37 +16,23 @@ import { FaEye, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { useGetTimelineQuery } from '../../../Redux/services/dashboard apis/timelineApis';
+import { imageUrl } from '../../../Utils/server';
 
 function HistoryTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
+  const { data, isLoading } = useGetTimelineQuery();
 
-  const history = [
-    {
-      key: '1',
-      name: 'Theodore Moscicki',
-      description: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae
-          quod odio, in commodi blanditiis dolorum assumenda ipsam quasi ad
-          soluta iste similique! Odio iusto ratione vero recusandae, tempora
-          sint eos unde esse! Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Quisquam, voluptatum.`,
-      date: '2025-01-10',
-      banner:
-        'https://cdn.prod.website-files.com/62d84e447b4f9e7263d31e94/6399a4d27711a5ad2c9bf5cd_ben-sweet-2LowviVHZ-E-unsplash-1.jpeg',
-    },
-    {
-      key: '2',
-      name: 'Russell Veum',
-      description: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae
-          quod odio, in commodi blanditiis dolorum assumenda ipsam quasi ad
-          soluta iste similique! Odio iusto ratione vero recusandae, tempora
-          sint eos unde esse!`,
-      date: '2025-01-10',
-      banner:
-        'https://cdn.prod.website-files.com/62d84e447b4f9e7263d31e94/6399a4d27711a5ad2c9bf5cd_ben-sweet-2LowviVHZ-E-unsplash-1.jpeg',
-    },
-  ];
+  // Transform API data to fit table format
+  const history =
+    data?.data?.map((item) => ({
+      key: item._id,
+      name: item.title,
+      description: item.description,
+      date: item.date,
+      banner: item.img,
+    })) || [];
 
   const showModal = (record) => {
     setSelectedHistory(record);
@@ -68,7 +54,7 @@ function HistoryTable() {
           <Image
             preview={false}
             className="w-28 h-16 rounded-md object-cover shadow-md"
-            src={record.banner}
+            src={imageUrl(record.banner)}
             alt="banner_image"
           />
         </div>
@@ -108,7 +94,7 @@ function HistoryTable() {
       width: 200,
       render: (_, record) => (
         <Space size="middle">
-          <Link to={'/timeline/create-new'}>
+          <Link to={`/timeline/create-new`}>
             <Button
               className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
               icon={<CiEdit />}
@@ -125,9 +111,7 @@ function HistoryTable() {
             placement="bottomRight"
             title="Confirm Deletion"
             description="Are you sure you want to delete this history item?"
-            onConfirm={() => {
-              toast.success('Deleted successfully');
-            }}
+            onConfirm={() => toast.success('Deleted successfully')}
             onCancel={() => console.log('Cancelled')}
             okText="Yes"
             cancelText="No"
@@ -164,6 +148,7 @@ function HistoryTable() {
       <Table
         columns={columns}
         dataSource={history}
+        loading={isLoading}
         pagination={{ pageSize: 5 }}
         className="history-table"
         rowKey="key"
@@ -171,7 +156,6 @@ function HistoryTable() {
         bordered
       />
 
-      {/* History Detail Modal */}
       <Modal
         title={<span className="text-xl font-bold">History Details</span>}
         open={isModalVisible}
