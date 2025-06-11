@@ -66,8 +66,8 @@ const AllUsers = ({ recentUser }) => {
         familySide: user?.familySide || 'N/A',
         elderFamilyMember: user?.eldestRelative || 'N/A',
         joined: user?.createdAt.split('T')[0] || 'N/A',
-        status: user?.status || 'N/A',
         isBlocked: user?.isDeleted || 'N/A',
+        status: user?.status || 'N/A',
         avatar: user?.img || null,
         fullUser: user,
       }));
@@ -76,9 +76,7 @@ const AllUsers = ({ recentUser }) => {
   }, [requestedUserData]);
 
   const updateUserStatusHandler = async (record) => {
-    console.log(record?.id);
     const id = record?.id;
-    const status = record?.status === 'active' ? 'inactive' : 'active';
     const data = {
       approvalStatus: true,
     };
@@ -87,10 +85,29 @@ const AllUsers = ({ recentUser }) => {
         .unwrap()
         .then((res) => {
           console.log(res);
-          toast.success('User status updated successfully!');
+          if (res?.success) {
+            toast.success(res?.message || 'User status updated successfully!');
+          }
         });
     } catch (error) {
-      toast.error('Failed to update user status. Please try again.');
+      toast.error(error?.data?.message || 'Something went wrong');
+    }
+  };
+  const blockUser = async (record) => {
+    const id = record?.id;
+    const data = {
+      approvalStatus: false,
+    };
+    try {
+      await updateUserStatus({ id, data })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'User status updated successfully!');
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
     }
   };
 
@@ -184,6 +201,7 @@ const AllUsers = ({ recentUser }) => {
             onConfirm={() => toast.success('Successfully blocked user')}
           >
             <Button
+              // onClick={() => blockUser(record)}
               className={`${
                 record?.isBlocked ? '!bg-green-200' : '!bg-red-300'
               } ant-btn ant-btn-default`}
@@ -265,7 +283,13 @@ const AllUsers = ({ recentUser }) => {
           >
             Approve
           </Button>
-          <Button className="!bg-red-300">Reject</Button>
+          <Popconfirm
+            placement="bottomRight"
+            title="Are you sure you want reject this user?"
+            onConfirm={() => blockUser(record)}
+          >
+            <Button className="!bg-red-300">Reject</Button>
+          </Popconfirm>
         </Space>
       ),
     },
