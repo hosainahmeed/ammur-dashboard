@@ -16,13 +16,17 @@ import { FaEye, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import { useGetTimelineQuery } from '../../../Redux/services/dashboard apis/timelineApis';
+import {
+  useDeleteTimelineMutation,
+  useGetTimelineQuery,
+} from '../../../Redux/services/dashboard apis/timelineApis';
 import { imageUrl } from '../../../Utils/server';
 
 function HistoryTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const { data, isLoading } = useGetTimelineQuery();
+  const [deleteTimeline] = useDeleteTimelineMutation();
 
   const history =
     data?.data?.map((item) => ({
@@ -40,6 +44,23 @@ function HistoryTable() {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const handleDelete = async (record) => {
+    try {
+      await deleteTimeline({ id: record.key })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res.message || 'Timeline deleted successfully!');
+          }
+        })
+        .catch((err) => {
+          toast.error(err.message);
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Failed to delete timeline');
+    }
   };
 
   const columns = [
@@ -118,7 +139,7 @@ function HistoryTable() {
             placement="bottomRight"
             title="Confirm Deletion"
             description="Are you sure you want to delete this history item?"
-            onConfirm={() => toast.success('Deleted successfully')}
+            onConfirm={() => handleDelete(record)}
             onCancel={() => console.log('Cancelled')}
             okText="Yes"
             cancelText="No"
