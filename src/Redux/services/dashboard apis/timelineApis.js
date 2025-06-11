@@ -24,6 +24,12 @@ const timelineApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['timeline'],
     }),
+    getSingleTimeline: builder.query({
+      query: ({ id }) => ({
+        url: `/timelines/${id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -31,4 +37,5 @@ export const {
   useGetTimelineQuery,
   useCreateTimelineMutation,
   useDeleteTimelineMutation,
+  useGetSingleTimelineQuery,
 } = timelineApis;
