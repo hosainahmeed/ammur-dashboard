@@ -3,16 +3,13 @@ import { Form, Input, Button, Card } from 'antd';
 import { EyeTwoTone } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import { Link } from 'react-router';
-import { useNavigate } from 'react-router';
 import BrandLogo from '../../Components/Shared/BrandLogo';
 import Logo from '../../assets/icons/brand.svg';
 import { useLoginUserMutation } from '../../Redux/services/AuthApis/authApis';
 import toast from 'react-hot-toast';
 
 const Login = () => {
-  const route = useNavigate();
-  const [loginUser, { isLoading: isSubmitting }] =
-    useLoginUserMutation();
+  const [loginUser, { isLoading: isSubmitting }] = useLoginUserMutation();
 
   const onFinish = async (values) => {
     const data = { email: values.email, password: values.password };
@@ -26,7 +23,7 @@ const Login = () => {
             if (accessToken) {
               localStorage.setItem('accessToken', accessToken);
               toast.success(res?.message);
-              route('/');
+              window.location.href = '/';
             } else {
               toast.error(res?.data?.message || 'Something went wrong');
             }

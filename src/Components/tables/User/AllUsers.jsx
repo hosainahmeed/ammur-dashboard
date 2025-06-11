@@ -35,7 +35,6 @@ const AllUsers = ({ recentUser }) => {
 
   const [activeTab, setActiveTab] = useState('1');
 
-  // Transform API data into table-friendly format when data changes
   useEffect(() => {
     if (allUsersData?.data) {
       const users = allUsersData.data.map((user) => ({
@@ -65,7 +64,7 @@ const AllUsers = ({ recentUser }) => {
         contactNumber: user?.contactNo || 'N/A',
         email: user?.email || 'N/A',
         familySide: user?.familySide || 'N/A',
-        elderFamilyMember: user?.eldestRelative || 'N/A', // from API data key
+        elderFamilyMember: user?.eldestRelative || 'N/A',
         joined: user?.createdAt.split('T')[0] || 'N/A',
         status: user?.status || 'N/A',
         isBlocked: user?.isDeleted || 'N/A',
