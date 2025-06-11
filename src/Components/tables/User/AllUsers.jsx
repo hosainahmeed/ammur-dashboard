@@ -37,7 +37,7 @@ const AllUsers = ({ recentUser }) => {
 
   useEffect(() => {
     if (allUsersData?.data) {
-      const users = allUsersData.data.map((user) => ({
+      const users = allUsersData?.data?.map((user) => ({
         key: user?._id || 'N/A',
         id: user?._id || 'N/A',
         name: user?.fullName || 'N/A',
@@ -57,7 +57,7 @@ const AllUsers = ({ recentUser }) => {
 
   useEffect(() => {
     if (requestedUserData?.data) {
-      const reqUsers = requestedUserData.data.map((user) => ({
+      const reqUsers = requestedUserData?.data?.map((user) => ({
         key: user?._id || 'N/A',
         id: user?._id || 'N/A',
         name: user?.fullName || 'N/A',
@@ -111,7 +111,10 @@ const AllUsers = ({ recentUser }) => {
     }
   };
 
-  // Search handler for all users
+  const handleUserBlock = (record) => {
+    console.log(record?.id);
+  };
+  // Search handler for all user
   const handleSearch = (value) => {
     if (activeTab === '1') {
       const filtered = filteredUsers.filter(
@@ -198,10 +201,9 @@ const AllUsers = ({ recentUser }) => {
           <Popconfirm
             placement="bottomRight"
             title="Are you sure you want block this user?"
-            onConfirm={() => toast.success('Successfully blocked user')}
+            onConfirm={() => handleUserBlock(record)}
           >
             <Button
-              // onClick={() => blockUser(record)}
               className={`${
                 record?.isBlocked ? '!bg-green-200' : '!bg-red-300'
               } ant-btn ant-btn-default`}
