@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import {
   useCreateThingsToKnowMutation,
+  useDeleteThingsToKnowMutation,
   useGetThingsToKnowQuery,
   useUpdateThingsToKnowMutation,
 } from '../../../Redux/services/dashboard apis/thingsToKnowApis';
@@ -39,7 +40,7 @@ function ThingsToKnow() {
   } = useGetThingsToKnowQuery();
   const [createCategory] = useCreateThingsToKnowMutation();
   const [updateCategory] = useUpdateThingsToKnowMutation();
-  // const [deleteCategory] = useDeleteCategoryMutation();
+  const [deleteCategory] = useDeleteThingsToKnowMutation();
   console.log(categories?.data);
   const handleEdit = (category) => {
     setEditData(category);
@@ -62,12 +63,17 @@ function ThingsToKnow() {
   };
 
   const handleDelete = async (id) => {
-    // try {
-    //   await deleteCategory(id).unwrap();
-    //   toast.success('Category deleted successfully');
-    // } catch (err) {
-    //   toast.error('Failed to delete category');
-    // }
+    try {
+      await deleteCategory({ id })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Category deleted successfully');
+          }
+        });
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to delete category');
+    }
   };
 
   const handleSubmit = async () => {
