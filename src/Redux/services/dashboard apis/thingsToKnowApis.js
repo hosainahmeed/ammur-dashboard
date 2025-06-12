@@ -9,7 +9,15 @@ const thingsToKnowApis = baseApis.injectEndpoints({
       }),
       providesTags: ['thingsToKnow'],
     }),
+    singleThingsToKnow: builder.query({
+      query: ({ id }) => ({
+        url: `/things-categories/${id}`,
+        method: 'GET',
+      }),
+    }),
+    
   }),
 });
 
-export const { useGetThingsToKnowQuery } = thingsToKnowApis;
+export const { useGetThingsToKnowQuery, useSingleThingsToKnowQuery } =
+  thingsToKnowApis;
