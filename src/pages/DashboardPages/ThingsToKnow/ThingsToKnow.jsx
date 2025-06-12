@@ -87,7 +87,6 @@ function ThingsToKnow() {
       }
 
       if (editData) {
-        // Update existing category
         await updateCategory({ id: editData?._id, data: formData })
           .unwrap()
           .then((res) => {

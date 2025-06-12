@@ -41,6 +41,13 @@ const thingsToKnowApis = baseApis.injectEndpoints({
     }),
 
     //subCategory
+    createSubCategory: builder.mutation({
+      query: ({ data }) => ({
+        url: `/things-to-knows/create-thing-to-know`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -52,4 +59,5 @@ export const {
   useDeleteThingsToKnowMutation,
   useCreateThingsToKnowMutation,
   //subCategory
+  useCreateSubCategoryMutation,
 } = thingsToKnowApis;
