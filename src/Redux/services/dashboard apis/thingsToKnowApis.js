@@ -15,9 +15,19 @@ const thingsToKnowApis = baseApis.injectEndpoints({
         method: 'GET',
       }),
     }),
-    
+    updateThingsToKnow: builder.mutation({
+      query: ({ data }) => ({
+        url: `/things-categories`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['thingsToKnow'],
+    }),
   }),
 });
 
-export const { useGetThingsToKnowQuery, useSingleThingsToKnowQuery } =
-  thingsToKnowApis;
+export const {
+  useGetThingsToKnowQuery,
+  useSingleThingsToKnowQuery,
+  useUpdateThingsToKnowMutation,
+} = thingsToKnowApis;
