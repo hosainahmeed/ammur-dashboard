@@ -23,6 +23,13 @@ const thingsToKnowApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['thingsToKnow'],
     }),
+    deleteThingsToKnow: builder.mutation({
+      query: ({ id }) => ({
+        url: `/things-categories/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['thingsToKnow'],
+    }),
   }),
 });
 
@@ -30,4 +37,5 @@ export const {
   useGetThingsToKnowQuery,
   useSingleThingsToKnowQuery,
   useUpdateThingsToKnowMutation,
+  useDeleteThingsToKnowMutation,
 } = thingsToKnowApis;
