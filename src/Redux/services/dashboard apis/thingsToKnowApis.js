@@ -2,6 +2,7 @@ import baseApis from '../../baseApis/baseApis';
 
 const thingsToKnowApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
+    //category
     getThingsToKnow: builder.query({
       query: () => ({
         url: '/things-categories',
@@ -30,12 +31,24 @@ const thingsToKnowApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['thingsToKnow'],
     }),
+    createThingsToKnow: builder.mutation({
+      query: ({ data }) => ({
+        url: `/things-categories`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['thingsToKnow'],
+    }),
+
+    //subCategory
   }),
 });
 
 export const {
+  //category
   useGetThingsToKnowQuery,
   useSingleThingsToKnowQuery,
   useUpdateThingsToKnowMutation,
   useDeleteThingsToKnowMutation,
+  //subCategory
 } = thingsToKnowApis;
