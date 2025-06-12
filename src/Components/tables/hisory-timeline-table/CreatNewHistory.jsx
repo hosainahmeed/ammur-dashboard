@@ -85,7 +85,7 @@ function CreatNewHistory() {
     formData.append('date', values.date.format('YYYY-MM-DD'));
     formData.append('description', description);
     if (file !== null) {
-      formData.append('img', file);
+      formData.append('file', file);
     }
     try {
       if (!id) {
@@ -130,7 +130,7 @@ function CreatNewHistory() {
       <div className="page-header">
         <div className="flex mb-6 items-center justify-between bg-white p-4 shadow-sm rounded-lg">
           <PageHeading
-            title="Create New History Timeline"
+            title={`${id ? 'Update' : 'Create'} Timeline`}
             icon={<FaHistory className="mr-2 text-blue-500" />}
           />
         </div>
