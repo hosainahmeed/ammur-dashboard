@@ -17,7 +17,11 @@ import { FaEdit, FaTrash, FaPlus, FaUpload } from 'react-icons/fa';
 import { GoArrowUpRight } from 'react-icons/go';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import { useGetThingsToKnowQuery } from '../../../Redux/services/dashboard apis/thingsToKnowApis';
+import {
+  useCreateThingsToKnowMutation,
+  useGetThingsToKnowQuery,
+  useUpdateThingsToKnowMutation,
+} from '../../../Redux/services/dashboard apis/thingsToKnowApis';
 
 const { Dragger } = Upload;
 
@@ -33,8 +37,8 @@ function ThingsToKnow() {
     isLoading,
     isError,
   } = useGetThingsToKnowQuery();
-  // const [createCategory] = useCreateCategoryMutation();
-  // const [updateCategory] = useUpdateCategoryMutation();
+  const [createCategory] = useCreateThingsToKnowMutation();
+  const [updateCategory] = useUpdateThingsToKnowMutation();
   // const [deleteCategory] = useDeleteCategoryMutation();
   console.log(categories?.data);
   const handleEdit = (category) => {
@@ -72,18 +76,30 @@ function ThingsToKnow() {
       const formData = new FormData();
 
       formData.append('title', values.title);
-      if (fileList.length > 0 && fileList[0].originFileObj) {
-        formData.append('image', fileList[0].originFileObj);
+      if (fileList.length > 0 && fileList[0]) {
+        formData.append('file', fileList[0]);
       }
 
       if (editData) {
         // Update existing category
-        // await updateCategory({ id: editData._id, data: formData }).unwrap();
-        // toast.success('Category updated successfully');
+        await updateCategory({ id: editData?._id, data: formData })
+          .unwrap()
+          .then((res) => {
+            console.log(res);
+            if (res?.success) {
+              toast.success(res?.message || 'Category updated successfully');
+            }
+          });
       } else {
         // Create new category
-        // await createCategory(formData).unwrap();
-        // toast.success('Category created successfully');
+        await createCategory({ data: formData })
+          .unwrap()
+          .then((res) => {
+            console.log(res);
+            if (res?.success) {
+              toast.success(res?.message || 'Category created successfully');
+            }
+          });
       }
 
       handleCloseModal();

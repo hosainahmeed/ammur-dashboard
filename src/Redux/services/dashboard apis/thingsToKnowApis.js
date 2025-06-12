@@ -17,8 +17,8 @@ const thingsToKnowApis = baseApis.injectEndpoints({
       }),
     }),
     updateThingsToKnow: builder.mutation({
-      query: ({ data }) => ({
-        url: `/things-categories`,
+      query: ({ id, data }) => ({
+        url: `/things-categories/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -33,7 +33,7 @@ const thingsToKnowApis = baseApis.injectEndpoints({
     }),
     createThingsToKnow: builder.mutation({
       query: ({ data }) => ({
-        url: `/things-categories`,
+        url: `/things-categories/create-thing-to-know-category`,
         method: 'POST',
         body: data,
       }),
@@ -50,5 +50,6 @@ export const {
   useSingleThingsToKnowQuery,
   useUpdateThingsToKnowMutation,
   useDeleteThingsToKnowMutation,
+  useCreateThingsToKnowMutation,
   //subCategory
 } = thingsToKnowApis;
