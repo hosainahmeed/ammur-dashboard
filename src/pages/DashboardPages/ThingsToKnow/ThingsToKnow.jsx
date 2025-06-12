@@ -17,7 +17,7 @@ import { FaEdit, FaTrash, FaPlus, FaUpload } from 'react-icons/fa';
 import { GoArrowUpRight } from 'react-icons/go';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-// import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation, useGetCategoriesQuery } from "./categoriesApiSlice";
+import { useGetThingsToKnowQuery } from '../../../Redux/services/dashboard apis/thingsToKnowApis';
 
 const { Dragger } = Upload;
 
@@ -28,29 +28,15 @@ function ThingsToKnow() {
   const [fileList, setFileList] = useState([]);
 
   // RTK Query hooks
-  // const { data: categories = [], isLoading, isError } = useGetCategoriesQuery();
+  const {
+    data: categories = [],
+    isLoading,
+    isError,
+  } = useGetThingsToKnowQuery();
   // const [createCategory] = useCreateCategoryMutation();
   // const [updateCategory] = useUpdateCategoryMutation();
   // const [deleteCategory] = useDeleteCategoryMutation();
-  const categories = [
-    {
-      id: 1,
-      title: 'Life Lessons & Values',
-      image: 'https://picsum.photos/600/300',
-    },
-    {
-      id: 2,
-      title: 'Spirituality & Beliefs',
-
-      image: 'https://picsum.photos/600/300',
-    },
-    {
-      id: 3,
-      title: 'Family & Relationships',
-
-      image: 'https://picsum.photos/600/300',
-    },
-  ];
+  console.log(categories?.data);
   const handleEdit = (category) => {
     setEditData(category);
     form.setFieldsValue({
@@ -92,7 +78,7 @@ function ThingsToKnow() {
 
       if (editData) {
         // Update existing category
-        // await updateCategory({ id: editData.id, data: formData }).unwrap();
+        // await updateCategory({ id: editData._id, data: formData }).unwrap();
         // toast.success('Category updated successfully');
       } else {
         // Create new category
@@ -130,8 +116,8 @@ function ThingsToKnow() {
     maxCount: 1,
   };
 
-  // if (isLoading) return <Spin size="large" className="flex justify-center" />;
-  // if (isError) return <div>Error loading categories</div>;
+  if (isLoading) return <Spin size="large" className="flex justify-center" />;
+  if (isError) return <div>Error loading categories</div>;
 
   return (
     <div className="p-5 container mx-auto">
@@ -154,16 +140,16 @@ function ThingsToKnow() {
         </Button>
       </div>
 
-      {categories.length > 0 ? (
+      {categories?.data?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories.map((item) => (
+          {categories?.data.map((item) => (
             <Card
-              key={item.id}
+              key={item?._id}
               className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
               cover={
                 <img
-                  alt={item.title}
-                  src={item.image || 'https://via.placeholder.com/150'}
+                  alt={item?.title}
+                  src={item?.img || 'https://via.placeholder.com/150'}
                   className="h-[180px] w-full object-cover"
                 />
               }
@@ -177,7 +163,7 @@ function ThingsToKnow() {
                 <Popconfirm
                   title="Are you sure you want to delete this item?"
                   placement="top"
-                  onConfirm={() => handleDelete(item.id)}
+                  onConfirm={() => handleDelete(item?._id)}
                   okText="Yes"
                   cancelText="No"
                 >
@@ -188,7 +174,7 @@ function ThingsToKnow() {
                     className="!flex !w-full !items-center !justify-center"
                   />
                 </Popconfirm>,
-                <Link to={`/things-to-know/blogs/${item.title}`}>
+                <Link to={`/things-to-know/blogs/${item?.title}`}>
                   <Button
                     type="text"
                     icon={<GoArrowUpRight />}
@@ -199,7 +185,7 @@ function ThingsToKnow() {
             >
               <Card.Meta
                 title={
-                  <span className="!text-lg !font-semibold">{item.title}</span>
+                  <span className="!text-lg !font-semibold">{item?.title}</span>
                 }
               />
             </Card>
@@ -237,7 +223,7 @@ function ThingsToKnow() {
             key="submit"
             className="!bg-[#0C469D] !text-white"
             onClick={handleSubmit}
-            // loading={isLoading}
+            loading={isLoading}
           >
             {editData ? 'Update' : 'Save'}
           </Button>,
