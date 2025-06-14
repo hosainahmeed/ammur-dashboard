@@ -96,7 +96,7 @@ const AllUsers = ({ recentUser }) => {
   const blockUser = async (record) => {
     const id = record?.id;
     const data = {
-      approvalStatus: false,
+      status: false,
     };
     try {
       await updateUserStatus({ id, data })
@@ -280,21 +280,30 @@ const AllUsers = ({ recentUser }) => {
           >
             <UserOutlined />
           </Button>
-          <Button
-            onClick={() => updateUserStatusHandler(record)}
-            className="!bg-yellow-300"
-            disabled={updateUserStatusLoading && selectedUser?.id === record.id}
-            loading={updateUserStatusLoading && selectedUser?.id === record.id}
-          >
-            Approve
-          </Button>
           <Popconfirm
+            placement="bottomRight"
+            title="Are you sure you want approve this user?"
+            onConfirm={() => updateUserStatusHandler(record)}
+          >
+            <Button
+              className="!bg-yellow-300"
+              disabled={
+                updateUserStatusLoading && selectedUser?.id === record.id
+              }
+              loading={
+                updateUserStatusLoading && selectedUser?.id === record.id
+              }
+            >
+              Approve
+            </Button>
+          </Popconfirm>
+          {/* <Popconfirm
             placement="bottomRight"
             title="Are you sure you want reject this user?"
             onConfirm={() => blockUser(record)}
           >
             <Button className="!bg-red-300">Reject</Button>
-          </Popconfirm>
+          </Popconfirm> */}
         </Space>
       ),
     },

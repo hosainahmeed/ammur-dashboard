@@ -8,21 +8,16 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import React, { memo, useEffect, useMemo, useState } from 'react';
-import { Select } from 'antd';
+import React, { memo, useMemo } from 'react';
 import Loader from '../Shared/Loaders/Loader';
+import { useGetTotalOverviewQuery } from '../../Redux/services/dashboard apis/totalOverviewApis';
 
 const UserGrowthChart = () => {
-  const currentYear = new Date().getFullYear();
-  const [year, setYear] = useState(currentYear);
-  const [years, setYears] = useState([
-    2024, 2025, 2026, 2027, 2028, 2029, 2030,
-  ]);
-  const [role] = useState('USER');
-  console.log(role);
+const { data, isLoading } =  useGetTotalOverviewQuery();
+
+
   const dummyData = {
     data: {
-      total_years: [2024, 2025, 2026, 2027],
       monthlyRegistration: {
         Jan: 100,
         Feb: 150,
@@ -40,12 +35,6 @@ const UserGrowthChart = () => {
     },
   };
 
-  const { data = dummyData, isLoading = false } = { data: dummyData };
-
-  useEffect(() => {
-    const years = data?.data?.total_years || [];
-    setYears(years);
-  }, []);
 
   const { monthlyData, maxUsers } = useMemo(() => {
     const monthMap = data?.data?.monthlyRegistration || {};
@@ -89,19 +78,6 @@ const UserGrowthChart = () => {
           >
             📈 User Growth Chart
           </h3>
-          <Select
-            loading={isLoading}
-            className="min-w-32"
-            value={year}
-            placeholder="Select year"
-            onChange={(value) => setYear(value)}
-            style={{
-              marginBottom: '15px',
-              width: '150px',
-              fontWeight: '500',
-            }}
-            options={years.map((item) => ({ value: item, label: item }))}
-          />
           <ResponsiveContainer width="100%" height="85%">
             <BarChart
               data={monthlyData}

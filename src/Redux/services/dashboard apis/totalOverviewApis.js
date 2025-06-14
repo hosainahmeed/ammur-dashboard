@@ -5,7 +5,7 @@ const totalOverviewApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getTotalOverview: builder.query({
       query: () => ({
-        url: '/dashboard/total-overview',
+        url: '/users/users-monthly',
         method: 'GET',
       }),
     }),
