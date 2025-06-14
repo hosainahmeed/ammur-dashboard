@@ -12,37 +12,51 @@ import React, { memo, useMemo } from 'react';
 import Loader from '../Shared/Loaders/Loader';
 import { useGetTotalOverviewQuery } from '../../Redux/services/dashboard apis/totalOverviewApis';
 
+const monthOrder = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+const monthNameToShort = {
+  January: 'Jan',
+  February: 'Feb',
+  March: 'Mar',
+  April: 'Apr',
+  May: 'May',
+  June: 'Jun',
+  July: 'Jul',
+  August: 'Aug',
+  September: 'Sep',
+  October: 'Oct',
+  November: 'Nov',
+  December: 'Dec',
+};
+
 const UserGrowthChart = () => {
-const { data, isLoading } =  useGetTotalOverviewQuery();
-
-
-  const dummyData = {
-    data: {
-      monthlyRegistration: {
-        Jan: 100,
-        Feb: 150,
-        Mar: 120,
-        Apr: 180,
-        May: 200,
-        Jun: 220,
-        Jul: 250,
-        Aug: 240,
-        Sep: 230,
-        Oct: 210,
-        Nov: 190,
-        Dec: 220,
-      },
-    },
-  };
-
+  const { data, isLoading } = useGetTotalOverviewQuery();
 
   const { monthlyData, maxUsers } = useMemo(() => {
-    const monthMap = data?.data?.monthlyRegistration || {};
+    const rawData = data?.data || [];
+
+    const monthMap = {};
+
+    // Initialize all months with 0
+    monthOrder.forEach((month) => {
+      monthMap[month] = 0;
+    });
+
+    // Fill actual data
+    rawData.forEach(({ month, count }) => {
+      const shortMonth = monthNameToShort[month];
+      if (shortMonth) {
+        monthMap[shortMonth] = count;
+      }
+    });
 
     const maxUsers = Math.max(...Object.values(monthMap), 0) + 4;
 
     return {
-      monthlyData: Object.keys(monthMap).map((month) => ({
+      monthlyData: monthOrder.map((month) => ({
         name: month,
         totalUser: monthMap[month],
       })),
