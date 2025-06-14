@@ -18,15 +18,17 @@ import {
 import toast from 'react-hot-toast';
 import { FaEye, FaPlus } from 'react-icons/fa6';
 const { Title } = Typography;
-import {
-  DeleteOutlined,
-  UploadOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { CiEdit } from 'react-icons/ci';
+import {
+  useDeleteFamilyMutation,
+  useGetFamiliesQuery,
+} from '../../../Redux/services/dashboard apis/familiesApis';
 
 function AddFamily() {
-  // State for families
+  const { data: families } = useGetFamiliesQuery();
+  const [deleteFamily] = useDeleteFamilyMutation();
+
   const [data, setData] = useState([
     { key: '1', familyName: 'Smith' },
     { key: '2', familyName: 'Johnson' },
@@ -72,14 +74,19 @@ function AddFamily() {
   const handleEdit = (record) => {
     setEditingFamily(record);
     addFamilyForm.setFieldsValue({
-      familyName: record.familyName,
+      familyName: record.name,
     });
     setIsAddFamilyModalOpen(true);
   };
 
-  const handleDelete = (key) => {
-    setData((prevData) => prevData.filter((item) => item.key !== key));
-    toast.success('Family deleted successfully');
+  const handleDelete = async (key) => {
+    await deleteFamily(key)
+      .unwrap()
+      .then((res) => {
+        if (res?.success) {
+          toast.success(res?.message || 'Family deleted successfully');
+        }
+      });
   };
 
   const handleEditGroup = (record) => {
@@ -126,37 +133,37 @@ function AddFamily() {
 
   // Form submission handlers
   const handleAddFamilySubmit = (values) => {
-    if (editingFamily) {
-      // Update existing family
-      setData((prevData) =>
-        prevData.map((item) =>
-          item.key === editingFamily.key
-            ? { ...item, familyName: values.familyName }
-            : item
-        )
-      );
+    // if (editingFamily) {
+    //   // Update existing family
+    //   setData((prevData) =>
+    //     prevData.map((item) =>
+    //       item.key === editingFamily.key
+    //         ? { ...item, familyName: values.familyName }
+    //         : item
+    //     )
+    //   );
 
-      // Also update family name in discussion groups
-      setDiscussionGroups((prevGroups) =>
-        prevGroups.map((group) =>
-          group.familyName === editingFamily.familyName
-            ? { ...group, familyName: values.familyName }
-            : group
-        )
-      );
+    //   // Also update family name in discussion groups
+    //   setDiscussionGroups((prevGroups) =>
+    //     prevGroups.map((group) =>
+    //       group.familyName === editingFamily.familyName
+    //         ? { ...group, familyName: values.familyName }
+    //         : group
+    //     )
+    //   );
 
-      toast.success('Family updated successfully');
-    } else {
-      // Add new family
-      const newFamily = {
-        key: (data.length + 1).toString(),
-        familyName: values.familyName,
-      };
+    //   toast.success('Family updated successfully');
+    // } else {
+    //   // Add new family
+    //   const newFamily = {
+    //     key: (data.length + 1).toString(),
+    //     familyName: values.familyName,
+    //   };
 
-      setData([...data, newFamily]);
-      toast.success('Family added successfully');
-    }
-
+    //   setData([...data, newFamily]);
+    //   toast.success('Family added successfully');
+    // }
+    console.log(values?.familyName);
     handleAddFamilyCancel();
   };
 
@@ -210,17 +217,17 @@ function AddFamily() {
   };
 
   // Table columns
+
   const columns = [
     {
-      title: 'SL no.',
-      dataIndex: 'key',
-      key: 'key',
-      render: (text, record, index) => index + 1,
+      title: 'SL No.',
+      dataIndex: 'index',
+      key: 'index',
     },
     {
-      title: 'Family name',
-      dataIndex: 'familyName',
-      key: 'familyName',
+      title: 'Family Name',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: 'Action',
@@ -303,7 +310,11 @@ function AddFamily() {
         <Table
           columns={columns}
           pagination={{ responsive: true }}
-          dataSource={data}
+          dataSource={families?.data?.map((family, index) => ({
+            key: family._id,
+            name: family.name,
+            index: index + 1,
+          }))}
           scroll={{ x: 1500 }}
           bordered
         />

@@ -17,6 +17,7 @@ const baseApis = createApi({
     'timeline',
     'thingsToKnow',
     'about',
+    'families',
   ],
   endpoints: () => ({}),
 });

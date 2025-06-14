@@ -38,6 +38,33 @@ const { TabPane } = Tabs;
 
 function Contact() {
   const { data: emailsData } = useGetAllEmailQuery();
+  console.log(emailsData);
+  /*this is the response of emailsData */
+  //  {
+  //   success: true,
+  //   message: 'Emails are retrieved successfully',
+  //   meta: { page: 1, limit: 10, total: 3, totalPage: 1 },
+  //   data: [
+  //     {
+  //       _id: '683e9b61f93b86ba99018e88',
+  //       lebel: 'primary',
+  //       email: 'ahmadmusa9805@gmail.com',
+  //       isDeleted: false
+  //     },
+  //     {
+  //       _id: '683e9b62f93b86ba99018e8a',
+  //       lebel: 'primary',
+  //       email: 'ahmadmusa9805@gmail.com',
+  //       isDeleted: false
+  //     },
+  //     {
+  //       _id: '684d192bcb0a14d990686285',
+  //       lebel: 'Williams',
+  //       email: 'hosain@gmail.com',
+  //       isDeleted: false
+  //     }
+  //   ]
+  // }
   const [emails, setEmails] = useState([
     { id: 1, address: 'primary@example.com', label: 'Primary' },
     { id: 2, address: 'work@example.com', label: 'Work' },
