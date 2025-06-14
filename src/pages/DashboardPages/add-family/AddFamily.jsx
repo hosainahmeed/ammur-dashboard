@@ -21,19 +21,18 @@ const { Title } = Typography;
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { CiEdit } from 'react-icons/ci';
 import {
+  useCreateFamilyMutation,
   useDeleteFamilyMutation,
   useGetFamiliesQuery,
+  useUpdateFamilyMutation,
 } from '../../../Redux/services/dashboard apis/familiesApis';
 
 function AddFamily() {
   const { data: families } = useGetFamiliesQuery();
   const [deleteFamily] = useDeleteFamilyMutation();
-
-  const [data, setData] = useState([
-    { key: '1', familyName: 'Smith' },
-    { key: '2', familyName: 'Johnson' },
-    { key: '3', familyName: 'Williams' },
-  ]);
+  const [updateFamily] = useUpdateFamilyMutation();
+  const [createteFamily] = useCreateFamilyMutation();
+  const [familyId, setFamilyId] = useState(null);
 
   // State for discussion groups
   const [discussionGroups, setDiscussionGroups] = useState([
@@ -132,38 +131,31 @@ function AddFamily() {
   };
 
   // Form submission handlers
-  const handleAddFamilySubmit = (values) => {
-    // if (editingFamily) {
-    //   // Update existing family
-    //   setData((prevData) =>
-    //     prevData.map((item) =>
-    //       item.key === editingFamily.key
-    //         ? { ...item, familyName: values.familyName }
-    //         : item
-    //     )
-    //   );
-
-    //   // Also update family name in discussion groups
-    //   setDiscussionGroups((prevGroups) =>
-    //     prevGroups.map((group) =>
-    //       group.familyName === editingFamily.familyName
-    //         ? { ...group, familyName: values.familyName }
-    //         : group
-    //     )
-    //   );
-
-    //   toast.success('Family updated successfully');
-    // } else {
-    //   // Add new family
-    //   const newFamily = {
-    //     key: (data.length + 1).toString(),
-    //     familyName: values.familyName,
-    //   };
-
-    //   setData([...data, newFamily]);
-    //   toast.success('Family added successfully');
-    // }
-    console.log(values?.familyName);
+  const handleAddFamilySubmit = async (values) => {
+    const data = {
+      name: values?.familyName,
+    };
+    try {
+      if (familyId !== null) {
+        await updateFamily({ data, id: familyId })
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              toast.success(res?.message || 'Family updated successfully');
+            }
+          });
+      } else {
+        await createteFamily({ data })
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              toast.success(res?.message || 'Family updated successfully');
+            }
+          });
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
+    }
     handleAddFamilyCancel();
   };
 
@@ -236,7 +228,10 @@ function AddFamily() {
       render: (_, record) => (
         <div className="flex items-center gap-2">
           <Button
-            onClick={() => handleEdit(record)}
+            onClick={() => {
+              setFamilyId(record.key);
+              handleEdit(record);
+            }}
             icon={<CiEdit />}
             className="!bg-[#0C469D] !text-white"
           />
@@ -277,7 +272,9 @@ function AddFamily() {
       render: (_, record) => (
         <div className="flex items-center gap-2">
           <Button
-            onClick={() => handleEditGroup(record)}
+            onClick={() => {
+              handleEditGroup(record);
+            }}
             icon={<CiEdit />}
             className="!bg-[#0C469D] !text-white"
           />
@@ -397,8 +394,8 @@ function AddFamily() {
             rules={[{ required: true, message: 'Please select a family!' }]}
           >
             <Select placeholder="Select family">
-              {data.map((family) => (
-                <Select.Option key={family.key} value={family.familyName}>
+              {families?.data?.map((family) => (
+                <Select.Option key={family.key} value={family.name}>
                   {family.familyName}
                 </Select.Option>
               ))}

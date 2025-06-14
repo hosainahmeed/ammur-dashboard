@@ -16,6 +16,27 @@ const familiesApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['families'],
     }),
+    updateFamily: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/families/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['families'],
+    }),
+    createFamily: builder.mutation({
+      query: ({ data }) => ({
+        url: '/families/create-family',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['families'],
+    }),
   }),
 });
-export const { useGetFamiliesQuery, useDeleteFamilyMutation } = familiesApis;
+export const {
+  useGetFamiliesQuery,
+  useDeleteFamilyMutation,
+  useUpdateFamilyMutation,
+  useCreateFamilyMutation
+} = familiesApis;
