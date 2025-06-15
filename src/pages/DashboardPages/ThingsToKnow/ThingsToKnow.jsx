@@ -30,9 +30,6 @@ function ThingsToKnow() {
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
   const [fileList, setFileList] = useState([]);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewTitle, setPreviewTitle] = useState('');
 
   const {
     data: categories = [],
@@ -129,20 +126,12 @@ function ThingsToKnow() {
     setEditData(null);
     form.resetFields();
     setFileList([]);
-    setPreviewVisible(false);
-    setPreviewImage('');
-    setPreviewTitle('');
   };
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
-    setPreviewImage(file.url || file.preview);
-    setPreviewVisible(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
-    );
   };
 
   const uploadProps = {
@@ -156,12 +145,6 @@ function ThingsToKnow() {
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
         message.error('You can only upload image files!');
-        return Upload.LIST_IGNORE;
-      }
-
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        message.error('Image must be smaller than 2MB!');
         return Upload.LIST_IGNORE;
       }
 
@@ -308,7 +291,6 @@ function ThingsToKnow() {
 
           <Form.Item
             label="Category Image"
-            extra="Upload a single image (max 2MB)"
           >
             <Upload {...uploadProps}>
               {fileList.length >= 1 ? null : (
@@ -320,15 +302,6 @@ function ThingsToKnow() {
             </Upload>
           </Form.Item>
         </Form>
-      </Modal>
-
-      <Modal
-        open={previewVisible}
-        title={previewTitle}
-        footer={null}
-        onCancel={() => setPreviewVisible(false)}
-      >
-        <img alt="Preview" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </div>
   );

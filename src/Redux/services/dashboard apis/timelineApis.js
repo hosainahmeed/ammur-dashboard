@@ -18,7 +18,7 @@ const timelineApis = baseApis.injectEndpoints({
       invalidatesTags: ['timeline'],
     }),
     deleteTimeline: builder.mutation({
-      query: ({id}) => ({
+      query: ({ id }) => ({
         url: `/timelines/${id}`,
         method: 'DELETE',
       }),
@@ -29,6 +29,7 @@ const timelineApis = baseApis.injectEndpoints({
         url: `/timelines/${id}`,
         method: 'GET',
       }),
+      providesTags: ['timelineSingle'],
     }),
     updateTimeline: builder.mutation({
       query: ({ id, data }) => ({
@@ -36,7 +37,7 @@ const timelineApis = baseApis.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: ['timeline'],
+      invalidatesTags: ['timeline', 'timelineSingle'],
     }),
   }),
 });
