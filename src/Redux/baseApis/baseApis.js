@@ -16,6 +16,7 @@ const baseApis = createApi({
     'termsAndConditions',
     'timeline',
     'thingsToKnow',
+    'thingsToKnow-single',
     'about',
     'families',
     'profile',

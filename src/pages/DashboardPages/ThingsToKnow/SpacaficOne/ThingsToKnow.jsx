@@ -20,6 +20,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import {
   useSingleThingsToKnowQuery,
   useUpdateSubCategoryMutation,
+  useCreateSubCategoryMutation,
 } from '../../../../Redux/services/dashboard apis/thingsToKnowApis';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
@@ -31,14 +32,16 @@ function ThingsToKnowSpecific() {
   const id = location.state;
 
   const { data } = useSingleThingsToKnowQuery({ id: id });
-  const [updateCategory] = useUpdateSubCategoryMutation();
+  const [updateSubCategory, { isLoading: isUpdating }] =
+    useUpdateSubCategoryMutation();
+  const [createSubCategory] = useCreateSubCategoryMutation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [fileList, setFileList] = useState([]);
-  console.log(fileList[0]);
   const [content, setContent] = useState('');
+
   const showModal = (item) => {
     setSelectedBlog(item);
     setIsModalVisible(true);
@@ -92,14 +95,13 @@ function ThingsToKnowSpecific() {
 
     formData.append('title', values.title);
     formData.append('date', values.date);
-
     formData.append('description', content);
 
     if (fileList[0]?.originFileObj) {
       formData.append('file', fileList[0].originFileObj);
     }
 
-    await updateCategory({ id: selectedBlog._id, data: formData })
+    await updateSubCategory({ id: selectedBlog._id, data: formData })
       .unwrap()
       .then((res) => {
         if (res?.success) {
@@ -109,30 +111,30 @@ function ThingsToKnowSpecific() {
       });
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     const values = form.getFieldsValue();
+    const formData = new FormData();
 
-    const newData = {
-      ...values,
-      description: content,
-      file: fileList[0] || null,
-    };
+    formData.append('title', values.title);
+    formData.append('date', values.date);
+    formData.append('description', content);
+    formData.append('thingToKnowCategoryId', id);
 
-    console.log('Created Data:', newData);
-    toast.success('Blog created successfully');
-    handleCancel();
-  };
-
-  const beforeUpload = (file) => {
-    const isImage = file.type.startsWith('image/');
-    if (!isImage) {
-      message.error('You can only upload image files!');
+    if (fileList[0]?.originFileObj) {
+      formData.append('file', fileList[0].originFileObj);
     }
-    return isImage || Upload.LIST_IGNORE;
-  };
 
-  const handleUploadChange = ({ fileList }) => {
-    setFileList(fileList.slice(-1));
+    await createSubCategory({ data: formData })
+      .unwrap()
+      .then((res) => {
+        if (res?.success) {
+          toast.success(res?.message || 'Blog created successfully');
+          handleCancel();
+        }
+      })
+      .catch((error) => {
+        toast.error(error?.data?.message || 'Failed to create blog');
+      });
   };
 
   const handlePreview = async (file) => {
@@ -167,6 +169,7 @@ function ThingsToKnowSpecific() {
     listType: 'picture-card',
     accept: 'image/*',
   };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
@@ -292,7 +295,11 @@ function ThingsToKnowSpecific() {
         open={isEditModalVisible}
         onOk={handleUpdate}
         onCancel={handleCancel}
-        okText="Update"
+        okText={`${isUpdating ? 'Updating...' : 'Update'}`}
+        okButtonProps={{
+          className: '!bg-[#0C469D] !text-white',
+          disabled: isUpdating,
+        }}
         width={1200}
       >
         <Form requiredMark={false} form={form} layout="vertical">
@@ -327,9 +334,19 @@ function ThingsToKnowSpecific() {
         onOk={handleCreate}
         onCancel={handleCancel}
         okText="Create"
-        width={700}
+        width={1200} // Made consistent with edit modal width
       >
-        <Form form={form} layout="vertical">
+        <Form requiredMark={false} form={form} layout="vertical">
+          <Form.Item label="Image" rules={[{ required: true }]}>
+            <Upload {...uploadProps}>
+              {fileList.length >= 1 ? null : (
+                <div>
+                  <FaUpload className="text-gray-400 text-lg mb-1" />
+                  <div>Upload</div>
+                </div>
+              )}
+            </Upload>
+          </Form.Item>
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -340,18 +357,6 @@ function ThingsToKnowSpecific() {
 
           <Form.Item label="Description" rules={[{ required: true }]}>
             <JoditComponent content={content} setContent={setContent} />
-          </Form.Item>
-
-          <Form.Item label="Image" rules={[{ required: true }]}>
-            <Upload
-              beforeUpload={beforeUpload}
-              onChange={handleUploadChange}
-              fileList={fileList}
-              maxCount={1}
-              listType="picture"
-            >
-              <Button icon={<UploadOutlined />}>Upload Image</Button>
-            </Upload>
           </Form.Item>
         </Form>
       </Modal>
