@@ -3,14 +3,13 @@ import user from '../../../assets/icons/man.png';
 import blockUser from '../../../assets/icons/block-user.png';
 import GrowthChart from '../../../Components/charts/UserGrowthChart';
 import Loader from '../../../Components/Shared/Loaders/Loader';
-import { useGetTotalOverviewQuery } from '../../../Redux/services/dashboard apis/totalOverviewApis';
-// import EearningsChart from '../../../Components/charts/EearningsChart';
+import { useGrowthOverviewQuery } from '../../../Redux/services/dashboard apis/totalOverviewApis';
 function DashboardHome() {
-  const { data, isLoading } = useGetTotalOverviewQuery();
+  const { data: growthData, isLoading } = useGrowthOverviewQuery();
   const cardData = [
     {
       title: 'Total User',
-      value: isLoading ? <Loader /> : Number(data?.data?.totalDriver) || 0,
+      value: isLoading ? <Loader /> : Number(growthData?.data?.members) || 0,
       icon: (
         <div className="!w-24 !h-24 overflow-hidden">
           <img
@@ -23,7 +22,7 @@ function DashboardHome() {
     },
     {
       title: 'Total Admin',
-      value: isLoading ? <Loader /> : Number(data?.data?.totalUser) || 0,
+      value: isLoading ? <Loader /> : Number(growthData?.data?.admins) || 0,
       icon: (
         <div className="w-24 h-24 overflow-hidden">
           <img
@@ -53,7 +52,7 @@ function DashboardHome() {
                 <h1 className="text-3xl !font-semibold leadingflex items-center justify-center -4">
                   {card.title}
                 </h1>
-                <h1 className="text-3xl !font-semibold leading-4 text-[var(--bg-green-high)]">
+                <h1 className="text-3xl !mt-5 !font-semibold leading-4 text-[var(--bg-green-high)]">
                   {card.value}
                 </h1>
               </div>
@@ -65,9 +64,6 @@ function DashboardHome() {
         <div className="w-full h-full">
           <GrowthChart />
         </div>
-        {/* <div className="w-full col-span-4 xl:col-span-2 h-full">
-          <EearningsChart />
-        </div> */}
       </div>
     </div>
   );

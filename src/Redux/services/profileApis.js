@@ -13,14 +13,11 @@ export const profileApis = baseApis.injectEndpoints({
       providesTags: ['profile'],
     }),
     updateProfileData: builder.mutation({
-      query: (data) => {
+      query: ({ data, id }) => {
         return {
-          url: '/admin/edit-profile',
+          url: `/users/${id}`,
           method: 'PATCH',
           body: data,
-          headers: {
-            Authorization: `${localStorage.getItem('accessToken')}`,
-          },
         };
       },
       invalidatesTags: ['profile'],

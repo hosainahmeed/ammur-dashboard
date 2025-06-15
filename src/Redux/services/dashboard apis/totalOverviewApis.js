@@ -1,5 +1,4 @@
-import baseApis from "../../baseApis/baseApis";
-
+import baseApis from '../../baseApis/baseApis';
 
 const totalOverviewApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,13 +9,9 @@ const totalOverviewApis = baseApis.injectEndpoints({
       }),
     }),
     growthOverview: builder.query({
-      query: ({ role, year }) => ({
-        url: '/dashboard/growth',
+      query: () => ({
+        url: '/users/all-users-admins',
         method: 'GET',
-        params: {
-          role,
-          year,
-        },
       }),
     }),
   }),

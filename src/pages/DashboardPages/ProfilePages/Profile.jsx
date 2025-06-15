@@ -4,14 +4,14 @@ import { Button } from 'antd';
 import { FaCameraRetro } from 'react-icons/fa6';
 import ProfileEdit from '../../../Components/ProfilePage/ProfileEdit.jsx';
 import ChangePassword from '../../../Components/ProfilePage/ChangePassword.jsx';
-// import { useGetProfileDataQuery } from '../../../Redux/services/profileApis.js';
-// import { imageUrl } from '../../../Utils/server.js';
+import { useGetProfileDataQuery } from '../../../Redux/services/profileApis.js';
+import { imageUrl } from '../../../Utils/server.js';
 
 const Tabs = ['Edit Profile', 'Change Password'];
 
 const Profile = () => {
   const [tab, setTab] = useState(Tabs[0]);
-  // const { data: profileData, isLoading } = useGetProfileDataQuery({});
+  const { data: profileData, isLoading } = useGetProfileDataQuery({});
   const [image, setImage] = useState(null);
   const handleImageUpload = (e) => {
     if (e.target.files?.[0]) {
@@ -19,12 +19,11 @@ const Profile = () => {
       localStorage.setItem('image', e.target.files[0]);
     }
   };
-  // const profileImage = image
-  //   ? URL.createObjectURL(image)
-  //   : profileData?.data?.profile_image
-  //   ? imageUrl(profileData.data.profile_image)
-  //   : 'https://placehold.co/400';
-
+  const profileImage = image
+    ? URL.createObjectURL(image)
+    : profileData?.data?.img
+    ? imageUrl(profileData.data.img)
+    : 'https://placehold.co/400';
   return (
     <>
       <div className="max-w-[700px] mx-auto  p-4 rounded-md">
@@ -39,10 +38,7 @@ const Profile = () => {
           >
             <img
               className="w-full h-full object-cover rounded-full"
-              src={
-                'https://wallpapercat.com/w/full/b/9/2/2144467-1920x1080-desktop-full-hd-hinata-naruto-wallpaper.jpg'
-              }
-              // src={profileImage}
+              src={profileImage}
               alt="Profile"
             />
             {tab === 'Edit Profile' && (
@@ -50,7 +46,10 @@ const Profile = () => {
                 aria-label="Edit Profile Picture"
                 className="absolute right-0 bottom-2 rounded-full bg-[var(--bg-green-high)]  p-2"
               >
-                <FaCameraRetro size={12} className="text-white cursor-pointer" />
+                <FaCameraRetro
+                  size={12}
+                  className="text-white cursor-pointer"
+                />
               </button>
             )}
 
@@ -64,8 +63,7 @@ const Profile = () => {
           </div>
         </div>
         <p className="text-2xl text-center text-black mt-2">
-          {/* {profileData?.data?.name || 'User Name'} */}
-          Hinata
+          {profileData?.data?.fullName || 'User Name'}
         </p>
       </div>
 
@@ -89,20 +87,15 @@ const Profile = () => {
 
       <div className="max-w-[700px] mx-auto bg-[var(--black-200)] p-4 rounded-md">
         {tab === 'Edit Profile' ? (
-          // isLoading ? (
-          //   <span className="loader-black"></span>
-          // ) : (
-          //   <ProfileEdit
-          //     image={image}
-          //     defaultImage={profileImage}
-          //     data={profileData?.data}
-          //   />
-          // )
-          <ProfileEdit
-            image={image}
-            // defaultImage={profileImage}
-            // data={profileData?.data}
-          />
+          isLoading ? (
+            <span className="loader-black"></span>
+          ) : (
+            <ProfileEdit
+              image={image}
+              defaultImage={profileImage}
+              data={profileData?.data}
+            />
+          )
         ) : (
           <ChangePassword />
         )}
