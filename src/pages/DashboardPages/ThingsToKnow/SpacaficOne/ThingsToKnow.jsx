@@ -17,7 +17,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { FaEdit, FaPlus } from 'react-icons/fa';
 import { FaEye, FaTrash, FaUpload } from 'react-icons/fa6';
 import { UploadOutlined } from '@ant-design/icons';
-import { useSingleThingsToKnowQuery } from '../../../../Redux/services/dashboard apis/thingsToKnowApis';
+import {
+  useSingleThingsToKnowQuery,
+  useUpdateSubCategoryMutation,
+} from '../../../../Redux/services/dashboard apis/thingsToKnowApis';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import JoditComponent from '../../../../Components/Shared/JoditComponent';
@@ -28,11 +31,13 @@ function ThingsToKnowSpecific() {
   const id = location.state;
 
   const { data } = useSingleThingsToKnowQuery({ id: id });
+  const [updateCategory] = useUpdateSubCategoryMutation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [fileList, setFileList] = useState([]);
+  console.log(fileList[0]);
   const [content, setContent] = useState('');
   const showModal = (item) => {
     setSelectedBlog(item);
@@ -42,7 +47,9 @@ function ThingsToKnowSpecific() {
   const showEditModal = (item) => {
     setSelectedBlog(item);
     setContent(item.description || '');
-    setFileList([{ uid: '-1', url: item.img, name: 'existing-image.png' }]);
+    setFileList([
+      { uid: '-1', name: 'current-image', status: 'done', url: item.img },
+    ]);
     form.setFieldsValue({
       title: item.title,
       date: dayjs(item.createdAt),
@@ -79,25 +86,38 @@ function ThingsToKnowSpecific() {
     toast.success('Deleted successfully');
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     const values = form.getFieldsValue();
-    const updatedData = {
-      ...values,
-      description: content,
-      image: fileList[0]?.url || null,
-    };
-    console.log('Updated Data:', updatedData);
-    toast.success('Blog updated successfully');
-    handleCancel();
+    const formData = new FormData();
+
+    formData.append('title', values.title);
+    formData.append('date', values.date);
+
+    formData.append('description', content);
+
+    if (fileList[0]?.originFileObj) {
+      formData.append('file', fileList[0].originFileObj);
+    }
+
+    await updateCategory({ id: selectedBlog._id, data: formData })
+      .unwrap()
+      .then((res) => {
+        if (res?.success) {
+          toast.success(res?.message || 'Category updated successfully');
+          handleCancel();
+        }
+      });
   };
 
   const handleCreate = () => {
     const values = form.getFieldsValue();
+
     const newData = {
       ...values,
       description: content,
-      image: fileList[0]?.url || null,
+      file: fileList[0] || null,
     };
+
     console.log('Created Data:', newData);
     toast.success('Blog created successfully');
     handleCancel();
@@ -212,12 +232,17 @@ function ThingsToKnowSpecific() {
             <Card.Meta
               title={
                 <div className="flex flex-col">
-                  <span className="!text-lg !font-semibold">{item.title}</span>
-                  <p className="font-normal text-sm text-wrap">
-                    {item.description
-                      ? `${item.description.slice(0, 40)}...`
-                      : 'No description available.'}
-                  </p>
+                  <span className="!text-lg !font-semibold">
+                    {item.title.slice(0, 20)}...
+                  </span>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: item?.description
+                        ? item?.description.slice(0, 50)
+                        : '',
+                    }}
+                    className="font-normal text-sm text-wrap"
+                  />
                 </div>
               }
             />
@@ -268,9 +293,19 @@ function ThingsToKnowSpecific() {
         onOk={handleUpdate}
         onCancel={handleCancel}
         okText="Update"
-        width={700}
+        width={1200}
       >
-        <Form form={form} layout="vertical">
+        <Form requiredMark={false} form={form} layout="vertical">
+          <Form.Item label="Image">
+            <Upload {...uploadProps}>
+              {fileList.length >= 1 ? null : (
+                <div>
+                  <FaUpload className="text-gray-400 text-lg mb-1" />
+                  <div>Upload</div>
+                </div>
+              )}
+            </Upload>
+          </Form.Item>
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -281,17 +316,6 @@ function ThingsToKnowSpecific() {
 
           <Form.Item label="Description">
             <JoditComponent content={content} setContent={setContent} />
-          </Form.Item>
-
-          <Form.Item label="Image">
-            <Upload {...uploadProps}>
-              {fileList.length >= 1 ? null : (
-                <div>
-                  <FaUpload className="text-gray-400 text-lg mb-1" />
-                  <div>Upload</div>
-                </div>
-              )}
-            </Upload>
           </Form.Item>
         </Form>
       </Modal>
