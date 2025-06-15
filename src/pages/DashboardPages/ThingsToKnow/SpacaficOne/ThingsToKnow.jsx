@@ -12,45 +12,42 @@ import {
   Upload,
   message,
 } from 'antd';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FaEdit, FaPlus } from 'react-icons/fa';
 import { FaEye, FaTrash } from 'react-icons/fa6';
 import { UploadOutlined } from '@ant-design/icons';
-import moment from 'moment/moment';
+import { useSingleThingsToKnowQuery } from '../../../../Redux/services/dashboard apis/thingsToKnowApis';
+import toast from 'react-hot-toast';
+import dayjs from 'dayjs';
+import JoditComponent from '../../../../Components/Shared/JoditComponent';
 
-function Blogs() {
+function ThingsToKnowSpecific() {
   const [form] = Form.useForm();
-  const params = useParams();
+  const location = useLocation();
+  const id = location.state;
 
-  const [blogs, setBlogs] = useState([
-    {
-      id: 12,
-      image: 'https://picsum.photos/600/300',
-      title: 'Lorem ipsum dolor sit amet.',
-      date: '2025-02-02',
-      descriptions:
-        'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde dignissimos error quasi! Vel minus inventore molestias sunt corporis sequi excepturi voluptatem.',
-    },
-  ]);
+  const { data } = useSingleThingsToKnowQuery({ id: id });
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [fileList, setFileList] = useState([]);
-
+  const [content, setContent] = useState('');
   const showModal = (item) => {
     setSelectedBlog(item);
     setIsModalVisible(true);
   };
 
   const showEditModal = (item) => {
+    console.log(item);
     setSelectedBlog(item);
+    setContent(item.description);
     form.setFieldsValue({
       title: item.title,
-      date: item.date ? moment(item.date, 'YYYY-MM-DD') : null,
-      descriptions: item.descriptions,
+      date: dayjs(item.createdAt),
     });
+
     setIsEditModalVisible(true);
   };
 
@@ -68,51 +65,15 @@ function Blogs() {
   };
 
   const handleDelete = (id) => {
-    setBlogs(blogs.filter((blog) => blog.id !== id));
-    message.success('Blog deleted successfully');
+    toast.success('Deleted Successfully');
   };
 
   const handleUpdate = () => {
-    form.validateFields().then((values) => {
-      const updatedBlogs = blogs.map((blog) => {
-        if (blog.id === selectedBlog.id) {
-          return {
-            ...blog,
-            title: values.title,
-            date: values.date.format('YYYY-MM-DD'),
-            descriptions: values.descriptions,
-            image:
-              fileList.length > 0
-                ? URL.createObjectURL(fileList[0].originFileObj)
-                : blog.image,
-          };
-        }
-        return blog;
-      });
-
-      setBlogs(updatedBlogs);
-      setIsEditModalVisible(false);
-      message.success('Blog updated successfully');
-    });
+    toast.success('Updated Successfully');
   };
 
   const handleCreate = () => {
-    form.validateFields().then((values) => {
-      const newBlog = {
-        id: Math.max(...blogs.map((blog) => blog.id), 0) + 1,
-        title: values.title,
-        date: values.date.format('YYYY-MM-DD'),
-        descriptions: values.descriptions,
-        image:
-          fileList.length > 0
-            ? URL.createObjectURL(fileList[0].originFileObj)
-            : 'https://via.placeholder.com/150',
-      };
-
-      setBlogs([...blogs, newBlog]);
-      setIsCreateModalVisible(false);
-      message.success('Blog created successfully');
-    });
+    toast.success('Blog created successfully');
   };
 
   const beforeUpload = (file) => {
@@ -124,7 +85,7 @@ function Blogs() {
   };
 
   const handleUploadChange = ({ fileList }) => {
-    setFileList(fileList.slice(-1)); // Only allow one file
+    setFileList(fileList.slice(-1));
   };
 
   return (
@@ -136,7 +97,7 @@ function Blogs() {
               title: <Link to="/things-to-know">Things To Know</Link>,
             },
             {
-              title: `${params.slug}`,
+              title: `${data?.data?.title}`,
             },
           ]}
         />
@@ -148,15 +109,16 @@ function Blogs() {
           Add New Blog
         </Button>
       </div>
-      <div className="grid-4">
-        {blogs.map((item) => (
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {data?.data?.ThingToKnows?.map((item) => (
           <Card
-            key={item.id}
+            key={item._id}
             className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
             cover={
               <img
                 alt={item.title}
-                src={item.image}
+                src={item.img}
                 className="h-[180px] w-full object-cover"
               />
             }
@@ -170,7 +132,7 @@ function Blogs() {
               <Popconfirm
                 title="Are you sure you want to delete this item?"
                 placement="top"
-                onConfirm={() => handleDelete(item.id)}
+                onConfirm={() => handleDelete(item._id)}
                 okText="Yes"
                 cancelText="No"
               >
@@ -194,7 +156,9 @@ function Blogs() {
                 <div className="flex flex-col">
                   <span className="!text-lg !font-semibold">{item.title}</span>
                   <p className="font-normal text-sm text-wrap">
-                    {item.descriptions.slice(0, 40)}...
+                    {item.description
+                      ? `${item?.description.slice(0, 40)}...`
+                      : 'No description available.'}
                   </p>
                 </div>
               }
@@ -202,10 +166,9 @@ function Blogs() {
           </Card>
         ))}
       </div>
-
       {/* View Modal */}
       <Modal
-        visible={isModalVisible}
+        open={isModalVisible}
         title={selectedBlog?.title}
         onCancel={handleCancel}
         footer={[
@@ -218,7 +181,7 @@ function Blogs() {
         {selectedBlog && (
           <>
             <img
-              src={selectedBlog.image}
+              src={selectedBlog.img}
               alt={selectedBlog.title}
               style={{
                 width: '100%',
@@ -231,10 +194,10 @@ function Blogs() {
                 {selectedBlog.title}
               </Descriptions.Item>
               <Descriptions.Item label="Date">
-                {selectedBlog.date}
+                {selectedBlog.date || 'N/A'}
               </Descriptions.Item>
               <Descriptions.Item label="Description">
-                {selectedBlog.descriptions}
+                {selectedBlog.descriptions || 'No description provided.'}
               </Descriptions.Item>
             </Descriptions>
           </>
@@ -244,7 +207,7 @@ function Blogs() {
       {/* Edit Modal */}
       <Modal
         title="Edit Blog"
-        visible={isEditModalVisible}
+        open={isEditModalVisible}
         onOk={handleUpdate}
         onCancel={handleCancel}
         okText="Update"
@@ -268,13 +231,17 @@ function Blogs() {
           </Form.Item>
 
           <Form.Item
-            name="descriptions"
+            name="description"
             label="Description"
             rules={[
               { required: true, message: 'Please input the description!' },
             ]}
           >
             <Input.TextArea rows={4} />
+            <JoditComponent
+              content={content}
+              setContent={setContent}
+            />
           </Form.Item>
 
           <Form.Item label="Image">
@@ -347,4 +314,4 @@ function Blogs() {
   );
 }
 
-export default Blogs;
+export default ThingsToKnowSpecific;

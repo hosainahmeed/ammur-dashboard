@@ -13,7 +13,7 @@ export const privacyPolicyApis = baseApis.injectEndpoints({
       query: ({ description }) => ({
         url: '/privacies/create-privacy',
         method: 'POST',
-        body: description,
+        body: { description: description },
       }),
       invalidatesTags: ['privacyPolicy'],
     }),

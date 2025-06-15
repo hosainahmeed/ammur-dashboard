@@ -13,7 +13,7 @@ import {
   message,
   Spin,
 } from 'antd';
-import { FaEdit, FaTrash, FaPlus, FaUpload } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaUpload, FaEye } from 'react-icons/fa';
 import { GoArrowUpRight } from 'react-icons/go';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
@@ -23,42 +23,55 @@ import {
   useGetThingsToKnowQuery,
   useUpdateThingsToKnowMutation,
 } from '../../../Redux/services/dashboard apis/thingsToKnowApis';
-
-const { Dragger } = Upload;
+import { imageUrl } from '../../../Utils/server';
 
 function ThingsToKnow() {
   const [form] = Form.useForm();
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
   const [fileList, setFileList] = useState([]);
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewTitle, setPreviewTitle] = useState('');
 
-  // RTK Query hooks
   const {
     data: categories = [],
     isLoading,
     isError,
   } = useGetThingsToKnowQuery();
-  const [createCategory] = useCreateThingsToKnowMutation();
-  const [updateCategory] = useUpdateThingsToKnowMutation();
+  const [createCategory, { isLoading: isCreating }] =
+    useCreateThingsToKnowMutation();
+  const [updateCategory, { isLoading: isUpdating }] =
+    useUpdateThingsToKnowMutation();
   const [deleteCategory] = useDeleteThingsToKnowMutation();
-  console.log(categories?.data);
+
+  const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   const handleEdit = (category) => {
     setEditData(category);
     form.setFieldsValue({
       title: category.title,
     });
-    setFileList(
-      category.image
-        ? [
-            {
-              uid: '-1',
-              name: 'current-image.png',
-              status: 'done',
-              url: category.image,
-            },
-          ]
-        : []
-    );
+
+    if (category.img) {
+      setFileList([
+        {
+          uid: '-1',
+          name: 'current-image',
+          status: 'done',
+          url: imageUrl(category.img),
+        },
+      ]);
+    } else {
+      setFileList([]);
+    }
+
     setShowModal(true);
   };
 
@@ -80,36 +93,34 @@ function ThingsToKnow() {
     try {
       const values = await form.validateFields();
       const formData = new FormData();
-
       formData.append('title', values.title);
-      if (fileList.length > 0 && fileList[0]) {
-        formData.append('file', fileList[0]);
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        formData.append('file', fileList[0].originFileObj);
+      } else if (fileList.length === 0 && editData?.img) {
+        formData.delete('file', '');
       }
 
       if (editData) {
         await updateCategory({ id: editData?._id, data: formData })
           .unwrap()
           .then((res) => {
-            console.log(res);
             if (res?.success) {
               toast.success(res?.message || 'Category updated successfully');
+              handleCloseModal();
             }
           });
       } else {
-        // Create new category
         await createCategory({ data: formData })
           .unwrap()
           .then((res) => {
-            console.log(res);
             if (res?.success) {
               toast.success(res?.message || 'Category created successfully');
+              handleCloseModal();
             }
           });
       }
-
-      handleCloseModal();
     } catch (err) {
-      toast.error(err.data?.message || 'Failed to save category');
+      toast.error(err?.data?.message || 'Failed to save category');
     }
   };
 
@@ -118,11 +129,28 @@ function ThingsToKnow() {
     setEditData(null);
     form.resetFields();
     setFileList([]);
+    setPreviewVisible(false);
+    setPreviewImage('');
+    setPreviewTitle('');
+  };
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewVisible(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
+    );
   };
 
   const uploadProps = {
     onRemove: (file) => {
-      setFileList([]);
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
     },
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
@@ -130,11 +158,24 @@ function ThingsToKnow() {
         message.error('You can only upload image files!');
         return Upload.LIST_IGNORE;
       }
+
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        message.error('Image must be smaller than 2MB!');
+        return Upload.LIST_IGNORE;
+      }
+
       setFileList([file]);
       return false;
     },
+    onChange: ({ fileList: newFileList }) => {
+      setFileList(newFileList);
+    },
+    onPreview: handlePreview,
     fileList,
     maxCount: 1,
+    listType: 'picture-card',
+    accept: 'image/*',
   };
 
   if (isLoading) return <Spin size="large" className="flex justify-center" />;
@@ -145,6 +186,7 @@ function ThingsToKnow() {
       <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
         <PageHeading title={'Things To Know'} />
       </div>
+
       <div className="flex items-center justify-between mb-4">
         <Input.Search
           placeholder="Search by title"
@@ -170,7 +212,7 @@ function ThingsToKnow() {
               cover={
                 <img
                   alt={item?.title}
-                  src={item?.img || 'https://via.placeholder.com/150'}
+                  src={imageUrl(item?.img) || 'https://via.placeholder.com/150'}
                   className="h-[180px] w-full object-cover"
                 />
               }
@@ -195,7 +237,10 @@ function ThingsToKnow() {
                     className="!flex !w-full !items-center !justify-center"
                   />
                 </Popconfirm>,
-                <Link to={`/things-to-know/blogs/${item?.title}`}>
+                <Link
+                  to={`/things-to-know/blogs/${item?.title}`}
+                  state={item?._id}
+                >
                   <Button
                     type="text"
                     icon={<GoArrowUpRight />}
@@ -244,7 +289,7 @@ function ThingsToKnow() {
             key="submit"
             className="!bg-[#0C469D] !text-white"
             onClick={handleSubmit}
-            loading={isLoading}
+            loading={isCreating || isUpdating}
           >
             {editData ? 'Update' : 'Save'}
           </Button>,
@@ -261,23 +306,29 @@ function ThingsToKnow() {
             <Input placeholder="Enter category title" />
           </Form.Item>
 
-          <Form.Item label="Category Image">
-            <Dragger
-              {...uploadProps}
-              className="!flex !flex-col !items-center !justify-center !p-4 !border-2 !border-dashed !border-gray-300 !rounded-lg"
-            >
-              <p className="ant-upload-drag-icon !flex !items-center !justify-center">
-                <FaUpload className="text-gray-400 text-2xl" />
-              </p>
-              <p className="ant-upload-text">
-                Click or drag file to this area to upload
-              </p>
-              <p className="ant-upload-hint">
-                Support for a single image upload
-              </p>
-            </Dragger>
+          <Form.Item
+            label="Category Image"
+            extra="Upload a single image (max 2MB)"
+          >
+            <Upload {...uploadProps}>
+              {fileList.length >= 1 ? null : (
+                <div>
+                  <FaUpload className="text-gray-400 text-lg mb-1" />
+                  <div>Upload</div>
+                </div>
+              )}
+            </Upload>
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        open={previewVisible}
+        title={previewTitle}
+        footer={null}
+        onCancel={() => setPreviewVisible(false)}
+      >
+        <img alt="Preview" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </div>
   );

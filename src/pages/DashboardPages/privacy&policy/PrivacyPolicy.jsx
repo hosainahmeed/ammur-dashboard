@@ -20,7 +20,7 @@ const PrivacyPolicy = () => {
     }
   }, [data]);
 
-  const handleLogContent = async () => {
+  const handleUpdateContent = async () => {
     try {
       await setDescription({ description: content })
         .unwrap()
@@ -58,7 +58,7 @@ const PrivacyPolicy = () => {
 
       {/* Button to log content */}
       <Button
-        onClick={handleLogContent}
+        onClick={handleUpdateContent}
         disabled={isSubmitting}
         style={{
           justifyContent: 'center',
