@@ -47,7 +47,7 @@ const AllUsers = ({ recentUser }) => {
         familySide: user?.familySide || 'N/A',
         subscription: user?.subscription || 'N/A',
         joined: user?.createdAt.split('T')[0] || 'N/A',
-        status: user?.status === 'active' || 'N/A',
+        status: user?.status || 'N/A',
         isBlocked: user?.isDeleted || 'N/A',
         avatar: user?.img || null,
         fullUser: user,
@@ -96,7 +96,7 @@ const AllUsers = ({ recentUser }) => {
   const blockUser = async (record) => {
     const id = record?.id;
     const data = {
-      status: false,
+      status: record?.status === 'active' ? 'blocked' : 'active',
     };
     try {
       await updateUserStatus({ id, data })
@@ -111,9 +111,6 @@ const AllUsers = ({ recentUser }) => {
     }
   };
 
-  const handleUserBlock = (record) => {
-    console.log(record?.id);
-  };
   // Search handler for all user
   const handleSearch = (value) => {
     if (activeTab === '1') {
@@ -200,13 +197,14 @@ const AllUsers = ({ recentUser }) => {
           </Button>
           <Popconfirm
             placement="bottomRight"
-            title="Are you sure you want block this user?"
-            // onConfirm={() => handleUserBlock(record)}
+            title={`Are you sure you want ${
+              record?.status === 'active' ? 'block' : 'unblock'
+            } this user?`}
             onConfirm={() => blockUser(record)}
           >
             <Button
               className={`${
-                record?.isBlocked ? '!bg-green-200' : '!bg-red-300'
+                record?.status === 'active' ? '!bg-green-200' : '!bg-red-300'
               } ant-btn ant-btn-default`}
             >
               <CgBlock />

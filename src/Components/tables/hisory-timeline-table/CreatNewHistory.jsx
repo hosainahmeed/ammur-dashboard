@@ -151,7 +151,7 @@ function CreatNewHistory() {
               form={form}
               onFinish={onFinish}
               layout="vertical"
-              requiredMark="optional"
+              requiredMark={false}
             >
               <Row gutter={[24, 16]}>
                 <Col xs={24} md={6}>
@@ -163,6 +163,7 @@ function CreatNewHistory() {
                       </span>
                     }
                     name="category_image"
+
                   >
                     <Upload
                       beforeUpload={() => false}
