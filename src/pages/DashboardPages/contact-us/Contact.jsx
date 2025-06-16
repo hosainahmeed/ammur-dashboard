@@ -31,6 +31,7 @@ import {
 import './Contact.css';
 import PageHeading from '../../../Components/Shared/PageHeading';
 import { useGetAllEmailQuery } from '../../../Redux/services/settings/contactUsApis';
+import toast from 'react-hot-toast';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -38,7 +39,6 @@ const { TabPane } = Tabs;
 
 function Contact() {
   const { data: emailsData } = useGetAllEmailQuery();
-  console.log(emailsData);
   /*this is the response of emailsData */
   //  {
   //   success: true,
@@ -65,11 +65,12 @@ function Contact() {
   //     }
   //   ]
   // }
-  const [emails, setEmails] = useState([
-    { id: 1, address: 'primary@example.com', label: 'Primary' },
-    { id: 2, address: 'work@example.com', label: 'Work' },
-    { id: 3, address: 'personal@example.com', label: 'Personal' },
-  ]);
+  const emails = emailsData?.data.map((email) => ({
+    id: email?._id,
+    lebel: email?.lebel,
+    email: email?.email,
+    isDeleted: email?.isDeleted,
+  }));
 
   const [phones, setPhones] = useState([
     { id: 1, number: '+1 (555) 123-4567', label: 'Mobile' },
@@ -198,31 +199,12 @@ function Contact() {
   };
 
   const deletePhone = (id) => {
-    setPhones(phones.filter((item) => item.id !== id));
-    message.success('Phone number deleted successfully');
+    console.log(id);
+    toast.success('Phone number deleted successfully');
   };
 
   const handlePhoneOk = () => {
-    phoneForm.validateFields().then((values) => {
-      if (editingItem) {
-        // Update existing phone
-        setPhones(
-          phones.map((item) =>
-            item.id === editingItem.id ? { ...item, ...values } : item
-          )
-        );
-        message.success('Phone number updated successfully');
-      } else {
-        // Add new phone
-        const newId =
-          phones.length > 0
-            ? Math.max(...phones.map((item) => item.id)) + 1
-            : 1;
-        setPhones([...phones, { id: newId, ...values }]);
-        message.success('Phone number added successfully');
-      }
-      setPhoneModalVisible(false);
-    });
+    toast.success('Phone number added successfully');
   };
 
   // Social media operations
@@ -270,12 +252,12 @@ function Contact() {
   const emailColumns = [
     {
       title: 'Email Address',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: 'Label',
-      dataIndex: 'label',
+      dataIndex: 'lebel',
       key: 'label',
     },
     {

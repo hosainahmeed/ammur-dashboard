@@ -86,6 +86,7 @@ function ThingsToKnowSpecific() {
 
   const handleDelete = (id) => {
     // plug in delete mutation here
+    console.log(id)
     toast.success('Deleted successfully');
   };
 
