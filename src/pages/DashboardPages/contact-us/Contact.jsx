@@ -10,7 +10,6 @@ import {
   Space,
   Tooltip,
   message,
-  Typography,
   Card,
   Popconfirm,
 } from 'antd';
@@ -25,7 +24,6 @@ import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
-  SaveOutlined,
   CopyOutlined,
   CheckOutlined,
 } from '@ant-design/icons';
@@ -47,7 +45,6 @@ import {
 } from '../../../Redux/services/settings/contactUsApis';
 import toast from 'react-hot-toast';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 const { TabPane } = Tabs;
 
