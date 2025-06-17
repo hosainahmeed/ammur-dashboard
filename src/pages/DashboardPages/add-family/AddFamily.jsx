@@ -1,40 +1,29 @@
 import React, { useState } from 'react';
-import PageHeading from '../../../Components/Shared/PageHeading';
-import {
-  Card,
-  Table,
-  Typography,
-  Button,
-  Popconfirm,
-  Divider,
-  Image,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Upload,
-  message,
-} from 'antd';
-import toast from 'react-hot-toast';
-import { FaEye, FaPlus } from 'react-icons/fa6';
-const { Title } = Typography;
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { CiEdit } from 'react-icons/ci';
+import { Card, Typography, Button, Divider, message, Form } from 'antd';
+import { FaPlus } from 'react-icons/fa6';
+import FamilyTable from './FamilyTable';
+import DiscussionGroupTable from './DiscussionGroupTable';
+import FamilyFormModal from './FamilyFormModal';
+import DiscussionGroupFormModal from './DiscussionGroupFormModal';
 import {
   useCreateFamilyMutation,
   useDeleteFamilyMutation,
   useGetFamiliesQuery,
   useUpdateFamilyMutation,
 } from '../../../Redux/services/dashboard apis/familiesApis';
+import toast from 'react-hot-toast';
+
+const { Title } = Typography;
 
 function AddFamily() {
+  // API Hooks
   const { data: families } = useGetFamiliesQuery();
   const [deleteFamily] = useDeleteFamilyMutation();
   const [updateFamily] = useUpdateFamilyMutation();
-  const [createteFamily] = useCreateFamilyMutation();
-  const [familyId, setFamilyId] = useState(null);
+  const [createFamily] = useCreateFamilyMutation();
 
-  // State for discussion groups
+  // State
+  const [familyId, setFamilyId] = useState(null);
   const [discussionGroups, setDiscussionGroups] = useState([
     {
       key: '1',
@@ -55,30 +44,27 @@ function AddFamily() {
       familyName: 'Williams',
     },
   ]);
-
-  // State for modals
   const [isAddFamilyModalOpen, setIsAddFamilyModalOpen] = useState(false);
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
   const [editingFamily, setEditingFamily] = useState(null);
   const [editingGroup, setEditingGroup] = useState(null);
+  const [groupImageUrl, setGroupImageUrl] = useState('');
 
   // Form refs
   const [addFamilyForm] = Form.useForm();
   const [addGroupForm] = Form.useForm();
 
-  // Image state for group
-  const [groupImageUrl, setGroupImageUrl] = useState('');
-
-  // Handlers for existing functionality
-  const handleEdit = (record) => {
+  // Family Handlers
+  const handleEditFamily = (record) => {
     setEditingFamily(record);
+    setFamilyId(record.key);
     addFamilyForm.setFieldsValue({
       familyName: record.name,
     });
     setIsAddFamilyModalOpen(true);
   };
 
-  const handleDelete = async (key) => {
+  const handleDeleteFamily = async (key) => {
     await deleteFamily(key)
       .unwrap()
       .then((res) => {
@@ -88,6 +74,33 @@ function AddFamily() {
       });
   };
 
+  const handleAddFamilySubmit = async (values) => {
+    const data = { name: values?.familyName };
+    try {
+      if (familyId !== null) {
+        await updateFamily({ data, id: familyId })
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              toast.success(res?.message || 'Family updated successfully');
+            }
+          });
+      } else {
+        await createFamily({ data })
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              toast.success(res?.message || 'Family created successfully');
+            }
+          });
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
+    }
+    handleAddFamilyCancel();
+  };
+
+  // Group Handlers
   const handleEditGroup = (record) => {
     setEditingGroup(record);
     addGroupForm.setFieldsValue({
@@ -103,65 +116,8 @@ function AddFamily() {
     toast.success('Discussion group deleted successfully');
   };
 
-  // Modal handlers
-  const showAddFamilyModal = () => {
-    setEditingFamily(null);
-    addFamilyForm.resetFields();
-    setIsAddFamilyModalOpen(true);
-  };
-
-  const showAddGroupModal = () => {
-    setEditingGroup(null);
-    addGroupForm.resetFields();
-    setGroupImageUrl('');
-    setIsAddGroupModalOpen(true);
-  };
-
-  const handleAddFamilyCancel = () => {
-    addFamilyForm.resetFields();
-    setEditingFamily(null);
-    setIsAddFamilyModalOpen(false);
-  };
-
-  const handleAddGroupCancel = () => {
-    addGroupForm.resetFields();
-    setGroupImageUrl('');
-    setEditingGroup(null);
-    setIsAddGroupModalOpen(false);
-  };
-
-  // Form submission handlers
-  const handleAddFamilySubmit = async (values) => {
-    const data = {
-      name: values?.familyName,
-    };
-    try {
-      if (familyId !== null) {
-        await updateFamily({ data, id: familyId })
-          .unwrap()
-          .then((res) => {
-            if (res?.success) {
-              toast.success(res?.message || 'Family updated successfully');
-            }
-          });
-      } else {
-        await createteFamily({ data })
-          .unwrap()
-          .then((res) => {
-            if (res?.success) {
-              toast.success(res?.message || 'Family updated successfully');
-            }
-          });
-      }
-    } catch (error) {
-      toast.error(error?.data?.message || 'Something went wrong');
-    }
-    handleAddFamilyCancel();
-  };
-
   const handleAddGroupSubmit = (values) => {
     if (editingGroup) {
-      // Update existing group
       setDiscussionGroups((prevGroups) =>
         prevGroups.map((group) =>
           group.key === editingGroup.key
@@ -176,31 +132,25 @@ function AddFamily() {
       );
       toast.success('Discussion group updated successfully');
     } else {
-      // Add new group
       const newGroup = {
         key: (discussionGroups.length + 1).toString(),
         familyTitle: values.groupTitle,
         familyName: values.familyName,
         familyImage:
-          groupImageUrl || 'https://randomuser.me/api/portraits/lego/1.jpg', // Default image if none uploaded
+          groupImageUrl || 'https://randomuser.me/api/portraits/lego/1.jpg',
       };
-
       setDiscussionGroups([...discussionGroups, newGroup]);
       toast.success('Discussion group added successfully');
     }
-
     handleAddGroupCancel();
   };
 
-  // Image upload handlers
+  // Image Upload Handler
   const handleImageUpload = (info) => {
     if (info.file.status === 'done') {
-      // In a real app, you would get the URL from the upload response
-      // For this demo, we'll use a random user image
       const randomId = Math.floor(Math.random() * 100);
       const randomGender = Math.random() > 0.5 ? 'men' : 'women';
       const imageUrl = `https://randomuser.me/api/portraits/${randomGender}/${randomId}.jpg`;
-
       setGroupImageUrl(imageUrl);
       message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === 'error') {
@@ -208,91 +158,38 @@ function AddFamily() {
     }
   };
 
-  // Table columns
+  // Modal Handlers
+  const showAddFamilyModal = () => {
+    setEditingFamily(null);
+    setFamilyId(null);
+    addFamilyForm.resetFields();
+    setIsAddFamilyModalOpen(true);
+  };
 
-  const columns = [
-    {
-      title: 'SL No.',
-      dataIndex: 'index',
-      key: 'index',
-    },
-    {
-      title: 'Family Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      width: 250,
-      render: (_, record) => (
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => {
-              setFamilyId(record.key);
-              handleEdit(record);
-            }}
-            icon={<CiEdit />}
-            className="!bg-[#0C469D] !text-white"
-          />
-          <Popconfirm
-            title="Are you sure to delete this family?"
-            onConfirm={() => handleDelete(record.key)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button icon={<DeleteOutlined />} danger />
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
+  const showAddGroupModal = () => {
+    setEditingGroup(null);
+    addGroupForm.resetFields();
+    setGroupImageUrl('');
+    setIsAddGroupModalOpen(true);
+  };
 
-  const discussionGroupColumns = [
-    {
-      title: 'Family Image',
-      dataIndex: 'familyImage',
-      key: 'familyImage',
-      render: (url) => <Image width={50} src={url} alt="Family" />,
-    },
-    {
-      title: 'Family Title',
-      dataIndex: 'familyTitle',
-      key: 'familyTitle',
-    },
-    {
-      title: 'Family Name',
-      dataIndex: 'familyName',
-      key: 'familyName',
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      width: 300,
-      render: (_, record) => (
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => {
-              handleEditGroup(record);
-            }}
-            icon={<CiEdit />}
-            className="!bg-[#0C469D] !text-white"
-          />
-          <Popconfirm
-            title="Are you sure to delete this discussion group?"
-            onConfirm={() => handleDeleteGroup(record.key)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button icon={<DeleteOutlined />} danger />
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
+  const handleAddFamilyCancel = () => {
+    addFamilyForm.resetFields();
+    setEditingFamily(null);
+    setFamilyId(null);
+    setIsAddFamilyModalOpen(false);
+  };
+
+  const handleAddGroupCancel = () => {
+    addGroupForm.resetFields();
+    setGroupImageUrl('');
+    setEditingGroup(null);
+    setIsAddGroupModalOpen(false);
+  };
 
   return (
     <div>
+      {/* Families Section */}
       <Card>
         <div className="flex items-center justify-between mb-4">
           <Title level={3}>All Family</Title>
@@ -304,21 +201,16 @@ function AddFamily() {
             Add New Family
           </Button>
         </div>
-        <Table
-          columns={columns}
-          pagination={{ responsive: true }}
-          dataSource={families?.data?.map((family, index) => ({
-            key: family._id,
-            name: family.name,
-            index: index + 1,
-          }))}
-          scroll={{ x: 1500 }}
-          bordered
+        <FamilyTable
+          families={families?.data}
+          onEdit={handleEditFamily}
+          onDelete={handleDeleteFamily}
         />
       </Card>
 
       <Divider />
 
+      {/* Discussion Groups Section */}
       <Card>
         <div className="flex items-center justify-between mb-4">
           <Title level={3}>Family discussion groups</Title>
@@ -330,119 +222,32 @@ function AddFamily() {
             Add New Group
           </Button>
         </div>
-        <Table
-          columns={discussionGroupColumns}
-          pagination={{ responsive: true }}
-          dataSource={discussionGroups}
-          scroll={{ x: 1500 }}
-          bordered
+        <DiscussionGroupTable
+          groups={discussionGroups}
+          onEdit={handleEditGroup}
+          onDelete={handleDeleteGroup}
         />
       </Card>
 
-      {/* Add Family Modal */}
-      <Modal
-        title={editingFamily ? 'Edit Family' : 'Add New Family'}
-        open={isAddFamilyModalOpen}
+      {/* Modals */}
+      <FamilyFormModal
+        visible={isAddFamilyModalOpen}
         onCancel={handleAddFamilyCancel}
-        footer={null}
-      >
-        <Form
-          form={addFamilyForm}
-          layout="vertical"
-          onFinish={handleAddFamilySubmit}
-        >
-          <Form.Item
-            name="familyName"
-            label="Family Name"
-            rules={[{ required: true, message: 'Please enter family name!' }]}
-          >
-            <Input placeholder="Enter family name" />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" className="!bg-[#0C469D]">
-              {editingFamily ? 'Update Family' : 'Add Family'}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={handleAddFamilySubmit}
+        form={addFamilyForm}
+        editingFamily={editingFamily}
+      />
 
-      {/* Add Group Modal */}
-      <Modal
-        title={
-          editingGroup ? 'Edit Discussion Group' : 'Add New Discussion Group'
-        }
-        open={isAddGroupModalOpen}
+      <DiscussionGroupFormModal
+        visible={isAddGroupModalOpen}
         onCancel={handleAddGroupCancel}
-        footer={null}
-      >
-        <Form
-          form={addGroupForm}
-          layout="vertical"
-          onFinish={handleAddGroupSubmit}
-        >
-          <Form.Item
-            name="groupTitle"
-            label="Group Title"
-            rules={[{ required: true, message: 'Please enter group title!' }]}
-          >
-            <Input placeholder="Enter group title" />
-          </Form.Item>
-
-          <Form.Item
-            name="familyName"
-            label="Family"
-            rules={[{ required: true, message: 'Please select a family!' }]}
-          >
-            <Select placeholder="Select family">
-              {families?.data?.map((family) => (
-                <Select.Option key={family.key} value={family.name}>
-                  {family.familyName}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="groupImage"
-            label="Group Image"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => {
-              if (Array.isArray(e)) {
-                return e;
-              }
-              return e && e.fileList;
-            }}
-          >
-            <Upload
-              name="groupImage"
-              listType="picture-card"
-              showUploadList={true}
-              action="/api/upload" // Replace with your actual upload endpoint
-              onChange={handleImageUpload}
-              maxCount={1}
-            >
-              {groupImageUrl ? (
-                <img
-                  src={groupImageUrl}
-                  alt="Group"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" className="!bg-[#0C469D]">
-              {editingGroup ? 'Update Group' : 'Add Group'}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={handleAddGroupSubmit}
+        form={addGroupForm}
+        editingGroup={editingGroup}
+        families={families?.data}
+        imageUrl={groupImageUrl}
+        onImageUpload={handleImageUpload}
+      />
     </div>
   );
 }
