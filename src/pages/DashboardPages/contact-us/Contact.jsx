@@ -1,41 +1,27 @@
 import React, { useState } from 'react';
-import { Form, message } from 'antd';
+import { Form } from 'antd';
 import './Contact.css';
 import PageHeading from '../../../Components/Shared/PageHeading';
-import {
-  useCreateEmailMutation,
-  useCreatePhoneMutation,
-  useCreateSocialMediaMutation,
-  useDeleteEmailMutation,
-  useDeletePhoneMutation,
-  useDeleteSocialMediaMutation,
-  useGetAllEmailQuery,
-  useGetAllPhoneQuery,
-  useSocialMediaQuery,
-  useUpdateEmailMutation,
-  useUpdatePhoneMutation,
-  useUpdateSocialMediaMutation,
-} from '../../../Redux/services/settings/contactUsApis';
 import toast from 'react-hot-toast';
 import ContactTabs from './ContactTabs.jsx';
 import { EmailModal, PhoneModal, SocialModal } from './SocialModal.jsx';
+import { useContactHooks } from '../../../hooks/useContactHooks.js';
 
 function Contact() {
-  // API Hooks
-  const { data: emailsData } = useGetAllEmailQuery();
-  const [createEmail] = useCreateEmailMutation();
-  const [updateEmail] = useUpdateEmailMutation();
-  const [deleteEmail] = useDeleteEmailMutation();
-
-  const { data: phoneData } = useGetAllPhoneQuery();
-  const [updatePhone] = useUpdatePhoneMutation();
-  const [createPhone] = useCreatePhoneMutation();
-  const [deletePhone] = useDeletePhoneMutation();
-
-  const { data: socialMediaData } = useSocialMediaQuery();
-  const [createSocialMedia] = useCreateSocialMediaMutation();
-  const [updateSocialMedia] = useUpdateSocialMediaMutation();
-  const [deleteSocialMedia] = useDeleteSocialMediaMutation();
+  const {
+    emailsData,
+    createEmail,
+    updateEmail,
+    deleteEmail,
+    phoneData,
+    createPhone,
+    updatePhone,
+    deletePhone,
+    socialMediaData,
+    createSocialMedia,
+    updateSocialMedia,
+    deleteSocialMedia,
+  } = useContactHooks();
 
   // Data formatting
   const emails = emailsData?.data.map((email) => ({
@@ -73,7 +59,7 @@ function Contact() {
   const copyToClipboard = (text, id) => {
     navigator.clipboard.writeText(text);
     setCopied(id);
-    message.success('Copied to clipboard!');
+    toast.success('Copied to clipboard!');
     setTimeout(() => setCopied(null), 2000);
   };
 
