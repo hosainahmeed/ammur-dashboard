@@ -21,6 +21,7 @@ const baseApis = createApi({
     'families',
     'profile',
     'timelineSingle',
+    'email',
   ],
   endpoints: () => ({}),
 });

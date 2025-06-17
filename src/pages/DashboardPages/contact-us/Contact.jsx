@@ -12,6 +12,7 @@ import {
   message,
   Typography,
   Card,
+  Popconfirm,
 } from 'antd';
 import {
   MailOutlined,
@@ -30,7 +31,12 @@ import {
 } from '@ant-design/icons';
 import './Contact.css';
 import PageHeading from '../../../Components/Shared/PageHeading';
-import { useGetAllEmailQuery } from '../../../Redux/services/settings/contactUsApis';
+import {
+  useCreateEmailMutation,
+  useDeleteEmailMutation,
+  useGetAllEmailQuery,
+  useUpdateEmailMutation,
+} from '../../../Redux/services/settings/contactUsApis';
 import toast from 'react-hot-toast';
 
 const { Title, Text } = Typography;
@@ -39,32 +45,9 @@ const { TabPane } = Tabs;
 
 function Contact() {
   const { data: emailsData } = useGetAllEmailQuery();
-  /*this is the response of emailsData */
-  //  {
-  //   success: true,
-  //   message: 'Emails are retrieved successfully',
-  //   meta: { page: 1, limit: 10, total: 3, totalPage: 1 },
-  //   data: [
-  //     {
-  //       _id: '683e9b61f93b86ba99018e88',
-  //       lebel: 'primary',
-  //       email: 'ahmadmusa9805@gmail.com',
-  //       isDeleted: false
-  //     },
-  //     {
-  //       _id: '683e9b62f93b86ba99018e8a',
-  //       lebel: 'primary',
-  //       email: 'ahmadmusa9805@gmail.com',
-  //       isDeleted: false
-  //     },
-  //     {
-  //       _id: '684d192bcb0a14d990686285',
-  //       lebel: 'Williams',
-  //       email: 'hosain@gmail.com',
-  //       isDeleted: false
-  //     }
-  //   ]
-  // }
+  const [createEmail] = useCreateEmailMutation();
+  const [updateEmail] = useUpdateEmailMutation();
+  const [deleteEmail] = useDeleteEmailMutation();
   const emails = emailsData?.data.map((email) => ({
     id: email?._id,
     lebel: email?.lebel,
@@ -157,32 +140,36 @@ function Contact() {
     setEmailModalVisible(true);
   };
 
-  const deleteEmail = (id) => {
-    setEmails(emails.filter((item) => item.id !== id));
-    message.success('Email deleted successfully');
+  const deleteEmailhandle = async (id) => {
+    await deleteEmail({ id: id })
+      .unwrap()
+      .then((res) => {
+        if (res?.success) {
+          toast.success(res?.message || 'Email deleted successfully');
+        }
+      });
   };
 
-  const handleEmailOk = () => {
-    emailForm.validateFields().then((values) => {
+  const handleEmailOk = async () => {
+    try {
+      const values = await emailForm.validateFields();
       if (editingItem) {
-        // Update existing email
-        setEmails(
-          emails.map((item) =>
-            item.id === editingItem.id ? { ...item, ...values } : item
-          )
-        );
-        message.success('Email updated successfully');
+        await updateEmail({ id: editingItem.id, data: values })
+          .unwrap()
+          .then((res) => {
+            toast.success(res?.message || 'Email updated successfully');
+          });
       } else {
-        // Add new email
-        const newId =
-          emails.length > 0
-            ? Math.max(...emails.map((item) => item.id)) + 1
-            : 1;
-        setEmails([...emails, { id: newId, ...values }]);
-        message.success('Email added successfully');
+        await createEmail({ data: values })
+          .unwrap()
+          .then((res) => {
+            toast.success(res?.message || 'Email added successfully');
+          });
       }
       setEmailModalVisible(false);
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // Phone operations
@@ -258,7 +245,7 @@ function Contact() {
     {
       title: 'Label',
       dataIndex: 'lebel',
-      key: 'label',
+      key: 'lebel',
     },
     {
       title: 'Actions',
@@ -276,7 +263,7 @@ function Contact() {
                 )
               }
               onClick={() =>
-                copyToClipboard(record.address, `email-${record.id}`)
+                copyToClipboard(record.email, `email-${record.id}`)
               }
               type="text"
             />
@@ -289,12 +276,15 @@ function Contact() {
             />
           </Tooltip>
           <Tooltip title="Delete">
-            <Button
-              icon={<DeleteOutlined />}
-              onClick={() => deleteEmail(record.id)}
-              type="text"
-              danger
-            />
+            <Popconfirm
+              placement="bottomRight"
+              title="Are you sure to delete this email?"
+              onConfirm={() => deleteEmailhandle(record.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button icon={<DeleteOutlined />} type="text" danger />
+            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -529,7 +519,7 @@ function Contact() {
         <Form requiredMark={false} form={emailForm} layout="vertical">
           <Form.Item
             label="Email Address"
-            name="address"
+            name="email"
             rules={[
               { required: true, message: 'Please enter an email address' },
               { type: 'email', message: 'Please enter a valid email address' },
@@ -539,7 +529,7 @@ function Contact() {
           </Form.Item>
           <Form.Item
             label="Label"
-            name="label"
+            name="lebel"
             rules={[{ required: true, message: 'Please enter a label' }]}
           >
             <Input placeholder="e.g. Work, Personal, etc." />
@@ -566,7 +556,7 @@ function Contact() {
           </Form.Item>
           <Form.Item
             label="Label"
-            name="label"
+            name="lebel"
             rules={[{ required: true, message: 'Please enter a label' }]}
           >
             <Input placeholder="e.g. Mobile, Work, Home, etc." />

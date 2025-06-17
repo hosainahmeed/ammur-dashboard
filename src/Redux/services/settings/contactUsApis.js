@@ -7,8 +7,37 @@ const contactUsApis = baseApis.injectEndpoints({
         url: '/emails',
         method: 'GET',
       }),
+      providesTags: ['email'],
+    }),
+    createEmail: builder.mutation({
+      query: ({ data }) => ({
+        url: '/emails/create-email',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['email'],
+    }),
+    updateEmail: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/emails/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['email'],
+    }),
+    deleteEmail: builder.mutation({
+      query: ({id}) => ({
+        url: `/emails/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['email'],
     }),
   }),
 });
 
-export const { useGetAllEmailQuery } = contactUsApis;
+export const {
+  useGetAllEmailQuery,
+  useCreateEmailMutation,
+  useUpdateEmailMutation,
+  useDeleteEmailMutation,
+} = contactUsApis;
