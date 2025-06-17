@@ -8,8 +8,6 @@ const PhoneTab = ({
   addPhone,
   editPhone,
   deletePhonehandle,
-  copied,
-  copyToClipboard,
 }) => {
   const columns = [
     {
@@ -31,8 +29,6 @@ const PhoneTab = ({
           record={record}
           onEdit={editPhone}
           onDelete={deletePhonehandle}
-          copied={copied}
-          copyToClipboard={copyToClipboard}
           type="phone"
           textToCopy={record.phone}
         />

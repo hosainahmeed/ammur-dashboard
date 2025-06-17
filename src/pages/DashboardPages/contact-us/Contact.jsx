@@ -48,7 +48,6 @@ function Contact() {
   const [phoneModalVisible, setPhoneModalVisible] = useState(false);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [copied, setCopied] = useState(null);
 
   // Form instances
   const [emailForm] = Form.useForm();
@@ -56,12 +55,6 @@ function Contact() {
   const [socialForm] = Form.useForm();
 
   // Helper functions
-  const copyToClipboard = (text, id) => {
-    navigator.clipboard.writeText(text);
-    setCopied(id);
-    toast.success('Copied to clipboard!');
-    setTimeout(() => setCopied(null), 2000);
-  };
 
   // Email operations
   const addEmail = () => {
@@ -233,8 +226,6 @@ function Contact() {
         addSocial={addSocial}
         editSocial={editSocial}
         deleteSocial={deleteSocial}
-        copied={copied}
-        copyToClipboard={copyToClipboard}
       />
 
       <EmailModal

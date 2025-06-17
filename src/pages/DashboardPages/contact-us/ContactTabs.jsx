@@ -19,8 +19,6 @@ const ContactTabs = ({
   addSocial,
   editSocial,
   deleteSocial,
-  copied,
-  copyToClipboard,
 }) => {
   return (
     <Tabs defaultActiveKey="1" type="card" className="contact-tabs">
@@ -37,8 +35,6 @@ const ContactTabs = ({
           addEmail={addEmail}
           editEmail={editEmail}
           deleteEmailhandle={deleteEmailhandle}
-          copied={copied}
-          copyToClipboard={copyToClipboard}
         />
       </TabPane>
 
@@ -55,8 +51,6 @@ const ContactTabs = ({
           addPhone={addPhone}
           editPhone={editPhone}
           deletePhonehandle={deletePhonehandle}
-          copied={copied}
-          copyToClipboard={copyToClipboard}
         />
       </TabPane>
 
@@ -73,8 +67,6 @@ const ContactTabs = ({
           addSocial={addSocial}
           editSocial={editSocial}
           deleteSocial={deleteSocial}
-          copied={copied}
-          copyToClipboard={copyToClipboard}
         />
       </TabPane>
     </Tabs>

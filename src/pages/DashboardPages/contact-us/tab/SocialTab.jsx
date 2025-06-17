@@ -10,14 +10,7 @@ import {
 } from '@ant-design/icons';
 import ActionButtons from '../ActionButtons';
 
-const SocialTab = ({
-  socials,
-  addSocial,
-  editSocial,
-  deleteSocial,
-  copied,
-  copyToClipboard,
-}) => {
+const SocialTab = ({ socials, addSocial, editSocial, deleteSocial }) => {
   const getIconComponent = (platform) => {
     const iconMap = {
       LinkedIn: <LinkedinOutlined />,
@@ -56,8 +49,6 @@ const SocialTab = ({
           record={record}
           onEdit={editSocial}
           onDelete={deleteSocial}
-          copied={copied}
-          copyToClipboard={copyToClipboard}
           type="social"
           textToCopy={record.url}
         />

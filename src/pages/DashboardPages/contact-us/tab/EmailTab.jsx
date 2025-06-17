@@ -8,8 +8,6 @@ const EmailTab = ({
   addEmail,
   editEmail,
   deleteEmailhandle,
-  copied,
-  copyToClipboard,
 }) => {
   const columns = [
     {
@@ -31,8 +29,6 @@ const EmailTab = ({
           record={record}
           onEdit={editEmail}
           onDelete={deleteEmailhandle}
-          copied={copied}
-          copyToClipboard={copyToClipboard}
           type="email"
           textToCopy={record.email}
         />
