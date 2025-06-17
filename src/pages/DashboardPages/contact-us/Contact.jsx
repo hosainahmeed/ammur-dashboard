@@ -33,11 +33,17 @@ import './Contact.css';
 import PageHeading from '../../../Components/Shared/PageHeading';
 import {
   useCreateEmailMutation,
+  useCreatePhoneMutation,
+  useCreateSocialMediaMutation,
   useDeleteEmailMutation,
+  useDeletePhoneMutation,
+  useDeleteSocialMediaMutation,
   useGetAllEmailQuery,
   useGetAllPhoneQuery,
   useSocialMediaQuery,
   useUpdateEmailMutation,
+  useUpdatePhoneMutation,
+  useUpdateSocialMediaMutation,
 } from '../../../Redux/services/settings/contactUsApis';
 import toast from 'react-hot-toast';
 
@@ -50,8 +56,16 @@ function Contact() {
   const [createEmail] = useCreateEmailMutation();
   const [updateEmail] = useUpdateEmailMutation();
   const [deleteEmail] = useDeleteEmailMutation();
+
   const { data: phoneData } = useGetAllPhoneQuery();
+  const [updatePhone] = useUpdatePhoneMutation();
+  const [createPhone] = useCreatePhoneMutation();
+  const [deletePhone] = useDeletePhoneMutation();
+
   const { data: socialMediaData } = useSocialMediaQuery();
+  const [createSocialMedia] = useCreateSocialMediaMutation();
+  const [updateSocialMedia] = useUpdateSocialMediaMutation();
+  const [deleteSocialMedia] = useDeleteSocialMediaMutation();
 
   const emails = emailsData?.data.map((email) => ({
     id: email?._id,
@@ -147,7 +161,9 @@ function Contact() {
       }
       setEmailModalVisible(false);
     } catch (error) {
-      toast.error(error?.data?.errorSources[0].message || 'Something went wrong');
+      toast.error(
+        error?.data?.errorSources[0].message || 'Something went wrong'
+      );
     }
   };
 
@@ -164,13 +180,43 @@ function Contact() {
     setPhoneModalVisible(true);
   };
 
-  const deletePhone = (id) => {
-    console.log(id);
+  const deletePhonehandle = async (id) => {
+    try {
+      await deletePhone({ id: id })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Phone number deleted successfully');
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
     toast.success('Phone number deleted successfully');
   };
 
-  const handlePhoneOk = () => {
-    toast.success('Phone number added successfully');
+  const handlePhoneOk = async () => {
+    try {
+      const values = await phoneForm.validateFields();
+      if (editingItem) {
+        await updatePhone({ id: editingItem.id, data: values })
+          .unwrap()
+          .then((res) => {
+            toast.success(res?.message || 'Phone number updated successfully');
+          });
+      } else {
+        await createPhone({ data: values })
+          .unwrap()
+          .then((res) => {
+            toast.success(res?.message || 'Phone number added successfully');
+          });
+      }
+      setPhoneModalVisible(false);
+    } catch (error) {
+      toast.error(
+        error?.data?.errorSources[0].message || 'Something went wrong'
+      );
+    }
   };
 
   // Social media operations
@@ -186,20 +232,46 @@ function Contact() {
     setSocialModalVisible(true);
   };
 
-  const deleteSocial = (id) => {
-    console.log(id);
-    toast.success('Social media account deleted successfully');
+  const deleteSocial = async (id) => {
+    try {
+      await deleteSocialMedia({ id: id })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(
+              res?.message || 'Social media account deleted successfully'
+            );
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
+      console.log(error);
+    }
   };
 
-  const handleSocialOk = () => {
-    socialForm.validateFields().then((values) => {
-      if (editingItem) {
-        // Update existing social
-      } else {
-        // Create new social
-      }
-      setSocialModalVisible(false);
-    });
+  const handleSocialOk = async () => {
+    try {
+      socialForm.validateFields().then((values) => {
+        if (editingItem) {
+          updateSocialMedia({ id: editingItem.id, data: values })
+            .unwrap()
+            .then((res) => {
+              toast.success(
+                res?.message || 'Social media updated successfully'
+              );
+            });
+        } else {
+          createSocialMedia({ data: values })
+            .unwrap()
+            .then((res) => {
+              toast.success(res?.message || 'Social media added successfully');
+            });
+        }
+        setSocialModalVisible(false);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Table column definitions
@@ -285,7 +357,7 @@ function Contact() {
                 )
               }
               onClick={() =>
-                copyToClipboard(record.number, `phone-${record.id}`)
+                copyToClipboard(record.phone, `phone-${record.id}`)
               }
               type="text"
             />
@@ -298,12 +370,15 @@ function Contact() {
             />
           </Tooltip>
           <Tooltip title="Delete">
-            <Button
-              icon={<DeleteOutlined />}
-              onClick={() => deletePhone(record.id)}
-              type="text"
-              danger
-            />
+            <Popconfirm
+              placement="bottomRight"
+              title="Are you sure to delete this phone number?"
+              onConfirm={() => deletePhonehandle(record.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button icon={<DeleteOutlined />} type="text" danger />
+            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -355,12 +430,15 @@ function Contact() {
             />
           </Tooltip>
           <Tooltip title="Delete">
-            <Button
-              icon={<DeleteOutlined />}
-              onClick={() => deleteSocial(record.id)}
-              type="text"
-              danger
-            />
+            <Popconfirm
+              placement="bottomRight"
+              title="Are you sure to delete this social media?"
+              onConfirm={() => deleteSocial(record.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button icon={<DeleteOutlined />} type="text" danger />
+            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -516,7 +594,7 @@ function Contact() {
         <Form requiredMark={false} form={phoneForm} layout="vertical">
           <Form.Item
             label="Phone Number"
-            name="number"
+            name="phone"
             rules={[{ required: true, message: 'Please enter a phone number' }]}
           >
             <Input prefix={<PhoneOutlined />} placeholder="Phone Number" />
@@ -543,7 +621,7 @@ function Contact() {
         <Form requiredMark={false} form={socialForm} layout="vertical">
           <Form.Item
             label="Platform"
-            name="platform"
+            name="name"
             rules={[{ required: true, message: 'Please select a platform' }]}
           >
             <Select placeholder="Select platform">
@@ -565,7 +643,7 @@ function Contact() {
               { type: 'url', message: 'Please enter a valid URL' },
             ]}
           >
-            <Input placeholder="https://..." />
+            <Input autoComplete="off" placeholder="https://..." />
           </Form.Item>
         </Form>
       </Modal>
