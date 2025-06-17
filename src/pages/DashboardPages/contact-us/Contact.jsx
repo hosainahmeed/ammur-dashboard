@@ -35,6 +35,8 @@ import {
   useCreateEmailMutation,
   useDeleteEmailMutation,
   useGetAllEmailQuery,
+  useGetAllPhoneQuery,
+  useSocialMediaQuery,
   useUpdateEmailMutation,
 } from '../../../Redux/services/settings/contactUsApis';
 import toast from 'react-hot-toast';
@@ -48,50 +50,27 @@ function Contact() {
   const [createEmail] = useCreateEmailMutation();
   const [updateEmail] = useUpdateEmailMutation();
   const [deleteEmail] = useDeleteEmailMutation();
+  const { data: phoneData } = useGetAllPhoneQuery();
+  const { data: socialMediaData } = useSocialMediaQuery();
+
   const emails = emailsData?.data.map((email) => ({
     id: email?._id,
     lebel: email?.lebel,
     email: email?.email,
     isDeleted: email?.isDeleted,
   }));
-
-  const [phones, setPhones] = useState([
-    { id: 1, number: '+1 (555) 123-4567', label: 'Mobile' },
-    { id: 2, number: '+1 (555) 987-6543', label: 'Work' },
-  ]);
-
-  const [socials, setSocials] = useState([
-    {
-      id: 1,
-      platform: 'LinkedIn',
-      url: 'https://linkedin.com/in/yourusername',
-      icon: 'linkedin',
-    },
-    {
-      id: 2,
-      platform: 'GitHub',
-      url: 'https://github.com/yourusername',
-      icon: 'github',
-    },
-    {
-      id: 3,
-      platform: 'Twitter',
-      url: 'https://twitter.com/yourusername',
-      icon: 'twitter',
-    },
-    {
-      id: 4,
-      platform: 'Instagram',
-      url: 'https://instagram.com/yourusername',
-      icon: 'instagram',
-    },
-    {
-      id: 5,
-      platform: 'Facebook',
-      url: 'https://facebook.com/yourusername',
-      icon: 'facebook',
-    },
-  ]);
+  const phones = phoneData?.data.map((phone) => ({
+    id: phone?._id,
+    lebel: phone?.lebel,
+    phone: phone?.phone,
+    isDeleted: phone?.isDeleted,
+  }));
+  const socials = socialMediaData?.data?.map((social) => ({
+    id: social?._id,
+    name: social?.name,
+    url: social?.url,
+    isDeleted: social?.isDeleted,
+  }));
 
   // Modal states
   const [emailModalVisible, setEmailModalVisible] = useState(false);
@@ -168,7 +147,7 @@ function Contact() {
       }
       setEmailModalVisible(false);
     } catch (error) {
-      console.error(error);
+      toast.error(error?.data?.errorSources[0].message || 'Something went wrong');
     }
   };
 
@@ -208,28 +187,16 @@ function Contact() {
   };
 
   const deleteSocial = (id) => {
-    setSocials(socials.filter((item) => item.id !== id));
-    message.success('Social media account deleted successfully');
+    console.log(id);
+    toast.success('Social media account deleted successfully');
   };
 
   const handleSocialOk = () => {
     socialForm.validateFields().then((values) => {
       if (editingItem) {
         // Update existing social
-        setSocials(
-          socials.map((item) =>
-            item.id === editingItem.id ? { ...item, ...values } : item
-          )
-        );
-        message.success('Social media account updated successfully');
       } else {
-        // Add new social
-        const newId =
-          socials.length > 0
-            ? Math.max(...socials.map((item) => item.id)) + 1
-            : 1;
-        setSocials([...socials, { id: newId, ...values }]);
-        message.success('Social media account added successfully');
+        // Create new social
       }
       setSocialModalVisible(false);
     });
@@ -294,13 +261,13 @@ function Contact() {
   const phoneColumns = [
     {
       title: 'Phone Number',
-      dataIndex: 'number',
-      key: 'number',
+      dataIndex: 'phone',
+      key: 'phone',
     },
     {
       title: 'Label',
-      dataIndex: 'label',
-      key: 'label',
+      dataIndex: 'lebel',
+      key: 'lebel',
     },
     {
       title: 'Actions',
@@ -346,8 +313,8 @@ function Contact() {
   const socialColumns = [
     {
       title: 'Platform',
-      dataIndex: 'platform',
-      key: 'platform',
+      dataIndex: 'name',
+      key: 'name',
       render: (text) => (
         <Space>
           {getIconComponent(text)}
