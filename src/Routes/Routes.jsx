@@ -30,6 +30,7 @@ import Contact from '../pages/DashboardPages/contact-us/Contact';
 import RecipePage from '../pages/DashboardPages/recipes/RecipePage';
 import CreateNewArchive from '../Components/tables/FamilyArchive/CreateNewArchive';
 import CreateNewLegacy from '../Components/tables/legacy/CreateNewLegacy';
+import CategoryInterview from '../pages/DashboardPages/InterViews/CategoryInterview';
 
 export const Routes = createBrowserRouter([
   {
@@ -94,7 +95,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/interviews',
-        element: <InterViews />,
+        element: <CategoryInterview />,
       },
       {
         path: '/legacy-tribute',

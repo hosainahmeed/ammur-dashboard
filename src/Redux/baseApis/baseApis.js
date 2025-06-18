@@ -26,6 +26,7 @@ const baseApis = createApi({
     'social',
     'groupes',
     'interview',
+    'interviewCategory',
   ],
   endpoints: () => ({}),
 });
