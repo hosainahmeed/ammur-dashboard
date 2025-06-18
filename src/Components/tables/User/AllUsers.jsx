@@ -187,6 +187,7 @@ const AllUsers = ({ recentUser }) => {
       render: (_, record) => (
         <Space size="middle">
           <Button
+            size="small"
             onClick={() => {
               setSelectedUser(record.fullUser);
               setUserDetailsModal(true);
@@ -203,6 +204,7 @@ const AllUsers = ({ recentUser }) => {
             onConfirm={() => blockUser(record)}
           >
             <Button
+              size="small"
               className={`${
                 record?.status === 'active' ? '!bg-green-200' : '!bg-red-300'
               } ant-btn ant-btn-default`}

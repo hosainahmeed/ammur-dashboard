@@ -2,13 +2,33 @@ import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
 
-function UpdateAdminInformatio({ id, closeModal }) {
-  console.log(id);
+function UpdateAdminInformatio({ adminData, closeModal }) {
+  console.log(adminData);
   const [form] = Form.useForm();
+
+  // {
+  //   key: '684e45cc81714191f0728d8a',
+  //   name: 'ahmad musa',
+  //   contactNumber: '1234567890',
+  //   email: 'john4.doe4@example.com',
+  //   approvalStatus: true,
+  //   otpVerified: false,
+  //   preferedContactMethod: 'email',
+  //   address: '',
+  //   proffession: '',
+  //   eldestRelative: '',
+  //   familySide: '',
+  //   subscription: 'basic',
+  //   paymentStatus: 'pending',
+  //   img: '',
+  //   role: 'admin',
+  //   status: 'active',
+  //   isDeleted: false
+  // }
   const initialData = {
-    fullName: 'Hosain Ahmed',
+    name: 'Hosain Ahmed',
     email: 'hosain@gmail.com',
-    phoneNumber: '998877665544',
+    contactNumber: '998877665544',
     password: '12112122',
     confirmPassword: '12112122',
   };
@@ -57,7 +77,12 @@ function UpdateAdminInformatio({ id, closeModal }) {
             { type: 'email', message: 'Please input a valid email!' },
           ]}
         >
-          <Input className='cursor-not-allowed' readOnly disabled placeholder="Enter email" />
+          <Input
+            className="cursor-not-allowed"
+            readOnly
+            disabled
+            placeholder="Enter email"
+          />
         </Form.Item>
 
         <Form.Item
@@ -69,39 +94,6 @@ function UpdateAdminInformatio({ id, closeModal }) {
         >
           <Input placeholder="Please Input the Number" />
         </Form.Item>
-        <Divider />
-        <Form.Item
-          name="password"
-          label="Set Admin New Password"
-          rules={[
-            { required: true, message: 'Please input the password!' },
-            { min: 6, message: 'Password must be at least 6 characters' },
-          ]}
-        >
-          <Input.Password placeholder="Enter password" />
-        </Form.Item>
-
-        <Form.Item
-          name="confirmPassword"
-          label="Confirm Admin New Password"
-          dependencies={['password']}
-          rules={[
-            { required: true, message: 'Please confirm the password!' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error('The two passwords do not match!')
-                );
-              },
-            }),
-          ]}
-        >
-          <Input.Password placeholder="Confirm password" />
-        </Form.Item>
-
         <div
           style={{
             display: 'flex',

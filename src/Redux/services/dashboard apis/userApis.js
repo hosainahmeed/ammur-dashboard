@@ -1,5 +1,4 @@
-import baseApis from "../../baseApis/baseApis";
-
+import baseApis from '../../baseApis/baseApis';
 
 export const userApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
@@ -28,11 +27,12 @@ export const userApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['user', 'requiestUser'],
     }),
-    blockUser: builder.mutation({
+    deleteUser: builder.mutation({
       query: ({ id }) => ({
         url: `/users/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['user'],
     }),
     getSingleUserOrDriver: builder.query({
       query: ({ id }) => ({
@@ -49,4 +49,5 @@ export const {
   useUpdateUserStatusMutation,
   useRequiestUserQuery,
   useGetSingleUserOrDriverQuery,
+  useDeleteUserMutation,
 } = userApis;

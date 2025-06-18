@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Badge, Button, Dropdown, Image, Menu, Spin } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
@@ -7,6 +7,8 @@ import { IoMdNotificationsOutline } from 'react-icons/io';
 import Notify from '../Notify_components/Notify';
 import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
 import { imageUrl } from '../../Utils/server';
+
+export let userRole = '';
 
 function Header() {
   const { data, isLoading, error } = useGetProfileDataQuery();
@@ -20,8 +22,12 @@ function Header() {
   );
 
   const user = data?.data;
-  const defaultAvatar =
-    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+  useEffect(() => {
+    if (user) {
+      userRole = user?.role;
+    }
+  }, [user]);
 
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
@@ -39,8 +45,7 @@ function Header() {
       <div className="p-4 flex items-center gap-3">
         <Image
           className="!w-12 !h-12 object-cover overflow-hidden rounded-full"
-          src={imageUrl(user?.img) || defaultAvatar}
-          fallback={defaultAvatar}
+          src={imageUrl(user?.img)}
         />
         <div>
           <h1 className="font-semibold text-base">{user?.fullName}</h1>
@@ -107,7 +112,7 @@ function Header() {
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
             <Avatar
               size={40}
-              src={user?.img || defaultAvatar}
+              src={imageUrl(user?.img)}
               className="cursor-pointer"
             />
           </Dropdown>

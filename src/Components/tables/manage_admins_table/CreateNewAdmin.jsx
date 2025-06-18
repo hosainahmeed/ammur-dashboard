@@ -1,16 +1,31 @@
 import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
+import { useCreateAdminsMutation } from '../../../Redux/services/dashboard apis/adminApis';
 
 function CreateNewAdmin({ closeModal }) {
+  const [createAdmin] = useCreateAdminsMutation();
   const [form] = Form.useForm();
   const initialData = {
-    fullName:'',
-    email:'',
-    phoneNumber:''
+    fullName: '',
+    email: '',
+    phoneNumber: '',
   };
-  const onFinish = (values) => {
-    console.log('Form values:', values);
+  const onFinish = async (values) => {
+    const data = { ...values };
+    try {
+      await createAdmin({ data })
+        .unwrap()
+        .then((res) => {
+          if (res?.data?.success) {
+            toast.success(res?.data?.message || 'Admin added successfully');
+            form.resetFields();
+            closeModal();
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onCancel = () => {
@@ -58,13 +73,22 @@ function CreateNewAdmin({ closeModal }) {
         </Form.Item>
 
         <Form.Item
-          name="phoneNumber"
+          name="contactNo"
           label="Phone Number"
           rules={[
             { required: true, message: 'Please input the phone number!' },
           ]}
         >
-          <Input placeholder="Please Input the Number" />
+          <Input placeholder="Please Input the phone number" />
+        </Form.Item>
+        <Divider />
+
+        <Form.Item
+          name="role"
+          label="User type"
+          rules={[{ required: true, message: 'Please input the user type!' }]}
+        >
+          <Input placeholder="Please Input the user type" />
         </Form.Item>
         <Divider />
         <Form.Item
@@ -76,27 +100,6 @@ function CreateNewAdmin({ closeModal }) {
           ]}
         >
           <Input.Password placeholder="Enter password" />
-        </Form.Item>
-
-        <Form.Item
-          name="confirmPassword"
-          label="Admin Confirm Password"
-          dependencies={['password']}
-          rules={[
-            { required: true, message: 'Please confirm the password!' },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error('The two passwords do not match!')
-                );
-              },
-            }),
-          ]}
-        >
-          <Input.Password placeholder="Confirm password" />
         </Form.Item>
 
         <div
@@ -113,10 +116,6 @@ function CreateNewAdmin({ closeModal }) {
             Cancel
           </Button>
           <Button
-          onClick={()=>{
-            toast.success('Create New Admin succesfully.')
-            onCancel()
-          }}
             className="!w-full !h-10 !text-white !bg-[var(--bg-green-high)]"
             htmlType="submit"
           >

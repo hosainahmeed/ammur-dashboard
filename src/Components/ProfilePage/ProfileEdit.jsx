@@ -8,8 +8,8 @@ const ProfileEdit = ({ image, data }) => {
     useUpdateProfileDataMutation();
   const onFinish = async (values) => {
     const updateData = {
-      name: values?.name,
-      phoneNumber: values?.contactNo,
+      fullName: values?.name,
+      contactNo: values?.contactNo,
     };
 
     const formData = new FormData();

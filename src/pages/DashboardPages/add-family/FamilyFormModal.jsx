@@ -17,8 +17,8 @@ const FamilyFormModal = ({
   onImageUpload,
   url,
 }) => {
-  const [updateFamily] = useUpdateFamilyMutation();
-  const [createFamily] = useCreateFamilyMutation();
+  const [updateFamily, { isLoading: isUpdating }] = useUpdateFamilyMutation();
+  const [createFamily, { isLoading: isCreating }] = useCreateFamilyMutation();
   const handleAddFamilySubmit = async (values) => {
     const formData = new FormData();
     formData.append('file', values?.file[0]?.originFileObj);
@@ -96,7 +96,13 @@ const FamilyFormModal = ({
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" className="!bg-[#0C469D]">
-            {editingFamily ? 'Update Family' : 'Add Family'}
+            {editingFamily
+              ? isUpdating
+                ? 'Updating...'
+                : 'Update Family'
+              : isCreating
+              ? 'Adding...'
+              : 'Add Family'}
           </Button>
         </Form.Item>
       </Form>

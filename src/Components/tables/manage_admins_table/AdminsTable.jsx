@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Table, Tag, Space, Avatar, Button, Modal, Form, Input } from 'antd';
+import {
+  Table,
+  Tag,
+  Space,
+  Avatar,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Popconfirm,
+} from 'antd';
 import {
   UserOutlined,
   EditOutlined,
@@ -9,66 +19,63 @@ import {
 import { FaRegCircle } from 'react-icons/fa6';
 import { IoIosWarning } from 'react-icons/io';
 import toast from 'react-hot-toast';
-import Success from '../../Shared/Success';
 import CreateNewAdmin from './CreateNewAdmin';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
 import PageHeading from '../../Shared/PageHeading';
+import {
+  useDeleteUserMutation,
+  useGetAllUserQuery,
+  useUpdateUserStatusMutation,
+} from '../../../Redux/services/dashboard apis/userApis';
+import { imageUrl } from '../../../Utils/server';
 
 const AdminsTable = () => {
   const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
   const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
   const [selectAdmin, setSelectAdmin] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
-  const admins = [
-    {
-      key: '1',
-      name: 'Theodore Mosciski',
-      contactNumber: '901-474-6265',
-      email: 'maka@yandex.ru',
-    },
-    {
-      key: '2',
-      name: 'Russell Veum',
-      contactNumber: '983-842-7095',
-      email: 'Nigel16@hotmail.com',
-    },
-    {
-      key: '3',
-      name: 'Tracy Grady',
-      contactNumber: '564-667-5097',
-      email: 'rrian@yandex.ru',
-    },
-    {
-      key: '4',
-      name: 'Dana Daniel',
-      contactNumber: '443-393-4346',
-      email: 'rrian@yandex.ru',
-    },
-    {
-      key: '5',
-      name: 'Gerardo Barrows',
-      contactNumber: '344-223-4982',
-      email: 'cido@gmail.com',
-    },
-    {
-      key: '6',
-      name: 'Sheryl Gusikowski',
-      contactNumber: '752-792-1071',
-      email: 'cedennar@gmail.com',
-    },
-  ];
+  const { data: adminsData, isLoading: adminsLoading } = useGetAllUserQuery({
+    role: 'admin',
+  });
+
+  const [updateUserStatus] = useUpdateUserStatusMutation();
+  const [deleteUser] = useDeleteUserMutation();
+
+  const adminsInfo =
+    adminsData?.data?.map((item) => {
+      return {
+        key: item?._id,
+        name: item?.fullName,
+        contactNumber: item?.contactNo,
+        email: item?.email,
+        approvalStatus: item?.approvalStatus,
+        otpVerified: item?.otpVerified,
+        preferedContactMethod: item?.preferedContactMethod,
+        address: item?.address,
+        proffession: item?.proffession,
+        eldestRelative: item?.eldestRelative,
+        familySide: item?.familySide,
+        subscription: item?.subscription,
+        paymentStatus: item?.paymentStatus,
+        img: item?.img,
+        role: item?.role,
+        status: item?.status,
+        isDeleted: item?.isDeleted,
+      };
+    }) || [];
 
   const columns = [
     {
       title: 'Admin Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text) => (
+      render: (text, record) => (
         <div className="flex items-center">
           <Avatar
             size="small"
             style={{ marginRight: 8 }}
-            src={`https://avatarfiles.alphacoders.com/364/364731.png`}
+            src={imageUrl(record.img)}
           />
           <span>{text}</span>
         </div>
@@ -87,11 +94,13 @@ const AdminsTable = () => {
     {
       title: 'Action',
       key: 'action',
-
       render: (_, record) => (
         <Space size="small">
           <Button
-            onClick={() => setUserDetailsModal(true)}
+            onClick={() => {
+              setUserDetailsModal(true);
+              setSelectedUser(record);
+            }}
             className="!bg-[var(--bg-green-high)]"
             type="default"
             icon={<UserOutlined className="!text-white" />}
@@ -99,7 +108,7 @@ const AdminsTable = () => {
           />
           <Button
             onClick={() => {
-              setSelectAdmin(record.key);
+              setSelectAdmin(record);
               setUpdateAdminInfo(true);
             }}
             className="!bg-[var(--bg-green-high)]"
@@ -107,18 +116,67 @@ const AdminsTable = () => {
             icon={<EditOutlined className="!text-white" />}
             size="small"
           />
-          <Button
-            danger
-            type="default"
-            icon={<DeleteOutlined />}
-            size="small"
-            onClick={() => toast.success('Admin delete successfully')}
-          />
-          <Button type="default" icon={<FaRegCircle />} size="small" />
+          <Popconfirm
+            title="Are you sure to delete this admin?"
+            onConfirm={() => deleteHandler(record.key)}
+          >
+            <Button
+              danger
+              type="default"
+              icon={<DeleteOutlined />}
+              size="small"
+            />
+          </Popconfirm>
+
+          <Popconfirm
+            title={`Are you sure to ${
+              record?.status === 'active' ? 'block' : 'unblock'
+            } this admin?`}
+            onConfirm={() => blockUser(record)}
+          >
+            <Button
+              className={`${
+                record?.status === 'active' ? '!bg-green-200' : '!bg-red-300'
+              } ant-btn ant-btn-default`}
+              type="default"
+              icon={<FaRegCircle />}
+              size="small"
+            />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
+  const deleteHandler = (id) => {
+    try {
+      deleteUser({ id })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'User deleted successfully!');
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
+    }
+  };
+  const blockUser = async (record) => {
+    const id = record?.key;
+    const data = {
+      status: record?.status === 'active' ? 'blocked' : 'active',
+    };
+    try {
+      await updateUserStatus({ id, data })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'User status updated successfully!');
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
+    }
+  };
 
   const handleSearch = () => {};
   return (
@@ -146,7 +204,8 @@ const AdminsTable = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={admins}
+        loading={adminsLoading}
+        dataSource={adminsInfo}
         pagination={{
           position: ['bottomCenter'],
           showSizeChanger: false,
@@ -161,7 +220,7 @@ const AdminsTable = () => {
       </Modal>
       <Modal centered open={updateAdminInfo} footer={null} closeIcon={false}>
         <UpdateAdminInformatio
-          id={selectAdmin}
+          adminData={selectAdmin}
           closeModal={setUpdateAdminInfo}
         />
       </Modal>
@@ -176,7 +235,7 @@ const AdminsTable = () => {
             className="!w-24 !h-24"
             src="https://xsgames.co/randomusers/avatar.php?g=male"
           />
-          <h1 className="text-2xl font-bold">Admin no.1</h1>
+          <h1 className="text-2xl font-bold">{selectedUser?.name}</h1>
           <div className="!w-full p-1 border-1 border-[var(--vg-green-high)] rounded-md">
             <div className="p-2 bg-[var(--bg-green-high)] !text-white flex items-center justify-center font-semibold text-base rounded-md">
               Admin Profile
@@ -184,42 +243,17 @@ const AdminsTable = () => {
           </div>
           <div className="mt-4 !w-full">
             <p className="font-semibold">Admin Full Name</p>
-            <p className="p-2 border border-[#64748B] rounded-md">Admin no.1</p>
+            <p className="p-2 border border-[#64748B] rounded-md">
+              {selectedUser?.name}
+            </p>
             <p className="font-semibold mt-2">Email</p>
             <p className="p-2 border border-[#64748B] rounded-md">
-              admin@gmail.com
+              {selectedUser?.email}
             </p>
             <p className="font-semibold mt-2">Phone Number</p>
             <p className="p-2 border border-[#64748B] rounded-md">
-              1245412458454
+              {selectedUser?.contactNumber}
             </p>
-          </div>
-          <div className="mt-4 !w-full">
-            <div className="flex items-center justify-between gap-3">
-              <Button
-                type="primary"
-                danger
-                onClick={() => {
-                  toast.success('User blocked');
-                  setUserDetailsModal(false);
-                }}
-                className="!w-full !border !bg-white !text-red-500 !border-red-500 hover:!text-white hover:!bg-red-500"
-              >
-                Block This User
-              </Button>
-              <Button
-                type="primary"
-                danger
-                onClick={() => {
-                  setSelectAdmin('as');
-                  setUserDetailsModal(false);
-                  setUpdateAdminInfo(true);
-                }}
-                className="!w-full !border !bg-[var(--bg-green-high)] !text-white"
-              >
-                Update
-              </Button>
-            </div>
           </div>
         </div>
       </Modal>

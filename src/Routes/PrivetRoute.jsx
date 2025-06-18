@@ -1,9 +1,41 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useGetProfileDataQuery } from '../Redux/services/profileApis';
 
 const PrivateRoute = ({ children }) => {
-  const { data, isLoading } = useGetProfileDataQuery();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const { data, isLoading: isProfileLoading } = useGetProfileDataQuery();
+
+  useEffect(() => {
+    const checkAuthorization = () => {
+      const role = data?.data?.role;
+      const currentPath = location.pathname;
+
+      try {
+        const restrictedRoutesForAdmin = ['/manage-admins'];
+
+        if (role === 'superAdmin') {
+          setIsAuthorized(true);
+        } else if (role === 'admin') {
+          const isRestricted = restrictedRoutesForAdmin.includes(currentPath);
+          setIsAuthorized(!isRestricted);
+        } else {
+          setIsAuthorized(false);
+        }
+      } catch (error) {
+        console.error('Authorization check failed:', error);
+        setIsAuthorized(false);
+      }
+    };
+
+    if (!isProfileLoading) {
+      checkAuthorization();
+      setIsLoading(false);
+    }
+  }, [location.pathname, data?.data?.role, isProfileLoading]);
 
   if (isLoading) {
     return (
@@ -13,11 +45,11 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-
-  const role = data?.data?.role;
-  const isAuthorized = role === 'superAdmin' || role === 'admin';
-
-  return isAuthorized ? children : <Navigate to="/login" replace />;
+  return isAuthorized ? (
+    children
+  ) : (
+    <Navigate to="/login" state={{ from: location }} replace />
+  );
 };
 
 export default PrivateRoute;

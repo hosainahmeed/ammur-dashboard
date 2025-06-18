@@ -24,7 +24,8 @@ const baseApis = createApi({
     'email',
     'phone',
     'social',
-    'groupes'
+    'groupes',
+    'interview',
   ],
   endpoints: () => ({}),
 });
