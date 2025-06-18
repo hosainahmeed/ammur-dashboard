@@ -1,12 +1,15 @@
 import baseApis from '../../baseApis/baseApis';
 
-baseApis.injectEndpoints({
+const groupeApis = baseApis.injectEndpoints({
   endpoints: (build) => ({
     getGroupes: build.query({
       query: () => ({
-        url: '/groupes',
+        url: '/rooms',
         method: 'GET',
       }),
+      providesTags: ['groupes','families'],
     }),
   }),
 });
+
+export const { useGetGroupesQuery } = groupeApis;

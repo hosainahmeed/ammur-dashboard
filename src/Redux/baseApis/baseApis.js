@@ -23,7 +23,8 @@ const baseApis = createApi({
     'timelineSingle',
     'email',
     'phone',
-    'social'
+    'social',
+    'groupes'
   ],
   endpoints: () => ({}),
 });

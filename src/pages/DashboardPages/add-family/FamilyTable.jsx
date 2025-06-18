@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, Button, Popconfirm, Typography } from 'antd';
 import { CiEdit } from 'react-icons/ci';
 import { MdDelete } from 'react-icons/md';
+import { imageUrl } from '../../../Utils/server';
 
 const FamilyTable = ({ families, onEdit, onDelete }) => {
   const columns = [
@@ -9,6 +10,12 @@ const FamilyTable = ({ families, onEdit, onDelete }) => {
       title: 'SL No.',
       dataIndex: 'index',
       key: 'index',
+    },
+    {
+      title: 'Image',
+      dataIndex: 'img',
+      key: 'img',
+      render: (url) => <img width={50} src={imageUrl(url)} alt="Family" />,
     },
     {
       title: 'Family Name',
@@ -38,13 +45,13 @@ const FamilyTable = ({ families, onEdit, onDelete }) => {
       ),
     },
   ];
-
   return (
     <Table
       columns={columns}
       pagination={{ responsive: true }}
       dataSource={families?.map((family, index) => ({
         key: family._id,
+        img: family.img,
         name: family.name,
         index: index + 1,
       }))}
