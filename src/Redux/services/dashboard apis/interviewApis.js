@@ -18,6 +18,21 @@ const interviewApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['interviewCategory'],
     }),
+    deleteCategory: builder.mutation({
+      query: ({ id }) => ({
+        url: `/interview-categories/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['interviewCategory'],
+    }),
+    updateCategory: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/interview-categories/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['interviewCategory'],
+    }),
     // interview
     getAllInterview: builder.query({
       query: () => ({
@@ -42,11 +57,14 @@ const interviewApis = baseApis.injectEndpoints({
       invalidatesTags: ['interview'],
     }),
     createInterview: builder.mutation({
-      query: ({ data }) => ({
-        url: '/interviews/create-interview',
-        method: 'POST',
-        body: data,
-      }),
+      query: ({ data }) => {
+        console.log(data);
+        return {
+          url: '/interviews/create-interview',
+          method: 'POST',
+          body: data,
+        };
+      },
       invalidatesTags: ['interview'],
     }),
   }),
@@ -56,6 +74,8 @@ export const {
   //category
   useGetAllInterCategoryQuery,
   useCreateCategoryMutation,
+  useDeleteCategoryMutation,
+  useUpdateCategoryMutation,
   // interview CRUD
   useGetAllInterviewQuery,
   useDeleteInterviewMutation,

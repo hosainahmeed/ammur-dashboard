@@ -1,33 +1,60 @@
 import React, { useState } from 'react';
 import PageHeading from '../../../Components/Shared/PageHeading';
-import { Button, Card, Form, Input, Modal, Pagination, Upload } from 'antd';
-import { FaPlus } from 'react-icons/fa6';
+import { Button, Card, Modal, Pagination, Popconfirm } from 'antd';
+import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { imageUrl } from '../../../Utils/server';
 import {
-  useCreateCategoryMutation,
+  useDeleteCategoryMutation,
   useGetAllInterCategoryQuery,
 } from '../../../Redux/services/dashboard apis/interviewApis';
-import { PlusOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import { GoArrowUpRight } from 'react-icons/go';
+import InterViewsCategoryForm from './InterViewsCategoryForm';
 import toast from 'react-hot-toast';
 
 function CategoryInterview() {
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
+  const [editData, setEditData] = useState(null);
   const limit = 6;
 
   const { data: interviewCategory, isLoading: categoryLoading } =
     useGetAllInterCategoryQuery({ page, limit });
+  const [deleteCategory] = useDeleteCategoryMutation();
 
-  if (categoryLoading) {
-    return <div>Loading...</div>;
-  }
+  const handleDelete = async (id) => {
+    try {
+      const res = await deleteCategory({ id }).unwrap();
+      if (res?.success) {
+        toast.success(res?.message || 'Category deleted successfully');
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to delete category');
+    }
+  };
+
+  const handleEdit = (category) => {
+    setEditData(category);
+    setShowModal(true);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    setEditData(null);
+  };
+
+  const handleSuccess = () => {
+    handleModalClose();
+  };
 
   const total = interviewCategory?.meta?.total || 0;
+
+  if (categoryLoading) return <div>Loading...</div>;
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
-        <PageHeading title={'InterViews'} />
+        <PageHeading title="InterViews" />
         <Button
           type="primary"
           icon={<FaPlus />}
@@ -42,11 +69,37 @@ function CategoryInterview() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {interviewCategory?.data?.map((item) => (
             <Card
-              key={item._id}
-              className="p-4 cursor-pointer"
-              cover={<img src={imageUrl(item?.img)} alt="category" />}
-              footer={<p>{item?.title}</p>}
-            ></Card>
+              key={item?._id}
+              cover={
+                <img
+                  alt={item?.title}
+                  src={imageUrl(item?.img)}
+                  className="h-[180px] w-full object-cover"
+                />
+              }
+              actions={[
+                <Button
+                  type="text"
+                  icon={<FaEdit />}
+                  onClick={() => handleEdit(item)}
+                />,
+                <Popconfirm
+                  title="Are you sure you want to delete this item?"
+                  onConfirm={() => handleDelete(item?._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="text" icon={<FaTrash />} danger />
+                </Popconfirm>,
+                <Link to={`/interviews/${item?._id}`} state={item}>
+                  <Button type="text" icon={<GoArrowUpRight />} />
+                </Link>,
+              ]}
+            >
+              <Card.Meta
+                title={<span className="font-semibold">{item?.title}</span>}
+              />
+            </Card>
           ))}
         </div>
 
@@ -55,7 +108,7 @@ function CategoryInterview() {
             current={page}
             pageSize={limit}
             total={total}
-            onChange={(newPage) => setPage(newPage)}
+            onChange={setPage}
             showSizeChanger={false}
           />
         </div>
@@ -63,95 +116,20 @@ function CategoryInterview() {
 
       <Modal
         open={showModal}
-        title="Add New Category"
+        title={editData ? 'Edit Category' : 'Add New Category'}
         footer={null}
-        width={800}
+        width={400}
         destroyOnClose
         centered
-        onCancel={() => setShowModal(false)}
+        onCancel={handleModalClose}
       >
-        <InterViewsCategoryForm />
+        <InterViewsCategoryForm
+          initialValues={editData}
+          onSuccess={handleSuccess}
+        />
       </Modal>
     </div>
   );
 }
 
 export default CategoryInterview;
-
-const InterViewsCategoryForm = ({ url }) => {
-  const [form] = Form.useForm();
-  const [createCategory] = useCreateCategoryMutation();
-
-  const handleAddFamilySubmit = async (values) => {
-    const data = {
-      title: values?.title,
-      file: values?.file?.[0]?.originFileObj,
-    };
-    try {
-      await createCategory({ data })
-        .unwrap()
-        .then((res) => {
-          if (res?.data?.success) {
-            toast.success(res?.data?.message || 'Category added successfully');
-            form.resetFields();
-          }
-        });
-    } catch (error) {
-      console.log(error);
-      toast.error(
-        error?.data?.message || error?.message || 'An unexpected error occurred'
-      );
-    }
-  };
-
-  return (
-    <div>
-      <Form form={form} layout="vertical" onFinish={handleAddFamilySubmit}>
-        <Form.Item
-          name="file"
-          label="Category Image"
-          valuePropName="fileList"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e && e.fileList;
-          }}
-        >
-          <Upload
-            name="file"
-            listType="picture-card"
-            showUploadList={true}
-            action="/api/upload"
-            maxCount={1}
-          >
-            {url ? (
-              <img
-                src={imageUrl(url)}
-                alt="Group"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ) : (
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
-            )}
-          </Upload>
-        </Form.Item>
-        <Form.Item
-          name="title"
-          label="Interview Category Name"
-          rules={[{ required: true, message: 'Please enter family name!' }]}
-        >
-          <Input placeholder="Enter family name" />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="!bg-[#0C469D]">
-            Add
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
-  );
-};

@@ -21,13 +21,16 @@ import {
   FaPause,
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
-// Uncomment these when you connect to your API
-// import { useCreateInterviewMutation, useUpdateInterviewMutation, useDeleteInterviewMutation, useGetCategoriesQuery } from "./categoriesApiSlice";
+import { useLocation } from 'react-router-dom';
+import { imageUrl } from '../../../Utils/server';
 
 const { Dragger } = Upload;
 
 function InterViews() {
   const [form] = Form.useForm();
+  const location = useLocation();
+  const items = location.state;
+  console.log(items);
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
   const [thumbnailList, setThumbnailList] = useState([]);
@@ -40,32 +43,32 @@ function InterViews() {
   const videoRefs = useRef({});
 
   // RTK Query hooks (commented out)
-  // const { data: categories = [], isLoading, isError } = useGetCategoriesQuery();
+  // const { data: categories = [], isLoading, isError } = useGetAllInterCategoryQuery();
   // const [createInterview, { isLoading: isCreating }] = useCreateInterviewMutation();
   // const [updateInterview, { isLoading: isUpdating }] = useUpdateInterviewMutation();
   // const [deleteInterview] = useDeleteInterviewMutation();
 
   // For demo/testing, using local state categories
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      title: 'Life Lessons & Values',
-      duration: '12:34',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      thumbnail:
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
-    },
-    {
-      id: 2,
-      title: 'Spirituality & Beliefs',
-      duration: '15:10',
-      description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-      videoUrl: 'https://www.w3schools.com/html/movie.mp4',
-      thumbnail:
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
-    },
-  ]);
+  // const [categories, setCategories] = useState([
+  //   {
+  //     id: 1,
+  //     title: 'Life Lessons & Values',
+  //     duration: '12:34',
+  //     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+  //     videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  //     thumbnail:
+  //       'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Spirituality & Beliefs',
+  //     duration: '15:10',
+  //     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+  //     videoUrl: 'https://www.w3schools.com/html/movie.mp4',
+  //     thumbnail:
+  //       'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
+  //   },
+  // ]);
 
   const handleEdit = (interview) => {
     setEditData(interview);
@@ -117,7 +120,6 @@ function InterViews() {
     // }
 
     // For demo, remove locally:
-    setCategories((prev) => prev.filter((item) => item.id !== id));
     toast.success('Interview deleted');
   };
 
@@ -159,7 +161,6 @@ function InterViews() {
           thumbnail: thumbnailUrl,
           videoUrl: videoUrl,
         };
-        setCategories((prev) => [newItem, ...prev]);
         toast.success('Interview created');
       }
 
@@ -300,33 +301,33 @@ function InterViews() {
         </Button>
       </div>
 
-      {categories.length > 0 ? (
+      {items?.interviews?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories.map((item) => (
+          {items?.interviews?.map((item) => (
             <Card
-              key={item.id}
+              key={item._id}
               className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
               cover={
                 <div
                   className="relative h-[180px] cursor-pointer"
-                  onMouseEnter={() => handleCardMouseEnter(item.id)}
-                  onMouseLeave={() => handleCardMouseLeave(item.id)}
+                  onMouseEnter={() => handleCardMouseEnter(item._id)}
+                  onMouseLeave={() => handleCardMouseLeave(item._id)}
                 >
                   {/* Thumbnail/Video container */}
-                  {hoveredCardId === item.id && item.videoUrl ? (
+                  {hoveredCardId === item._id && item.video ? (
                     <div className="relative h-full w-full">
                       <video
                         ref={(el) => {
-                          if (el) videoRefs.current[item.id] = el;
+                          if (el) videoRefs.current[item._id] = el;
                         }}
-                        src={item.videoUrl}
+                        src={item.video}
                         className="h-full w-full object-cover"
                         muted
                         loop
                       />
                       <div
                         className="absolute inset-0 flex items-center justify-center bg-transparent bg-opacity-30"
-                        onClick={(e) => toggleVideoPlay(item.id, e)}
+                        onClick={(e) => toggleVideoPlay(item._id, e)}
                       >
                         <button className="p-3 bg-white bg-opacity-70 rounded-full text-blue-600 hover:bg-opacity-90 transition-all">
                           {isVideoPlaying ? (
@@ -340,7 +341,7 @@ function InterViews() {
                   ) : (
                     <img
                       alt={item.title}
-                      src={item.thumbnail || 'https://via.placeholder.com/150'}
+                      src={imageUrl(item.img)}
                       className="h-full w-full object-cover"
                     />
                   )}

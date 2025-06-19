@@ -26,7 +26,7 @@ import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import JoditComponent from '../../../../Components/Shared/JoditComponent';
 
-function ThingsToKnowSpecific() {
+function SingleThingstoKnow() {
   const [form] = Form.useForm();
   const location = useLocation();
   const id = location.state;
@@ -86,7 +86,7 @@ function ThingsToKnowSpecific() {
 
   const handleDelete = (id) => {
     // plug in delete mutation here
-    console.log(id)
+    console.log(id);
     toast.success('Deleted successfully');
   };
 
@@ -365,4 +365,4 @@ function ThingsToKnowSpecific() {
   );
 }
 
-export default ThingsToKnowSpecific;
+export default SingleThingstoKnow;

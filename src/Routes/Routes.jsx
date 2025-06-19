@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import PrivateRoute from './PrivetRoute';
 import Dashboard from '../Layout/Dashboard';
-import ThingsToKnowSpecific from '../pages/DashboardPages/ThingsToKnow/SpacaficOne/ThingsToKnow';
+import ThingsToKnowSpecific from '../pages/DashboardPages/ThingsToKnow/SpacaficOne/SingleThingstoKnow';
 
 // Normal imports for pages
 import Login from '../pages/Auth/Login';
@@ -96,6 +96,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/interviews',
         element: <CategoryInterview />,
+      },
+      {
+        path: '/interviews/:id',
+        element: <InterViews />,
       },
       {
         path: '/legacy-tribute',
