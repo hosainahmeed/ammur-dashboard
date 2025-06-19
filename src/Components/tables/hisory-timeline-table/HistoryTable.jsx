@@ -15,18 +15,21 @@ import { CiEdit } from 'react-icons/ci';
 import { FaEye, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import {
   useDeleteTimelineMutation,
   useGetTimelineQuery,
 } from '../../../Redux/services/dashboard apis/timelineApis';
 import { imageUrl } from '../../../Utils/server';
+import CreatNewHistory from './CreatNewHistory';
 
 function HistoryTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const { data, isLoading } = useGetTimelineQuery();
+  const [id, setId] = useState(null);
   const [deleteTimeline] = useDeleteTimelineMutation();
+  const [createNewModal, setCreateNewModal] = useState(false);
 
   const history =
     data?.data?.map((item) => ({
@@ -122,13 +125,17 @@ function HistoryTable() {
       width: 200,
       render: (_, record) => (
         <Space size="middle">
-          <Link to={`/timeline/timeline-handle`} state={record.key}>
-            <Button
-              className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
-              icon={<CiEdit />}
-              title="Edit"
-            />
-          </Link>
+          {/* <Link to={`/timeline/timeline-handle`} state={record.key}> */}
+          <Button
+            onClick={() => {
+              setCreateNewModal(true);
+              setId(record.key);
+            }}
+            className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
+            icon={<CiEdit />}
+            title="Edit"
+          />
+          {/* </Link> */}
           <Button
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<FaEye />}
@@ -163,14 +170,18 @@ function HistoryTable() {
           className="!w-[300px]"
           allowClear
         />
-        <Link to={'/timeline/timeline-handle'}>
-          <Button
-            icon={<FaPlus />}
-            className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
-          >
-            Add New History
-          </Button>
-        </Link>
+        {/* <Link to={'/timeline/timeline-handle'}> */}
+        <Button
+          onClick={() => {
+            setId(null);
+            setCreateNewModal(true);
+          }}
+          icon={<FaPlus />}
+          className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
+        >
+          Add New History
+        </Button>
+        {/* </Link> */}
       </div>
 
       <Table
@@ -188,6 +199,7 @@ function HistoryTable() {
         title={<span className="text-xl font-bold">History Details</span>}
         open={isModalVisible}
         onCancel={handleCancel}
+        destroyOnClose
         footer={[
           <Button key="back" onClick={handleCancel}>
             Close
@@ -238,6 +250,18 @@ function HistoryTable() {
             </div>
           </div>
         )}
+      </Modal>
+      <Modal
+        width={1200}
+        open={createNewModal}
+        footer={null}
+        destroyOnClose
+        onCancel={() => setCreateNewModal(false)}
+        closeIcon={false}
+        centered
+        maskClosable={false}
+      >
+        <CreatNewHistory setCreateNewModal={setCreateNewModal} id={id} />
       </Modal>
     </div>
   );

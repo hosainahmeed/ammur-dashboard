@@ -71,7 +71,7 @@ const InterViewsCategoryForm = ({ initialValues, onSuccess }) => {
         }
       }
     } catch (err) {
-      toast.error(err?.data?.message || 'Submission failed');
+      toast.error(err?.data?.errorSources[0].message || 'Submission failed');
     }
   };
 

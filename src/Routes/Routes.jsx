@@ -53,10 +53,10 @@ export const Routes = createBrowserRouter([
         path: '/timeline',
         element: <HistoryTimeline />,
       },
-      {
-        path: '/timeline/timeline-handle',
-        element: <CreatNewHistory />,
-      },
+      // {
+      //   path: '/timeline/timeline-handle',
+      //   element: <CreatNewHistory />,
+      // },
       {
         path: '/subscription',
         element: <Subscription />,
@@ -66,7 +66,7 @@ export const Routes = createBrowserRouter([
         element: <ThingsToKnow />,
       },
       {
-        path: '/things-to-know/blogs/:slug',
+        path: '/things-to-know/:id',
         element: <ThingsToKnowSpecific />,
       },
       {

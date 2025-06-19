@@ -8,7 +8,15 @@ const adminApis = baseApis.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      providesTags: ['user'],
+      invalidatesTags: ['user'],
+    }),
+    updateAdmin: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/users/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['user'],
     }),
   }),
 });

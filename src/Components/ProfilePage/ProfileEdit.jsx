@@ -28,6 +28,7 @@ const ProfileEdit = ({ image, data }) => {
         .unwrap()
         .then((res) => {
           if (res?.data?.success) {
+            toast.dismiss();
             toast.success(res?.data?.message || 'Profile updated successfully');
           }
         });

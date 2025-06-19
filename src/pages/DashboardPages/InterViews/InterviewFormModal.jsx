@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Input } from 'antd';
 import toast from 'react-hot-toast';
 import UploadPreview from './UploadPreview';
-
+import './interviwModal.css'
 const InterviewFormModal = ({
   open,
   setOpen,
@@ -80,6 +80,7 @@ const InterviewFormModal = ({
 
   return (
     <Modal
+      width={800}
       title={editData ? 'Edit Interview' : 'Add Interview'}
       open={open}
       onCancel={handleClose}

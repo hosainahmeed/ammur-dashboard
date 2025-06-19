@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useCreateAdminsMutation } from '../../../Redux/services/dashboard apis/adminApis';
 
 function CreateNewAdmin({ closeModal }) {
-  const [createAdmin] = useCreateAdminsMutation();
+  const [createAdmin, { isLoading }] = useCreateAdminsMutation();
   const [form] = Form.useForm();
   const initialData = {
     fullName: '',
@@ -12,19 +12,19 @@ function CreateNewAdmin({ closeModal }) {
     phoneNumber: '',
   };
   const onFinish = async (values) => {
-    const data = { ...values };
+    const data = { ...values, role: 'admin' };
     try {
       await createAdmin({ data })
         .unwrap()
         .then((res) => {
-          if (res?.data?.success) {
-            toast.success(res?.data?.message || 'Admin added successfully');
+          if (res?.success) {
+            toast.success(res?.message || 'Admin added successfully');
             form.resetFields();
-            closeModal();
+            closeModal(false);
           }
         });
     } catch (error) {
-      console.log(error);
+      toast.error(error?.data?.message || 'Something went wrong');
     }
   };
 
@@ -81,15 +81,15 @@ function CreateNewAdmin({ closeModal }) {
         >
           <Input placeholder="Please Input the phone number" />
         </Form.Item>
-        <Divider />
-
+        {/* <Divider /> */}
+        {/* 
         <Form.Item
           name="role"
           label="User type"
           rules={[{ required: true, message: 'Please input the user type!' }]}
         >
           <Input placeholder="Please Input the user type" />
-        </Form.Item>
+        </Form.Item> */}
         <Divider />
         <Form.Item
           name="password"
@@ -119,7 +119,7 @@ function CreateNewAdmin({ closeModal }) {
             className="!w-full !h-10 !text-white !bg-[var(--bg-green-high)]"
             htmlType="submit"
           >
-            Save
+            {isLoading ? 'Adding...' : 'Add Admin'}
           </Button>
         </div>
       </Form>

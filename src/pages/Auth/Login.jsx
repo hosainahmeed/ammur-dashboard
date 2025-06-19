@@ -22,14 +22,17 @@ const Login = () => {
             const accessToken = res?.data?.accessToken;
             if (accessToken) {
               localStorage.setItem('accessToken', accessToken);
+              toast.dismiss();
               toast.success(res?.message);
               window.location.href = '/';
             } else {
+              toast.dismiss();
               toast.error(res?.data?.message || 'Something went wrong');
             }
           }
         });
     } catch (error) {
+      toast.dismiss();
       toast.error(error?.data?.message || 'Something went wrong');
     }
   };

@@ -5,32 +5,10 @@ import toast from 'react-hot-toast';
 function UpdateAdminInformatio({ adminData, closeModal }) {
   console.log(adminData);
   const [form] = Form.useForm();
-
-  // {
-  //   key: '684e45cc81714191f0728d8a',
-  //   name: 'ahmad musa',
-  //   contactNumber: '1234567890',
-  //   email: 'john4.doe4@example.com',
-  //   approvalStatus: true,
-  //   otpVerified: false,
-  //   preferedContactMethod: 'email',
-  //   address: '',
-  //   proffession: '',
-  //   eldestRelative: '',
-  //   familySide: '',
-  //   subscription: 'basic',
-  //   paymentStatus: 'pending',
-  //   img: '',
-  //   role: 'admin',
-  //   status: 'active',
-  //   isDeleted: false
-  // }
   const initialData = {
-    name: 'Hosain Ahmed',
+    fullName:adminData?.name,
     email: 'hosain@gmail.com',
-    contactNumber: '998877665544',
-    password: '12112122',
-    confirmPassword: '12112122',
+    phoneNumber: adminData?.contactNumber,
   };
   const onFinish = (values) => {
     console.log('Form values:', values);

@@ -117,7 +117,7 @@ function ThingsToKnow() {
           });
       }
     } catch (err) {
-      toast.error(err?.data?.message || 'Failed to save category');
+      toast.error(err?.data?.errorSources[0].message || 'Failed to save category');
     }
   };
 
@@ -195,7 +195,7 @@ function ThingsToKnow() {
               cover={
                 <img
                   alt={item?.title}
-                  src={imageUrl(item?.img) || 'https://via.placeholder.com/150'}
+                  src={imageUrl(item?.img)}
                   className="h-[180px] w-full object-cover"
                 />
               }
@@ -221,7 +221,7 @@ function ThingsToKnow() {
                   />
                 </Popconfirm>,
                 <Link
-                  to={`/things-to-know/blogs/${item?.title}`}
+                  to={`/things-to-know/${item?._id}`}
                   state={item?._id}
                 >
                   <Button
@@ -248,16 +248,7 @@ function ThingsToKnow() {
             </span>
           }
           className="!flex !flex-col !items-center !justify-center !p-10 !bg-white !rounded-lg !shadow-sm"
-        >
-          <Button
-            type="primary"
-            icon={<FaPlus />}
-            onClick={() => setShowModal(true)}
-            className="!mt-4"
-          >
-            Add New Item
-          </Button>
-        </Empty>
+        ></Empty>
       )}
 
       <Modal
@@ -289,9 +280,7 @@ function ThingsToKnow() {
             <Input placeholder="Enter category title" />
           </Form.Item>
 
-          <Form.Item
-            label="Category Image"
-          >
+          <Form.Item label="Category Image">
             <Upload {...uploadProps}>
               {fileList.length >= 1 ? null : (
                 <div>

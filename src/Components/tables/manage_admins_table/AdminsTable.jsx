@@ -233,7 +233,7 @@ const AdminsTable = () => {
         <div className="flex flex-col items-center">
           <Avatar
             className="!w-24 !h-24"
-            src="https://xsgames.co/randomusers/avatar.php?g=male"
+            src={imageUrl(selectedUser?.img)}
           />
           <h1 className="text-2xl font-bold">{selectedUser?.name}</h1>
           <div className="!w-full p-1 border-1 border-[var(--vg-green-high)] rounded-md">

@@ -12,6 +12,7 @@ import {
   DatePicker,
   Upload,
   message,
+  Empty,
 } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { FaEdit, FaPlus } from 'react-icons/fa';
@@ -21,6 +22,7 @@ import {
   useSingleThingsToKnowQuery,
   useUpdateSubCategoryMutation,
   useCreateSubCategoryMutation,
+  useDeleteThingsToKnowMutation,
 } from '../../../../Redux/services/dashboard apis/thingsToKnowApis';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
@@ -32,9 +34,12 @@ function SingleThingstoKnow() {
   const id = location.state;
 
   const { data } = useSingleThingsToKnowQuery({ id: id });
+  const [deleteSubCategory] = useDeleteThingsToKnowMutation();
+  console.log(data);
   const [updateSubCategory, { isLoading: isUpdating }] =
     useUpdateSubCategoryMutation();
-  const [createSubCategory] = useCreateSubCategoryMutation();
+  const [createSubCategory, { isLoading: isCreating }] =
+    useCreateSubCategoryMutation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
@@ -84,8 +89,19 @@ function SingleThingstoKnow() {
       reader.onerror = (error) => reject(error);
     });
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     // plug in delete mutation here
+    try {
+      await deleteSubCategory({ id })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Category deleted successfully');
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
     console.log(id);
     toast.success('Deleted successfully');
   };
@@ -189,69 +205,75 @@ function SingleThingstoKnow() {
           icon={<FaPlus />}
           onClick={showCreateModal}
         >
-          Add New Blog
+          Add New
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data?.data?.ThingToKnows?.map((item) => (
-          <Card
-            key={item._id}
-            className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
-            cover={
-              <img
-                alt={item.title}
-                src={item.img}
-                className="h-[180px] w-full object-cover"
-              />
-            }
-            actions={[
-              <Button
-                type="text"
-                icon={<FaEdit />}
-                onClick={() => showEditModal(item)}
-                className="!flex !w-full !items-center !justify-center"
-              />,
-              <Popconfirm
-                title="Are you sure you want to delete this item?"
-                onConfirm={() => handleDelete(item._id)}
-                okText="Yes"
-                cancelText="No"
-              >
+        {data?.data?.ThingToKnows?.length > 0 ? (
+          data?.data?.ThingToKnows?.map((item) => (
+            <Card
+              key={item._id}
+              className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
+              cover={
+                <img
+                  alt={item.title}
+                  src={item.img}
+                  className="h-[180px] w-full object-cover"
+                />
+              }
+              actions={[
                 <Button
                   type="text"
-                  icon={<FaTrash />}
-                  danger
+                  icon={<FaEdit />}
+                  onClick={() => showEditModal(item)}
                   className="!flex !w-full !items-center !justify-center"
-                />
-              </Popconfirm>,
-              <Button
-                type="text"
-                icon={<FaEye />}
-                onClick={() => showModal(item)}
-                className="!flex !w-full !items-center !justify-center"
-              />,
-            ]}
-          >
-            <Card.Meta
-              title={
-                <div className="flex flex-col">
-                  <span className="!text-lg !font-semibold">
-                    {item.title.slice(0, 20)}...
-                  </span>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: item?.description
-                        ? item?.description.slice(0, 50)
-                        : '',
-                    }}
-                    className="font-normal text-sm text-wrap"
+                />,
+                <Popconfirm
+                  title="Are you sure you want to delete this item?"
+                  onConfirm={() => handleDelete(item._id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button
+                    type="text"
+                    icon={<FaTrash />}
+                    danger
+                    className="!flex !w-full !items-center !justify-center"
                   />
-                </div>
-              }
-            />
-          </Card>
-        ))}
+                </Popconfirm>,
+                <Button
+                  type="text"
+                  icon={<FaEye />}
+                  onClick={() => showModal(item)}
+                  className="!flex !w-full !items-center !justify-center"
+                />,
+              ]}
+            >
+              <Card.Meta
+                title={
+                  <div className="flex flex-col">
+                    <span className="!text-lg !font-semibold">
+                      {item.title.slice(0, 20)}...
+                    </span>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: item?.description
+                          ? item?.description.slice(0, 50)
+                          : '',
+                      }}
+                      className="font-normal text-sm text-wrap"
+                    />
+                  </div>
+                }
+              />
+            </Card>
+          ))
+        ) : (
+          <div className="col-span-3 flex items-center justify-center">
+            <Empty description="No things to know" />
+          </div>
+        )}
       </div>
 
       {/* View Modal */}
@@ -334,8 +356,8 @@ function SingleThingstoKnow() {
         open={isCreateModalVisible}
         onOk={handleCreate}
         onCancel={handleCancel}
-        okText="Create"
-        width={1200} // Made consistent with edit modal width
+        okText={`${isCreating ? 'Creating...' : 'Create'}`}
+        width={1200}
       >
         <Form requiredMark={false} form={form} layout="vertical">
           <Form.Item label="Image" rules={[{ required: true }]}>

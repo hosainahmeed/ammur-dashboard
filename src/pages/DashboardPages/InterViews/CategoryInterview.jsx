@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PageHeading from '../../../Components/Shared/PageHeading';
-import { Button, Card, Modal, Pagination, Popconfirm } from 'antd';
+import { Button, Card, Empty, Modal, Pagination, Popconfirm } from 'antd';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { imageUrl } from '../../../Utils/server';
 import {
@@ -67,51 +67,61 @@ function CategoryInterview() {
 
       <Card>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {interviewCategory?.data?.map((item) => (
-            <Card
-              key={item?._id}
-              cover={
-                <img
-                  alt={item?.title}
-                  src={imageUrl(item?.img)}
-                  className="h-[180px] w-full object-cover"
+          {interviewCategory?.data.length > 0 ? (
+            interviewCategory?.data.map((item) => (
+              <Card
+                key={item?._id}
+                cover={
+                  <img
+                    alt={item?.title}
+                    src={imageUrl(item?.img)}
+                    className="h-[180px] w-full object-cover"
+                  />
+                }
+                actions={[
+                  <Button
+                    type="text"
+                    icon={<FaEdit />}
+                    onClick={() => handleEdit(item)}
+                  />,
+                  <Popconfirm
+                    title="Are you sure you want to delete this item?"
+                    onConfirm={() => handleDelete(item?._id)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button type="text" icon={<FaTrash />} danger />
+                  </Popconfirm>,
+                  <Link to={`/interviews/${item?._id}`} state={item?._id}>
+                    <Button type="text" icon={<GoArrowUpRight />} />
+                  </Link>,
+                ]}
+              >
+                <Card.Meta
+                  title={<span className="font-semibold">{item?.title}</span>}
                 />
-              }
-              actions={[
-                <Button
-                  type="text"
-                  icon={<FaEdit />}
-                  onClick={() => handleEdit(item)}
-                />,
-                <Popconfirm
-                  title="Are you sure you want to delete this item?"
-                  onConfirm={() => handleDelete(item?._id)}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <Button type="text" icon={<FaTrash />} danger />
-                </Popconfirm>,
-                <Link to={`/interviews/${item?._id}`} state={item?._id}>
-                  <Button type="text" icon={<GoArrowUpRight />} />
-                </Link>,
-              ]}
-            >
-              <Card.Meta
-                title={<span className="font-semibold">{item?.title}</span>}
+              </Card>
+            ))
+          ) : (
+            <div className='col-span-3 flex justify-center items-cente'>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="No categories found"
               />
-            </Card>
-          ))}
+            </div>
+          )}
         </div>
 
-        <div className="flex justify-center mt-6">
-          <Pagination
-            current={page}
-            pageSize={limit}
-            total={total}
-            onChange={setPage}
-            showSizeChanger={false}
-          />
-        </div>
+        {interviewCategory?.data.length > 0 && (
+          <div className="flex justify-end mt-4">
+            <Pagination
+              current={page}
+              pageSize={limit}
+              total={total}
+              onChange={(page) => setPage(page)}
+            />
+          </div>
+        )}
       </Card>
 
       <Modal
