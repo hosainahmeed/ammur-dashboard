@@ -23,14 +23,20 @@ import {
 import toast from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
 import { imageUrl } from '../../../Utils/server';
+import {
+  useCreateInterviewMutation,
+  useDeleteInterviewMutation,
+  useGetAllInterviewQuery,
+  useUpdateInterviewMutation,
+} from '../../../Redux/services/dashboard apis/interviewApis';
 
 const { Dragger } = Upload;
 
 function InterViews() {
   const [form] = Form.useForm();
   const location = useLocation();
-  const items = location.state;
-  console.log(items);
+  const id = location.state;
+  const { data: interviewCategory } = useGetAllInterviewQuery(id);
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
   const [thumbnailList, setThumbnailList] = useState([]);
@@ -42,33 +48,11 @@ function InterViews() {
 
   const videoRefs = useRef({});
 
-  // RTK Query hooks (commented out)
-  // const { data: categories = [], isLoading, isError } = useGetAllInterCategoryQuery();
-  // const [createInterview, { isLoading: isCreating }] = useCreateInterviewMutation();
-  // const [updateInterview, { isLoading: isUpdating }] = useUpdateInterviewMutation();
-  // const [deleteInterview] = useDeleteInterviewMutation();
-
-  // For demo/testing, using local state categories
-  // const [categories, setCategories] = useState([
-  //   {
-  //     id: 1,
-  //     title: 'Life Lessons & Values',
-  //     duration: '12:34',
-  //     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-  //     videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-  //     thumbnail:
-  //       'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Spirituality & Beliefs',
-  //     duration: '15:10',
-  //     description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-  //     videoUrl: 'https://www.w3schools.com/html/movie.mp4',
-  //     thumbnail:
-  //       'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60',
-  //   },
-  // ]);
+  const [createInterview, { isLoading: isCreating }] =
+    useCreateInterviewMutation();
+  const [updateInterview, { isLoading: isUpdating }] =
+    useUpdateInterviewMutation();
+  const [deleteInterview] = useDeleteInterviewMutation();
 
   const handleEdit = (interview) => {
     setEditData(interview);
@@ -76,6 +60,8 @@ function InterViews() {
       title: interview.title,
       description: interview.description,
       duration: interview.duration,
+      thumbnail: interview.thumbnail,
+      video: interview.videoUrl,
     });
 
     // Set the preview URLs for the existing media
@@ -111,16 +97,18 @@ function InterViews() {
   };
 
   const handleDelete = async (id) => {
-    // Uncomment to use RTK Query API call
-    // try {
-    //   await deleteInterview(id).unwrap();
-    //   toast.success('Interview deleted successfully');
-    // } catch (err) {
-    //   toast.error('Failed to delete interview');
-    // }
-
-    // For demo, remove locally:
-    toast.success('Interview deleted');
+    try {
+      await deleteInterview(id)
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Interview deleted successfully');
+          }
+        });
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || 'Failed to delete interview');
+    }
   };
 
   const handleSubmit = async () => {
@@ -129,38 +117,29 @@ function InterViews() {
 
       const thumbnailFile = thumbnailList[0]?.originFileObj || null;
       const videoFile = videoList[0]?.originFileObj || null;
-      console.log(thumbnailFile, videoFile);
-      // For demo, use local URL objects or keep existing URLs
-      let thumbnailUrl = thumbnailPreview || editData?.thumbnail || '';
-      let videoUrl = videoPreview || editData?.videoUrl || '';
 
       if (editData) {
-        // Demo local update
-        setCategories((prev) =>
-          prev.map((item) =>
-            item.id === editData.id
-              ? {
-                  ...item,
-                  title: values.title,
-                  description: values.description,
-                  duration: values.duration || item.duration,
-                  thumbnail: thumbnailUrl,
-                  videoUrl: videoUrl,
-                }
-              : item
-          )
-        );
         toast.success('Interview updated');
       } else {
         // Demo local create
         const newItem = {
-          id: Date.now(),
           title: values.title,
           description: values.description,
           duration: values.duration || '00:00',
-          thumbnail: thumbnailUrl,
-          videoUrl: videoUrl,
+          image: thumbnailFile,
+          video: videoFile,
+          interviewCategoryId: id,
         };
+
+        const formData = new FormData();
+        formData.append('title', newItem.title);
+        formData.append('description', newItem.description);
+        formData.append('duration', newItem.duration || '00:00');
+        formData.append('image', thumbnailFile);
+        formData.append('video', videoFile);
+        formData.append('interviewCategoryId', id);
+
+        await createInterview({ data: formData }).unwrap();
         toast.success('Interview created');
       }
 
@@ -286,7 +265,6 @@ function InterViews() {
 
   // if (isLoading) return <Spin size="large" className="flex justify-center" />;
   // if (isError) return <div>Error loading categories</div>;
-
   return (
     <div className="p-5 container mx-auto">
       <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
@@ -301,9 +279,9 @@ function InterViews() {
         </Button>
       </div>
 
-      {items?.interviews?.length > 0 ? (
+      {interviewCategory?.data?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {items?.interviews?.map((item) => (
+          {interviewCategory?.data?.map((item) => (
             <Card
               key={item._id}
               className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
@@ -361,7 +339,7 @@ function InterViews() {
                 <Popconfirm
                   title="Are you sure you want to delete this item?"
                   placement="top"
-                  onConfirm={() => handleDelete(item.id)}
+                  onConfirm={() => handleDelete(item._id)}
                   okText="Yes"
                   cancelText="No"
                 >
@@ -397,16 +375,7 @@ function InterViews() {
             </span>
           }
           className="!flex !flex-col !items-center !justify-center !p-10 !bg-white !rounded-lg !shadow-sm"
-        >
-          <Button
-            type="primary"
-            icon={<FaPlus />}
-            onClick={() => setShowModal(true)}
-            className="!mt-4"
-          >
-            Add New Item
-          </Button>
-        </Empty>
+        ></Empty>
       )}
 
       <Modal
@@ -422,7 +391,7 @@ function InterViews() {
             key="submit"
             onClick={handleSubmit}
             className="!bg-[#0C469D] !text-white"
-            // loading={isCreating || isUpdating}
+            loading={isCreating || isUpdating}
           >
             {editData ? 'Update' : 'Save'}
           </Button>,

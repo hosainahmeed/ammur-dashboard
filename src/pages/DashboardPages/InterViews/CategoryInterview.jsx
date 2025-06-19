@@ -91,7 +91,7 @@ function CategoryInterview() {
                 >
                   <Button type="text" icon={<FaTrash />} danger />
                 </Popconfirm>,
-                <Link to={`/interviews/${item?._id}`} state={item}>
+                <Link to={`/interviews/${item?._id}`} state={item?._id}>
                   <Button type="text" icon={<GoArrowUpRight />} />
                 </Link>,
               ]}

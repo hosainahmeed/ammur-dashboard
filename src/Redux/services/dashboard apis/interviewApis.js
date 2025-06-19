@@ -35,8 +35,8 @@ const interviewApis = baseApis.injectEndpoints({
     }),
     // interview
     getAllInterview: builder.query({
-      query: () => ({
-        url: '/interviews',
+      query: (id) => ({
+        url: `/interviews/category-id/${id}`,
         method: 'GET',
       }),
       providesTags: ['interview'],
@@ -46,7 +46,7 @@ const interviewApis = baseApis.injectEndpoints({
         url: `/interviews/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['interview'],
+      invalidatesTags: ['interview', 'interviewCategory'],
     }),
     updateInterview: builder.mutation({
       query: ({ id, data }) => ({
