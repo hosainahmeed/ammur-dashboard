@@ -64,7 +64,7 @@ const InterviewFormModal = ({
       }
       handleClose();
     } catch (err) {
-      toast.error(err?.data?.message || 'Failed to save');
+      toast.error(err?.data?.errorSources[0].message || 'Failed to save');
     }
   };
 

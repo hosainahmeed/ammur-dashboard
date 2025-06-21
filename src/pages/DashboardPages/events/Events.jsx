@@ -24,6 +24,7 @@ import 'dayjs/locale/en-gb';
 import locale from 'antd/locale/en_GB';
 import { FaEdit } from 'react-icons/fa';
 import PageHeading from '../../../Components/Shared/PageHeading';
+import { useGetEventQuery } from '../../../Redux/services/dashboard apis/eventApis';
 
 const { TextArea } = Input;
 
@@ -59,6 +60,7 @@ const getBase64 = (file) =>
   });
 
 function Events() {
+  const { data } = useGetEventQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [events, setEvents] = useState(initialEventsData);
@@ -69,6 +71,17 @@ function Events() {
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
+
+  const eventsData = data?.data?.map((event) => ({
+    _id: event?._id,
+    interviewCategoryId: event?.interviewCategoryId,
+    title: event?.title,
+    description: event?.description,
+    duration: event?.duration,
+    img: event?.img,
+    video: event?.video,
+    isDeleted: event?.isDeleted,
+  }));
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -292,7 +305,7 @@ function Events() {
         <Space size="middle">
           <Button
             type="primary"
-            className='!bg-[#0C469D]'
+            className="!bg-[#0C469D]"
             icon={<EditOutlined />}
             size="small"
             onClick={() => handleEdit(record)}
@@ -322,7 +335,12 @@ function Events() {
     <div className="container mx-auto p-6">
       <div className="bg-white flex items-center px-4 justify-between rounded-md shadow-md">
         <PageHeading title={'Events'} />
-        <Button className='!bg-[#0C469D]' type="primary" icon={<PlusOutlined />} onClick={showModal}>
+        <Button
+          className="!bg-[#0C469D]"
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={showModal}
+        >
           Add New Event
         </Button>
       </div>
@@ -423,7 +441,10 @@ function Events() {
               showUploadList={false}
               accept="video/*"
             >
-              <Button className='!bg-[#0C469D] !text-white' icon={<UploadOutlined />}>
+              <Button
+                className="!bg-[#0C469D] !text-white"
+                icon={<UploadOutlined />}
+              >
                 {videoPreviewUrl ? 'Change Video' : 'Upload Video'}
               </Button>
             </Upload>

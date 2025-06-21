@@ -27,6 +27,7 @@ const baseApis = createApi({
     'groupes',
     'interview',
     'interviewCategory',
+    'event',
   ],
   endpoints: () => ({}),
 });

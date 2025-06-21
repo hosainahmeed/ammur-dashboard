@@ -109,6 +109,7 @@ function CreatNewHistory({ id, setCreateNewModal }) {
               toast.success(
                 res?.message || 'History timeline updated successfully!'
               );
+              onReset();
             }
           });
       }
@@ -136,7 +137,7 @@ function CreatNewHistory({ id, setCreateNewModal }) {
             requiredMark={false}
           >
             <Row gutter={[24, 16]}>
-              <Col xs={24} md={6}>
+              <Col xs={24} md={24}>
                 <Form.Item
                   label={
                     <span className="form-label flex items-center">
@@ -166,7 +167,7 @@ function CreatNewHistory({ id, setCreateNewModal }) {
                 </Form.Item>
               </Col>
 
-              <Col xs={24} md={24}>
+              <Col xs={24} md={12}>
                 <ConfigProvider
                   theme={{
                     components: {
@@ -201,7 +202,7 @@ function CreatNewHistory({ id, setCreateNewModal }) {
                 </ConfigProvider>
               </Col>
 
-              <Col xs={24}>
+              <Col xs={12}>
                 <Form.Item
                   label={
                     <span className="form-label flex items-center">

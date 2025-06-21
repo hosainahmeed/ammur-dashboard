@@ -58,6 +58,13 @@ const thingsToKnowApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['thingsToKnow-single'],
     }),
+    deleteSubCategory: builder.mutation({
+      query: ({ id }) => ({
+        url: `/things-to-knows/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['thingsToKnow-single'],
+    })
   }),
 });
 
@@ -71,4 +78,5 @@ export const {
   //subCategory
   useCreateSubCategoryMutation,
   useUpdateSubCategoryMutation,
+  useDeleteSubCategoryMutation
 } = thingsToKnowApis;

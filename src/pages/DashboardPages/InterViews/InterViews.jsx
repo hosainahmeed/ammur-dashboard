@@ -44,8 +44,9 @@ function InterViews() {
   };
 
   return (
-    <div className="p-5 bg-white rounded-md container mx-auto">
-      <div className='mb-3 flex itmx-center justify-end'>
+    <div className="p-5  rounded-md container mx-auto">
+      <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
+        <PageHeading title="InterViews/Subcategories" />
         <Button
           type="primary"
           icon={<FaPlus />}

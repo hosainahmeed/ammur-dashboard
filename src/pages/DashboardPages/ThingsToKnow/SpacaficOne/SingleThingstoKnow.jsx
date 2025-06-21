@@ -17,12 +17,11 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { FaEdit, FaPlus } from 'react-icons/fa';
 import { FaEye, FaTrash, FaUpload } from 'react-icons/fa6';
-import { UploadOutlined } from '@ant-design/icons';
 import {
   useSingleThingsToKnowQuery,
   useUpdateSubCategoryMutation,
   useCreateSubCategoryMutation,
-  useDeleteThingsToKnowMutation,
+  useDeleteSubCategoryMutation,
 } from '../../../../Redux/services/dashboard apis/thingsToKnowApis';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
@@ -34,7 +33,7 @@ function SingleThingstoKnow() {
   const id = location.state;
 
   const { data } = useSingleThingsToKnowQuery({ id: id });
-  const [deleteSubCategory] = useDeleteThingsToKnowMutation();
+  const [deleteSubCategory] = useDeleteSubCategoryMutation();
   console.log(data);
   const [updateSubCategory, { isLoading: isUpdating }] =
     useUpdateSubCategoryMutation();
@@ -91,6 +90,7 @@ function SingleThingstoKnow() {
 
   const handleDelete = async (id) => {
     // plug in delete mutation here
+    console.log(id);
     try {
       await deleteSubCategory({ id })
         .unwrap()
@@ -101,9 +101,8 @@ function SingleThingstoKnow() {
         });
     } catch (error) {
       console.log(error);
+      toast.error(error?.data?.message || 'Something went wrong');
     }
-    console.log(id);
-    toast.success('Deleted successfully');
   };
 
   const handleUpdate = async () => {
