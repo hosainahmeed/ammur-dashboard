@@ -1,0 +1,46 @@
+.modalStyle {
+  overflow: hidden !important;
+  border-radius: 12px !important;
+}
+
+.headerStyle {
+  border-radius: 12px 12px 0 0 !important;
+  padding: 16px 24px !important;
+  color: white !important;
+  border: none !important;
+}
+
+.uploadStyle {
+  border-radius: 8px !important;
+  border: 2px dashed #d9d9d9 !important;
+  padding: 20px !important;
+  text-align: center !important;
+  transition: all 0.3s !important;
+}
+
+.buttonStyle {
+  border-radius: 8px !important;
+  height: 40px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015) !important;
+}
+
+.primaryButtonStyle {
+  margin-top: 12px !important;
+  background: #072656 !important;
+  border-color: #072656 !important;
+}
+
+.ingredientCardStyle {
+  background: #f9fafb !important;
+  border-radius: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.descriptionStyle {
+  border-radius: 8px !important;
+  border: 1px solid #d9d9d9 !important;
+  resize: none !important;
+  height: 100px !important;
+  width: 100% !important;
+}

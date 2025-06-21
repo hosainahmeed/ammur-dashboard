@@ -6,23 +6,60 @@ import {
   EyeOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Card, Modal, Space, Typography } from 'antd';
+import { Card, Modal, Popconfirm, Space, Typography } from 'antd';
+import { imageUrl } from '../../Utils/server';
+import RecipeForm from './RecipeForm';
+import { useDeleteRecipeMutation } from '../../Redux/services/dashboard apis/recipeApis';
+import toast from 'react-hot-toast';
 
 const { Text } = Typography;
 
 export const RecipeCard = ({ data }) => {
-  const { name, descriptions, time, people, family, image, ingredients } = data;
+  console.log(data);
+  const [recipeModal, setRecipeModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [recipeId, setRecipeId] = useState(null);
+  const [deleteRecipe] = useDeleteRecipeMutation();
+
+  const deleteRecipehandler = async (id) => {
+    try {
+      await deleteRecipe({ id })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Recipe deleted successfully');
+          } else {
+            toast.error(res?.message || 'Failed to delete recipe');
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
       <Card
         style={{ width: '100%', margin: '1rem' }}
-        cover={<img alt={name} src={image} />}
+        cover={<img alt={data?.title} src={imageUrl(data?.img)} />}
         actions={[
-          <EditOutlined key="edit" />,
-          <DeleteOutlined key="delete" />,
-          <EyeOutlined key="view" onClick={() => setShowModal(true)} />,
+          <EditOutlined
+            onClick={() => {
+              setRecipeId(data?._id);
+              setRecipeModal(true);
+            }}
+            key="edit"
+          />,
+          <Popconfirm
+            placement="bottomRight"
+            title="Are you sure to delete this recipe?"
+            onConfirm={() => deleteRecipehandler(data?._id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <DeleteOutlined key="delete" />{' '}
+          </Popconfirm>,
+          <EyeOutlined onClick={() => setShowModal(true)} key="view" />,
         ]}
       >
         <Card.Meta
@@ -30,14 +67,14 @@ export const RecipeCard = ({ data }) => {
           description={
             <Space direction="vertical" size={4}>
               <div>
-                <ClockCircleOutlined /> {time}
+                <ClockCircleOutlined /> {data?.cookingTime}
               </div>
               <div>
-                <UserOutlined /> Serves: {people}
+                <UserOutlined /> Serves: {data?.serving}
               </div>
-              <div>Family: {family}</div>
+              <div>Family: {data?.familyName}</div>
               <div>
-                <strong>Description:</strong> {descriptions.slice(0, 50)}...
+                <strong>Description:</strong> {'descriptions'}...
               </div>
             </Space>
           }
@@ -53,7 +90,7 @@ export const RecipeCard = ({ data }) => {
       >
         <div style={{ display: 'flex', gap: '20px' }}>
           <img
-            src={image}
+            src={data?.img}
             alt={name}
             style={{
               width: '300px',
@@ -68,23 +105,23 @@ export const RecipeCard = ({ data }) => {
                 <Text>{name}</Text>
               </div>
               <div>
-                <Text>{descriptions}</Text>
+                <Text>{'descriptions'}</Text>
               </div>
               <div>
                 <Text strong>
                   <ClockCircleOutlined /> Cooking Time:
                 </Text>
-                <Text>{time}</Text>
+                <Text>{data?.cookingTime}</Text>
               </div>
               <div>
                 <Text strong>
                   <UserOutlined /> Serves:
                 </Text>
-                <Text>{people} people</Text>
+                <Text>{data?.serving} people</Text>
               </div>
               <div>
                 <Text strong>Family: </Text>
-                <Text>{family}</Text>
+                <Text>{data?.familyName}</Text>
               </div>
             </Space>
           </div>
@@ -93,14 +130,14 @@ export const RecipeCard = ({ data }) => {
         <div style={{ marginTop: '24px' }}>
           <h1 className="mb-3">Ingredients:</h1>
           <div>
-            {ingredients.length === 0 ? (
+            {data?.ingredients.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <Text type="secondary">
                   No recipes found. Add your first recipe!
                 </Text>
               </div>
             ) : (
-              ingredients.map((item, i) => (
+              data?.ingredients.map((item, i) => (
                 <Card key={i} className="!mb-3">
                   <div className="!w-full !flex !items-center !justify-between">
                     <img
@@ -121,6 +158,11 @@ export const RecipeCard = ({ data }) => {
           </div>
         </div>
       </Modal>
+      <RecipeForm
+        setShowModal={setRecipeModal}
+        recipeId={recipeId}
+        showModal={recipeModal}
+      />
     </>
   );
 };

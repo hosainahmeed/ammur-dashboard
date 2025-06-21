@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { RecipeCard } from '../../../Components/Recipe/RecipeCard';
 import RecipeToolbar from '../../../Components/Recipe/RecipeToolbar';
 
+import { Button, Input } from 'antd';
+import { useGetRecipeQuery } from '../../../Redux/services/dashboard apis/recipeApis';
+  
 function RecipePage() {
-  const [searchTerm, setSearchTerm] = useState(''); 
+  const [searchTerm, setSearchTerm] = useState('');
+  const { data, isLoading: recipeLoading } = useGetRecipeQuery();
   const datas = [
     {
       id: 1,
@@ -51,15 +55,16 @@ function RecipePage() {
       ],
     },
   ];
+  console.log();
   const onSearchChange = (e) => {
     e.preventDefault();
     setSearchTerm(e.target.value);
   };
   return (
-    <div className='!w-full'>
+    <div className="!w-full">
       <RecipeToolbar searchTerm={searchTerm} onSearchChange={onSearchChange} />
       <div className="grid-4">
-        {datas.map((data, i) => (
+        {data?.data?.map((data, i) => (
           <RecipeCard data={data} key={i} />
         ))}
       </div>
