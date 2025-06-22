@@ -54,10 +54,6 @@ const SideBar = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-6 mb-4">
-        <img src="/logo.svg" alt="Logo" className="w-24 h-auto" />
-      </div>
-
       {/* Scrollable menu items */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="px-4 space-y-1 pb-4">

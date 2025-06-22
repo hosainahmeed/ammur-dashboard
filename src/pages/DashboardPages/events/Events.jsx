@@ -137,9 +137,9 @@ function Events() {
   return (
     <div className="container mx-auto p-6">
       <div className="bg-white flex items-center px-4 justify-between rounded-md shadow-md mb-4 py-2">
-        <h1 className="text-xl font-bold">Events</h1>
+        <h1 className="text-2xl font-semibold">Events</h1>
         <Button
-          type="primary"
+        className='!bg-[#0C469D] !text-white'
           icon={<PlusOutlined />}
           onClick={() => {
             setEditingEvent(null);

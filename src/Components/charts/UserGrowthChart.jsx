@@ -72,7 +72,8 @@ const UserGrowthChart = () => {
         backgroundColor: '#fff',
         borderRadius: '12px',
         padding: '20px',
-        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+        border: '1px solid #E0E0E0',
+        // boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
       }}
     >
       {isLoading ? (

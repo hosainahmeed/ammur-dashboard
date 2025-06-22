@@ -37,7 +37,7 @@ const DashboardLayout = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar - Fixed on large screens */}
-        <div className="hidden lg:flex lg:flex-shrink-0">
+        <div className="flex flex-shrink-0">
           <div className="flex flex-col w-[300px] bg-[var(--color-white)]">
             <Sidebar />
           </div>

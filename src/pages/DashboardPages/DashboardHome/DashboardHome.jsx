@@ -37,13 +37,13 @@ function DashboardHome() {
 
   return (
     <div>
-      <div className="grid grid-cols-2 bg-gradient-to-tr from-[#F6F6F6] via-white to-[var(--bg-green-low)]/70 p-12 rounded-xl">
+      <div className="grid grid-cols-2 border-[1px] border-gray-200 bg-gradient-to-tr from-[#F6F6F6] via-white to-[var(--bg-green-low)]/70 p-12 rounded-xl">
         {cardData.map((card, index) => (
           <div className="" key={index}>
             <div
               className={`flex ${
                 index !== 1 ? 'border-r-2' : ''
-              } px-12 items-center justify-center gap-3`}
+              } px-12  items-center justify-center gap-3`}
             >
               <div className="w-28 h-28  flex items-center justify-center">
                 {card.icon}

@@ -53,8 +53,8 @@ function CategoryInterview() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-sm">
-        <PageHeading title="InterViews" />
+      <div className="flex justify-between items-center mb-6 bg-white rounded-lg shadow-sm">
+        <PageHeading title="Interview Category" />
         <Button
           type="primary"
           icon={<FaPlus />}

@@ -89,6 +89,7 @@ export const RecipeCard = ({ data }) => {
       </Card>
 
       <Modal
+        bodyStyle={{ padding: '24px', maxHeight: '80vh', overflow: 'auto' }}
         centered
         visible={showModal}
         onCancel={() => setShowModal(false)}

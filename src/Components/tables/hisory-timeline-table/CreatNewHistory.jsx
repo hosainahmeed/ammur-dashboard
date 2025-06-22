@@ -114,7 +114,10 @@ function CreatNewHistory({ id, setCreateNewModal }) {
           });
       }
     } catch (error) {
-      toast.error(error?.data?.message || 'Failed to create history timeline');
+      toast.error(
+        error?.data?.errorSources[0]?.message ||
+          'Failed to create history timeline'
+      );
     }
   };
 
@@ -222,19 +225,26 @@ function CreatNewHistory({ id, setCreateNewModal }) {
               </Col>
             </Row>
 
-            <Form.Item
-              label={
-                <span className="form-label flex items-center">
-                  <MdDescription className="label-icon mr-2" />
-                  Description (Required)
-                </span>
-              }
-              name="description"
-              validateStatus={!description ? 'error' : ''}
-              help={!description ? 'Please enter a description' : ''}
-            >
-              <JoditComponent setContent={setDescription} content={content} />
-            </Form.Item>
+            <Row>
+              <Col xs={24}>
+                <Form.Item
+                  label={
+                    <span className="form-label flex items-center">
+                      <MdDescription className="label-icon mr-2" />
+                      Description (Required)
+                    </span>
+                  }
+                  name="description"
+                  validateStatus={!description ? 'error' : ''}
+                  help={!description ? 'Please enter a description' : ''}
+                >
+                  <JoditComponent
+                    setContent={setDescription}
+                    content={content}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <div className="form-actions flex justify-end space-x-4 mt-8">
               <Button

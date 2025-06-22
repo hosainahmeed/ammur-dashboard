@@ -2,8 +2,7 @@ import React from 'react';
 
 export default function UserInformation({ user }) {
   if (!user) return null;
-
-  // You can format dates or handle missing data here
+  
   const joinedDate = user?.createdAt
     ? new Date(user?.createdAt).toLocaleDateString()
     : '-';

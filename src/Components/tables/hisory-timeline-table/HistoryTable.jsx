@@ -252,7 +252,7 @@ function HistoryTable() {
         )}
       </Modal>
       <Modal
-        width={1200}
+        width={800}
         open={createNewModal}
         footer={null}
         destroyOnClose
