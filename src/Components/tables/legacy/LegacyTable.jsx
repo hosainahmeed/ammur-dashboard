@@ -16,10 +16,20 @@ import { FaEye, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { useGetLegacyQuery } from '../../../Redux/services/dashboard apis/lagecyApis';
 
 function LegacyTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
+  const { data, isLoading } = useGetLegacyQuery();
+  const lagacyData = data?.data?.map((item) => {
+    return {
+      id: item?._id,
+      title: item?.title,
+      img: item?.img,
+      isDeleted: item?.isDeleted,
+    };
+  });
 
   const history = [
     {
@@ -182,12 +192,13 @@ function LegacyTable() {
       </div>
 
       <Table
+        loading={isLoading}
         columns={columns}
         dataSource={history}
         pagination={{ pageSize: 5 }}
         className="history-table"
         rowKey="key"
-        scroll={{ x: 1200}}
+        scroll={{ x: 1200 }}
         bordered
       />
 

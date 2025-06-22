@@ -48,7 +48,18 @@ export const RecipeCard = ({ data }) => {
     <>
       <Card
         style={{ width: '100%', margin: '1rem' }}
-        cover={<img alt={data?.title} src={imageUrl(data?.img)} />}
+        cover={
+          <img
+            style={{
+              objectFit: 'cover',
+              height: '200px',
+              width: '100%',
+              border: '1px solid #d9d9d9',
+            }}
+            alt={data?.title}
+            src={imageUrl(data?.img)}
+          />
+        }
         actions={[
           <EditOutlined
             onClick={() => {
