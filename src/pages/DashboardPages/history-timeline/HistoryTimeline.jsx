@@ -6,9 +6,7 @@ import HistoryTable from '../../../Components/tables/hisory-timeline-table/Histo
 function HistoryTimeline() {
   return (
     <div>
-      <div className="flex mb-4 items-center justify-between bg-white shadow-sm pr-12 rounded-md w-full">
-        <PageHeading title="History Timeline" />
-      </div>
+      <PageHeading title="History Timeline" />
       <HistoryTable />
     </div>
   );

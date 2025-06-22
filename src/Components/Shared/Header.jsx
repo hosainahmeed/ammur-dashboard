@@ -54,7 +54,7 @@ function Header() {
       </div>
       <Menu.Divider />
       <Menu.Item key="1" icon={<UserOutlined />}>
-        <Link to="/profile-setting">Profile</Link>
+        <Link to="/dashboard/Settings/profile">Profile</Link>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="4" icon={<LogoutOutlined />} onClick={handleSignOut}>

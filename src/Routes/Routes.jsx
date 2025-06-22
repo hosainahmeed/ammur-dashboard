@@ -31,6 +31,7 @@ import RecipePage from '../pages/DashboardPages/recipes/RecipePage';
 import CreateNewArchive from '../Components/tables/FamilyArchive/CreateNewArchive';
 import CreateNewLegacy from '../Components/tables/legacy/CreateNewLegacy';
 import CategoryInterview from '../pages/DashboardPages/InterViews/CategoryInterview';
+import RequestUser from '../Components/tables/User/RequestUser';
 
 export const Routes = createBrowserRouter([
   {
@@ -46,8 +47,12 @@ export const Routes = createBrowserRouter([
         element: <DashboardHome />,
       },
       {
-        path: '/user',
+        path: '/user/all-user',
         element: <UsersManage />,
+      },
+      {
+        path: '/user/sign-up-request',
+        element: <RequestUser />,
       },
       {
         path: '/timeline',
@@ -70,25 +75,30 @@ export const Routes = createBrowserRouter([
         element: <ThingsToKnowSpecific />,
       },
       {
-        path: '/terms-condition',
+        path: '/dashboard/Settings/Terms&Condition',
         element: <TermsCondition />,
       },
       {
-        path: '/contact-us',
+        path: '/dashboard/Settings/PrivacyPolicy',
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: '/dashboard/Settings/profile',
+        element: <Profile />,
+      },
+      {
+        path: '/dashboard/Settings/contact-us',
         element: <Contact />,
       },
       {
-        path: '/about-us',
+        path: '/dashboard/Settings/about-us',
         element: <AboutUs />,
       },
       {
         path: '/add-family',
         element: <AddFamily />,
       },
-      {
-        path: '/privacy-policy',
-        element: <PrivacyPolicy />,
-      },
+      
       {
         path: '/earnings',
         element: <EarningPage />,
@@ -129,10 +139,7 @@ export const Routes = createBrowserRouter([
         path: '/recipe',
         element: <RecipePage />,
       },
-      {
-        path: '/profile-setting',
-        element: <Profile />,
-      },
+      
     ],
   },
   {

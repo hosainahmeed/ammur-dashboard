@@ -67,9 +67,7 @@ function CreateNewLegacy() {
   return (
     <div className="history-form-container">
       <div className="page-header">
-        <div className="flex mb-4 items-center justify-between bg-white shadow-sm pr-12 rounded-md w-full">
-          <PageHeading title="Create New Legacy" />
-        </div>
+        <PageHeading title="Create New Legacy" />
       </div>
 
       <Card className="form-card">

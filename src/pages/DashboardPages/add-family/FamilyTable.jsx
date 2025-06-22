@@ -55,7 +55,7 @@ const FamilyTable = ({ families, onEdit, onDelete }) => {
         name: family.name,
         index: index + 1,
       }))}
-      scroll={{ x: 1500 }}
+      scroll={{ x: 1200}}
       bordered
     />
   );

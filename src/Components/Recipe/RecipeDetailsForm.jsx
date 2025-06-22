@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, TimePicker, Row, Col, Select, Typography } from 'antd';
 import {
   ClockCircleOutlined,
   UserOutlined,
   FormOutlined,
 } from '@ant-design/icons';
+import dayjs from 'dayjs';
 
 const { Text } = Typography;
 
-function RecipeDetailsForm({ families, familiesLoading }) {
+function RecipeDetailsForm({ families, familiesLoading, recipeData }) {
+  const [form] = Form.useForm();
+  console.log(recipeData?.familyName);
+  useEffect(() => {
+    if (recipeData) {
+      form.setFieldsValue({
+        title: recipeData?.title,
+        cookingTime: dayjs(recipeData?.cookingTime, 'HH:mm'),
+        serving: recipeData?.serving,
+        familyName: recipeData?.familyName,
+      });
+    }
+  }, [recipeData, form]);
   return (
     <>
       <Form.Item
@@ -27,7 +40,7 @@ function RecipeDetailsForm({ families, familiesLoading }) {
             rules={[{ required: true, message: 'Select cooking time' }]}
           >
             <TimePicker
-              format="HH:mm"
+              format="HH:mm:ss"
               style={{ width: '100%' }}
               prefix={<ClockCircleOutlined />}
             />
@@ -51,10 +64,23 @@ function RecipeDetailsForm({ families, familiesLoading }) {
         label={<Text strong>Family Name</Text>}
         name="familyName"
         rules={[{ required: true, message: 'Please select a family' }]}
+        validateStatus={
+          form.isFieldTouched('familyName') && form.getFieldError('familyName')
+            ? 'error'
+            : ''
+        }
+        help={
+          form.isFieldTouched('familyName') && form.getFieldError('familyName')
+        }
       >
-        <Select loading={familiesLoading} placeholder="Select Family">
+        <Select
+          allowClear
+          loading={familiesLoading}
+          placeholder="Select Family"
+          optionFilterProp="children"
+        >
           {families?.data?.map((fam) => (
-            <Select.Option key={fam.name} value={fam.name}>
+            <Select.Option key={fam._id} value={fam.name}>
               {fam.name}
             </Select.Option>
           ))}

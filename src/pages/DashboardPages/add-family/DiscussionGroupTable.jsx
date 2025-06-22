@@ -2,14 +2,34 @@ import React from 'react';
 import { Table, Button, Popconfirm, Image } from 'antd';
 import { CiEdit } from 'react-icons/ci';
 import { MdDelete } from 'react-icons/md';
-import { useGetGroupesQuery } from '../../../Redux/services/dashboard apis/groupeApis';
+import {
+  useDeleteGroupeMutation,
+  useGetGroupesQuery,
+} from '../../../Redux/services/dashboard apis/groupeApis';
 import { imageUrl } from '../../../Utils/server';
-const DiscussionGroupTable = ({ onEdit, onDelete }) => {
+import toast from 'react-hot-toast';
+const DiscussionGroupTable = () => {
   const { data: group } = useGetGroupesQuery();
+  const [deleteGroupe] = useDeleteGroupeMutation();
+
+  const handleDeleteGroup = async (key) => {
+    console.log(key)
+    try {
+      await deleteGroupe({ id: key })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Family deleted successfully');
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
+    }
+  };
   const groups =
     group?.data?.map((item) => {
       return {
-        key: item._id,
+        id: item._id,
         familyImage: item.img,
         roomId: item.roomId,
         familyName: item.familyName,
@@ -38,14 +58,9 @@ const DiscussionGroupTable = ({ onEdit, onDelete }) => {
       width: 300,
       render: (_, record) => (
         <div className="flex items-center gap-2">
-          <Button
-            onClick={() => onEdit(record)}
-            icon={<CiEdit />}
-            className="!bg-[#0C469D] !text-white"
-          />
           <Popconfirm
             title="Are you sure to delete this discussion group?"
-            onConfirm={() => onDelete(record.key)}
+            onConfirm={() => handleDeleteGroup(record.id)}
             okText="Yes"
             cancelText="No"
           >
@@ -61,7 +76,7 @@ const DiscussionGroupTable = ({ onEdit, onDelete }) => {
       columns={columns}
       pagination={{ responsive: true }}
       dataSource={groups}
-      scroll={{ x: 1500 }}
+      scroll={{ x: 1200}}
       bordered
     />
   );

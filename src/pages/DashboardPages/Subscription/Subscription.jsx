@@ -144,9 +144,7 @@ export default function SubscriptionManagement() {
 
   return (
     <>
-      <div className="flex mb-4 items-center justify-between bg-white shadow-sm pr-12 rounded-md w-full">
-        <PageHeading title="Subscription" />
-      </div>
+      <PageHeading title="Subscription" />
       <div className="container mx-auto p-4 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Subscription Management</h1>

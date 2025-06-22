@@ -75,7 +75,7 @@ export default function EventForm({ open, onCancel, event }) {
             }
           });
       } else {
-        await createEvent({data:formData})
+        await createEvent({ data: formData })
           .unwrap()
           .then((res) => {
             if (res?.success) {
@@ -97,8 +97,15 @@ export default function EventForm({ open, onCancel, event }) {
       footer={null}
       forceRender
       width={800}
+      maskStyle={{ backdropFilter: 'blur(2px)' }}
+      destroyOnClose
     >
-      <Form requiredMark={false} form={form} layout="vertical" onFinish={handleSubmit}>
+      <Form
+        requiredMark={false}
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+      >
         <Form.Item name="title" label="Title" rules={[{ required: true }]}>
           <Input placeholder="Enter event title" />
         </Form.Item>

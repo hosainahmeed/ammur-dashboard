@@ -62,11 +62,6 @@ function AddFamily() {
     // setIsAddGroupModalOpen(true);
   };
 
-  const handleDeleteGroup = (key) => {
-    console.log(key);
-    toast.success('Discussion group deleted successfully');
-  };
-
   // const handleAddGroupSubmit = (values) => {
   //   if (editingGroup) {
   //     setDiscussionGroups((prevGroups) =>
@@ -174,10 +169,7 @@ function AddFamily() {
             Add New Group
           </Button> */}
         </div>
-        <DiscussionGroupTable
-          onEdit={handleEditGroup}
-          onDelete={handleDeleteGroup}
-        />
+        <DiscussionGroupTable onEdit={handleEditGroup} />
       </Card>
 
       {/* Modals */}

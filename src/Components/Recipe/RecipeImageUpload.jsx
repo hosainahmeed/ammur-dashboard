@@ -7,9 +7,13 @@ const { Text } = Typography;
 function RecipeImageUpload({ fileList, setFileList }) {
   const normFile = (e) => (Array.isArray(e) ? e : e?.fileList);
 
-
   const onChange = ({ fileList: newList }) => {
-    setFileList(newList.slice(-1));
+    if (
+      newList.length === 0 ||
+      (fileList.length > 0 && newList[0].uid !== fileList[0].uid)
+    ) {
+      setFileList(newList.slice(-1));
+    }
   };
 
   return (

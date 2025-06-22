@@ -177,7 +177,7 @@ function FamilyArchiveTable() {
         pagination={{ pageSize: 5 }}
         className="history-table"
         rowKey="key"
-        scroll={{ x: 1500 }}
+        scroll={{ x: 1200}}
         bordered
       />
 

@@ -1,32 +1,75 @@
 import React, { useState } from 'react';
-import { Form, Input, Upload, Button, Typography } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Form, Input, Upload, Button, Typography, Spin } from 'antd';
+import { UploadOutlined, LoadingOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
+import { useUploadImageMutation } from '../../Redux/services/dashboard apis/imageUpload';
 
 const { Text } = Typography;
 
 function IngredientForm({ ingredients, setIngredients }) {
   const [ingredientName, setIngredientName] = useState('');
-  const [ingredientFileList, setIngredientFileList] = useState([]);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [fileList, setFileList] = useState([]);
+  const [uploadImage, { isLoading }] = useUploadImageMutation();
+  console.log(imageUrl);
 
   const handleAdd = () => {
     if (!ingredientName.trim()) {
       toast.error('Enter ingredient name');
       return;
     }
-    if (ingredientFileList.length === 0) {
+    if (!imageUrl) {
       toast.error('Upload an image for the ingredient');
       return;
     }
-
     const newIngredient = {
       name: ingredientName.trim(),
-      img: ingredientFileList[0].originFileObj,
+      img: imageUrl,
     };
 
     setIngredients([...ingredients, newIngredient]);
     setIngredientName('');
-    setIngredientFileList([]);
+    setFileList([]);
+    setImageUrl(null);
+  };
+
+  const uploadImageHandler = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      await uploadImage({ data: formData })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Image uploaded successfully');
+            setImageUrl(res?.data);
+            setFileList([
+              {
+                uid: file.uid,
+                name: file.name,
+                status: 'done',
+                url: res?.data,
+              },
+            ]);
+          }
+        });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      toast.error('Failed to upload image');
+    }
+  };
+
+  const handleBeforeUpload = async (file) => {
+    setFileList([
+      {
+        uid: file.uid,
+        name: file.name,
+        status: 'uploading',
+      },
+    ]);
+    await uploadImageHandler(file);
+    return false; // prevent auto upload by Ant Design
   };
 
   return (
@@ -41,19 +84,19 @@ function IngredientForm({ ingredients, setIngredients }) {
 
       <Upload
         listType="picture-card"
-        beforeUpload={() => false}
-        fileList={ingredientFileList}
-        onChange={({ fileList }) => setIngredientFileList(fileList.slice(-1))}
+        fileList={fileList}
+        beforeUpload={handleBeforeUpload}
+        showUploadList={{ showRemoveIcon: false }}
         maxCount={1}
       >
-        {ingredientFileList.length === 0 && (
+        {fileList.length === 0 && !isLoading && (
           <div>
             <UploadOutlined />
             <div style={{ marginTop: 8 }}>Upload Image</div>
           </div>
         )}
+        {isLoading && <Spin indicator={<LoadingOutlined />} />}
       </Upload>
-
       <Button style={{ marginTop: 16 }} type="primary" onClick={handleAdd}>
         Add Ingredient
       </Button>

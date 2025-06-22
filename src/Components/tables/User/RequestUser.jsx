@@ -1,60 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import { Avatar, Button, Modal, Popconfirm, Space, Table } from 'antd';
+import React, { useEffect, useState } from 'react';
 import {
-  Table,
-  Space,
-  Avatar,
-  Button,
-  Modal,
-  Tabs,
-  Form,
-  Input,
-  Popconfirm,
-} from 'antd';
-import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
-import { CgBlock } from 'react-icons/cg';
-import { IoIosMail } from 'react-icons/io';
-import toast from 'react-hot-toast';
-import UserInformation from '../../page component/UserInformation';
-import {
-  useGetAllUserQuery,
+  useRequiestUserQuery,
   useUpdateUserStatusMutation,
 } from '../../../Redux/services/dashboard apis/userApis';
+import toast from 'react-hot-toast';
+import { PhoneOutlined, UserOutlined } from '@ant-design/icons';
+import { IoIosMail } from 'react-icons/io';
+import PageHeading from '../../Shared/PageHeading';
 
-const AllUsers = ({ recentUser }) => {
+function RequestUser() {
   const [userDetailsModal, setUserDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const { data: allUsersData, isLoading } = useGetAllUserQuery({
-    role: 'member',
-  });
-  const [updateUserStatus] = useUpdateUserStatusMutation();
-  const [filteredUsers, setFilteredUsers] = useState([]);
-
-  const [activeTab, setActiveTab] = useState('1');
-
+  const [filteredRequestedUsers, setFilteredRequestedUsers] = useState([]);
+  const { data: requestedUserData, isLoading: requestedUsersLoading } =
+    useRequiestUserQuery();
+  const [updateUserStatus, { isLoading: updateUserStatusLoading }] =
+    useUpdateUserStatusMutation();
   useEffect(() => {
-    if (allUsersData?.data) {
-      const users = allUsersData?.data?.map((user) => ({
+    if (requestedUserData?.data) {
+      const reqUsers = requestedUserData?.data?.map((user) => ({
         key: user?._id || 'N/A',
         id: user?._id || 'N/A',
         name: user?.fullName || 'N/A',
         contactNumber: user?.contactNo || 'N/A',
         email: user?.email || 'N/A',
         familySide: user?.familySide || 'N/A',
-        subscription: user?.subscription || 'N/A',
+        elderFamilyMember: user?.eldestRelative || 'N/A',
         joined: user?.createdAt.split('T')[0] || 'N/A',
-        status: user?.status || 'N/A',
         isBlocked: user?.isDeleted || 'N/A',
+        status: user?.status || 'N/A',
         avatar: user?.img || null,
         fullUser: user,
       }));
-      setFilteredUsers(users);
+      setFilteredRequestedUsers(reqUsers);
     }
-  }, [allUsersData]);
-
-  const blockUser = async (record) => {
+  }, [requestedUserData]);
+  const updateUserStatusHandler = async (record) => {
     const id = record?.id;
     const data = {
-      status: record?.status === 'active' ? 'blocked' : 'active',
+      approvalStatus: true,
     };
     try {
       await updateUserStatus({ id, data })
@@ -68,10 +53,7 @@ const AllUsers = ({ recentUser }) => {
       toast.error(error?.data?.message || 'Something went wrong');
     }
   };
-
-  // Search handler for all user
-
-  const columnsAllUsers = [
+  const columnsRequestedUsers = [
     {
       title: 'User Name',
       dataIndex: 'name',
@@ -111,9 +93,9 @@ const AllUsers = ({ recentUser }) => {
       key: 'familySide',
     },
     {
-      title: 'Subscription',
-      dataIndex: 'subscription',
-      key: 'subscription',
+      title: 'Elder Family Member',
+      dataIndex: 'elderFamilyMember',
+      key: 'elderFamilyMember',
     },
     {
       title: 'Joined',
@@ -126,7 +108,6 @@ const AllUsers = ({ recentUser }) => {
       render: (_, record) => (
         <Space size="middle">
           <Button
-            size="small"
             onClick={() => {
               setSelectedUser(record.fullUser);
               setUserDetailsModal(true);
@@ -137,46 +118,36 @@ const AllUsers = ({ recentUser }) => {
           </Button>
           <Popconfirm
             placement="bottomRight"
-            title={`Are you sure you want ${
-              record?.status === 'active' ? 'block' : 'unblock'
-            } this user?`}
-            onConfirm={() => blockUser(record)}
+            title="Are you sure you want approve this user?"
+            onConfirm={() => updateUserStatusHandler(record)}
           >
             <Button
-              size="small"
-              className={`${
-                record?.status === 'active' ? '!bg-green-200' : '!bg-red-300'
-              } ant-btn ant-btn-default`}
+              className="!bg-yellow-300"
+              disabled={
+                updateUserStatusLoading && selectedUser?.id === record.id
+              }
+              loading={
+                updateUserStatusLoading && selectedUser?.id === record.id
+              }
             >
-              <CgBlock />
+              Approve
             </Button>
           </Popconfirm>
         </Space>
       ),
     },
   ];
-
   return (
-    <div className="w-full overflow-x-auto">
-      {recentUser !== true && (
-        <div className="max-w-[400px]">
-          <Form>
-            <Form.Item>
-              <Input.Search placeholder="Search here" allowClear />
-            </Form.Item>
-          </Form>
-        </div>
-      )}
-
+    <div>
+      <PageHeading title="Request User Manage" />
       <Table
-        columns={columnsAllUsers}
-        dataSource={filteredUsers}
+        columns={columnsRequestedUsers}
+        dataSource={filteredRequestedUsers}
         rowKey="id"
         pagination={true}
         bordered
-        loading={isLoading}
+        loading={requestedUsersLoading}
       />
-
       <Modal
         centered
         visible={userDetailsModal}
@@ -188,6 +159,6 @@ const AllUsers = ({ recentUser }) => {
       </Modal>
     </div>
   );
-};
+}
 
-export default AllUsers;
+export default RequestUser;

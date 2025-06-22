@@ -1,6 +1,7 @@
 import { Card, Form, Modal } from 'antd';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { imageUrl } from '../../../Utils/server';
 
 function FamilyDiscussion() {
   const [editingFamily, setEditingFamily] = useState(null);
@@ -127,8 +128,7 @@ function FamilyDiscussion() {
         key: (discussionGroups.length + 1).toString(),
         familyTitle: values.groupTitle,
         familyName: values.familyName,
-        familyImage:
-          groupImageUrl || 'https://randomuser.me/api/portraits/lego/1.jpg', // Default image if none uploaded
+        familyImage: imageUrl(groupImageUrl),
       };
 
       setDiscussionGroups([...discussionGroups, newGroup]);
@@ -155,7 +155,7 @@ function FamilyDiscussion() {
           columns={discussionGroupColumns}
           pagination={{ responsive: true }}
           dataSource={discussionGroups}
-          scroll={{ x: 1500 }}
+          scroll={{ x: 1200}}
           bordered
         />
       </Card>
@@ -166,6 +166,8 @@ function FamilyDiscussion() {
         open={isAddGroupModalOpen}
         onCancel={handleAddGroupCancel}
         footer={null}
+        maskStyle={{ backdropFilter: 'blur(2px)' }}
+        destroyOnClose
       >
         <Form
           form={addGroupForm}

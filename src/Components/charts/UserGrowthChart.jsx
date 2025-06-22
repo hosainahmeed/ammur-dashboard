@@ -127,7 +127,7 @@ const UserGrowthChart = () => {
               <Bar
                 dataKey="totalUser"
                 fill="url(#colorUv)"
-                barSize={35}
+                barSize={100}
                 radius={[10, 10, 0, 0]}
               />
             </BarChart>
