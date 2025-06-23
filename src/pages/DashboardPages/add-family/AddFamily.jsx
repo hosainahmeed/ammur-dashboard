@@ -10,12 +10,15 @@ import {
   useGetFamiliesQuery,
 } from '../../../Redux/services/dashboard apis/familiesApis';
 import toast from 'react-hot-toast';
+import { userRole } from '../../../Components/Shared/Header';
 
 const { Title } = Typography;
 
 function AddFamily() {
   // API Hooks
-  const { data: families } = useGetFamiliesQuery();
+  const { data: families } = useGetFamiliesQuery({
+    skip: userRole === 'admin',
+  });
   const [deleteFamily] = useDeleteFamilyMutation();
 
   // State
@@ -133,27 +136,28 @@ function AddFamily() {
   //   setEditingGroup(null);
   //   setIsAddGroupModalOpen(false);
   // };
-
   return (
     <div>
       {/* Families Section */}
-      <Card>
-        <div className="flex items-center justify-between mb-4">
-          <Title level={3}>All Family</Title>
-          <Button
-            className="!bg-[#0C469D] !text-white"
-            icon={<FaPlus />}
-            onClick={showAddFamilyModal}
-          >
-            Add New Family
-          </Button>
-        </div>
-        <FamilyTable
-          families={families?.data}
-          onEdit={handleEditFamily}
-          onDelete={handleDeleteFamily}
-        />
-      </Card>
+      {userRole !== 'admin' && (
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <Title level={3}>All Family</Title>
+            <Button
+              className="!bg-[#0C469D] !text-white"
+              icon={<FaPlus />}
+              onClick={showAddFamilyModal}
+            >
+              Add New Family
+            </Button>
+          </div>
+          <FamilyTable
+            families={families?.data}
+            onEdit={handleEditFamily}
+            onDelete={handleDeleteFamily}
+          />
+        </Card>
+      )}
 
       <Divider />
 

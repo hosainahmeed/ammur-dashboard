@@ -46,6 +46,7 @@ const FamilyFormModal = ({
     }
     onCancel();
   };
+  
   return (
     <Modal
       title={editingFamily ? 'Edit Family' : 'Add New Family'}
@@ -69,7 +70,6 @@ const FamilyFormModal = ({
             name="file"
             listType="picture-card"
             showUploadList={true}
-            action="/api/upload"
             onChange={onImageUpload}
             maxCount={1}
           >

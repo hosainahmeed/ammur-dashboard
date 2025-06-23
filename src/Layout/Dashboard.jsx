@@ -29,7 +29,7 @@ const DashboardLayout = () => {
   return (
     <div className="flex flex-col h-dvh bg-[var(--color-white)]">
       {/* Header */}
-      <header className="bg-[var(--color-white)] mb-2 border-gray-700">
+      <header className="bg-[var(--color-white)]  border-gray-700">
         <div className="max-w-full mx-auto">
           <Header />
         </div>

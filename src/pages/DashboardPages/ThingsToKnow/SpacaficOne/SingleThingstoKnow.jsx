@@ -13,6 +13,7 @@ import {
   Upload,
   message,
   Empty,
+  Alert,
 } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { FaEdit, FaPlus } from 'react-icons/fa';
@@ -188,25 +189,29 @@ function SingleThingstoKnow() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6 bg-white rounded-lg shadow-sm">
-        <Breadcrumb
-          items={[
-            {
-              title: <Link to="/things-to-know">Things To Know</Link>,
-            },
-            {
-              title: `${data?.data?.title}`,
-            },
-          ]}
-        />
-        <Button
-          className="!bg-[#0C469D] !text-white"
-          icon={<FaPlus />}
-          onClick={showCreateModal}
-        >
-          Add things to know
-        </Button>
-      </div>
+      <Alert
+        type="info"
+        message={
+          <Breadcrumb
+            items={[
+              {
+                title: <Link to="/things-to-know">Things To Know</Link>,
+              },
+              {
+                title: `${data?.data?.title}`,
+              },
+            ]}
+          />
+        }
+        className="!mb-4"
+      />
+      <Button
+        className="!bg-[#0C469D] !text-white"
+        icon={<FaPlus />}
+        onClick={showCreateModal}
+      >
+        Add things to know
+      </Button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {data?.data?.ThingToKnows?.length > 0 ? (
@@ -313,7 +318,7 @@ function SingleThingstoKnow() {
 
       {/* Edit Modal */}
       <Modal
-        title="Edit Blog"
+        title="Edit things to know"
         open={isEditModalVisible}
         onOk={handleUpdate}
         onCancel={handleCancel}
@@ -351,12 +356,12 @@ function SingleThingstoKnow() {
 
       {/* Create Modal */}
       <Modal
-        title="Create New Blog"
+        title="Create New Things To Know"
         open={isCreateModalVisible}
         onOk={handleCreate}
         onCancel={handleCancel}
         okText={`${isCreating ? 'Creating...' : 'Create'}`}
-        width={1200}
+        width={800}
       >
         <Form requiredMark={false} form={form} layout="vertical">
           <Form.Item label="Image" rules={[{ required: true }]}>

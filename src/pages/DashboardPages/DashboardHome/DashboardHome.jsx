@@ -1,6 +1,6 @@
 import React from 'react';
 import user from '../../../assets/icons/man.png';
-import blockUser from '../../../assets/icons/block-user.png';
+import admin from '../../../assets/icons/admin.png';
 import GrowthChart from '../../../Components/charts/UserGrowthChart';
 import Loader from '../../../Components/Shared/Loaders/Loader';
 import { useGrowthOverviewQuery } from '../../../Redux/services/dashboard apis/totalOverviewApis';
@@ -27,7 +27,7 @@ function DashboardHome() {
         <div className="w-24 h-24 overflow-hidden">
           <img
             className="w-full h-full object-contain"
-            src={blockUser}
+            src={admin}
             alt="user_icons"
           />
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PageHeading from '../../../Components/Shared/PageHeading';
-import { Button, Card, Empty, Modal, Pagination, Popconfirm } from 'antd';
+import { Button, Card, Empty, Modal, Pagination, Popconfirm, Spin } from 'antd';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { imageUrl } from '../../../Utils/server';
 import {
@@ -49,21 +49,17 @@ function CategoryInterview() {
 
   const total = interviewCategory?.meta?.total || 0;
 
-  if (categoryLoading) return <div>Loading...</div>;
-
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6 bg-white rounded-lg shadow-sm">
-        <PageHeading title="Interview Category" />
-        <Button
-          type="primary"
-          icon={<FaPlus />}
-          onClick={() => setShowModal(true)}
-          className="!flex !items-center !gap-2 !bg-[#0C469D] !text-white"
-        >
-          Add New
-        </Button>
-      </div>
+    <Spin spinning={categoryLoading}>
+      <PageHeading title="Interview Category" />
+      <Button
+        type="primary"
+        icon={<FaPlus />}
+        onClick={() => setShowModal(true)}
+        className="!flex !items-center !mb-2 !justify-end !gap-2 !bg-[#0C469D] !text-white"
+      >
+        Add Catgeory
+      </Button>
 
       <Card>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -103,7 +99,7 @@ function CategoryInterview() {
               </Card>
             ))
           ) : (
-            <div className='col-span-3 flex justify-center items-cente'>
+            <div className="col-span-3 flex justify-center items-cente">
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 description="No categories found"
@@ -138,7 +134,7 @@ function CategoryInterview() {
           onSuccess={handleSuccess}
         />
       </Modal>
-    </div>
+    </Spin>
   );
 }
 

@@ -49,11 +49,12 @@ const SideBar = () => {
   };
 
   const handleLogout = () => {
-    navigate('/login');
+    localStorage.removeItem('accessToken');
+    window.location.reload();
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex bg-[#0C469D]/10 pt-3 flex-col h-full">
       {/* Scrollable menu items */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="px-4 space-y-1 pb-4">
@@ -70,7 +71,9 @@ const SideBar = () => {
                 )) ||
               (item.key === 'creatorManagement' &&
                 item.children?.some(
-                  (child) => child.link === location.pathname
+                  (child) =>
+                    child.link === location.pathname ||
+                    location.pathname.includes(location.pathname)
                 )) ||
               (item.key === 'categoriesManagement' &&
                 item.children?.some(
@@ -154,7 +157,7 @@ const SideBar = () => {
       <div className="p-4 ">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center px-4 py-2.5 text-sm font-medium bg-[#0C469D]  rounded-lg transition-colors duration-200"
+          className="w-full cursor-pointer flex items-center justify-center px-4 py-2.5 text-sm font-medium bg-[#0C469D]  rounded-lg transition-colors duration-200"
         >
           <IoIosLogOut className="w-5 !text-white h-5 mr-2" />
           <span className="text-white">Log Out</span>

@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import { IoIosMail } from 'react-icons/io';
 import PageHeading from '../../Shared/PageHeading';
+import UserInformation from '../../page component/UserInformation';
 
 function RequestUser() {
   const [userDetailsModal, setUserDetailsModal] = useState(false);

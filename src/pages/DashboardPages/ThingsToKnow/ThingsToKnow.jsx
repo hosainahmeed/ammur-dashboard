@@ -117,7 +117,9 @@ function ThingsToKnow() {
           });
       }
     } catch (err) {
-      toast.error(err?.data?.errorSources[0].message || 'Failed to save category');
+      toast.error(
+        err?.data?.errorSources[0].message || 'Failed to save category'
+      );
     }
   };
 
@@ -161,138 +163,134 @@ function ThingsToKnow() {
     accept: 'image/*',
   };
 
-  if (isLoading) return <Spin size="large" className="flex justify-center" />;
-  if (isError) return <div>Error loading categories</div>;
-
   return (
-    <div className="p-5 container mx-auto">
-      <div className="flex justify-between items-center mb-6 bg-white rounded-lg shadow-sm">
+    <Spin spinning={isLoading}>
+      <div className="p-5 container mx-auto">
         <PageHeading title={'Things To Know'} />
-      </div>
 
-      <div className="flex items-center justify-between mb-4">
-        <Input.Search
-          placeholder="Search by title"
-          className="!w-[300px]"
-          allowClear
-        />
-        <Button
-          onClick={() => setShowModal(true)}
-          type="primary"
-          icon={<FaPlus />}
-          className="!flex !items-center !bg-[#0C469D] !gap-2"
-        >
-          Add Catgeory
-        </Button>
-      </div>
+        <div className="flex items-center justify-between mb-4">
+          <Input.Search
+            placeholder="Search by title"
+            className="!w-[300px]"
+            allowClear
+          />
+          <Button
+            onClick={() => setShowModal(true)}
+            type="primary"
+            icon={<FaPlus />}
+            className="!flex !items-center !bg-[#0C469D] !gap-2"
+          >
+            Add Catgeory
+          </Button>
+        </div>
 
-      {categories?.data?.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories?.data.map((item) => (
-            <Card
-              key={item?._id}
-              className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
-              cover={
-                <img
-                  alt={item?.title}
-                  src={imageUrl(item?.img)}
-                  className="h-[180px] w-full object-cover"
+        {categories?.data?.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {categories?.data.map((item) => (
+              <Card
+                key={item?._id}
+                className="h-full flex flex-col rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md"
+                cover={
+                  <img
+                    alt={item?.title}
+                    src={imageUrl(item?.img)}
+                    className="h-[180px] w-full object-cover"
+                  />
+                }
+                actions={[
+                  <Button
+                    type="text"
+                    icon={<FaEdit />}
+                    onClick={() => handleEdit(item)}
+                    className="!flex !w-full !items-center !justify-center"
+                  />,
+                  <Popconfirm
+                    title="Are you sure you want to delete this item?"
+                    placement="top"
+                    onConfirm={() => handleDelete(item?._id)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button
+                      type="text"
+                      icon={<FaTrash />}
+                      danger
+                      className="!flex !w-full !items-center !justify-center"
+                    />
+                  </Popconfirm>,
+                  <Link to={`/things-to-know/${item?._id}`} state={item?._id}>
+                    <Button
+                      type="text"
+                      icon={<GoArrowUpRight />}
+                      className="!flex !w-full !items-center !justify-center"
+                    />
+                  </Link>,
+                ]}
+              >
+                <Card.Meta
+                  title={
+                    <span className="!text-lg !font-semibold">
+                      {item?.title}
+                    </span>
+                  }
                 />
-              }
-              actions={[
-                <Button
-                  type="text"
-                  icon={<FaEdit />}
-                  onClick={() => handleEdit(item)}
-                  className="!flex !w-full !items-center !justify-center"
-                />,
-                <Popconfirm
-                  title="Are you sure you want to delete this item?"
-                  placement="top"
-                  onConfirm={() => handleDelete(item?._id)}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <Button
-                    type="text"
-                    icon={<FaTrash />}
-                    danger
-                    className="!flex !w-full !items-center !justify-center"
-                  />
-                </Popconfirm>,
-                <Link
-                  to={`/things-to-know/${item?._id}`}
-                  state={item?._id}
-                >
-                  <Button
-                    type="text"
-                    icon={<GoArrowUpRight />}
-                    className="!flex !w-full !items-center !justify-center"
-                  />
-                </Link>,
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Empty
+            description={
+              <span className="!text-gray-400 !text-base">
+                No things to know yet. Add your first item!
+              </span>
+            }
+            className="!flex !flex-col !items-center !justify-center !p-10 !bg-white !rounded-lg !shadow-sm"
+          ></Empty>
+        )}
+
+        <Modal
+          title={editData ? 'Edit Category' : 'Add New Category'}
+          open={showModal}
+          onCancel={handleCloseModal}
+          footer={[
+            <Button key="back" onClick={handleCloseModal}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              className="!bg-[#0C469D] !text-white"
+              onClick={handleSubmit}
+              loading={isCreating || isUpdating}
+            >
+              {editData ? 'Update' : 'Save'}
+            </Button>,
+          ]}
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item
+              name="title"
+              label="Category Title"
+              rules={[
+                { required: true, message: 'Please input the category title!' },
               ]}
             >
-              <Card.Meta
-                title={
-                  <span className="!text-lg !font-semibold">{item?.title}</span>
-                }
-              />
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Empty
-          description={
-            <span className="!text-gray-400 !text-base">
-              No things to know yet. Add your first item!
-            </span>
-          }
-          className="!flex !flex-col !items-center !justify-center !p-10 !bg-white !rounded-lg !shadow-sm"
-        ></Empty>
-      )}
+              <Input placeholder="Enter category title" />
+            </Form.Item>
 
-      <Modal
-        title={editData ? 'Edit Category' : 'Add New Category'}
-        open={showModal}
-        onCancel={handleCloseModal}
-        footer={[
-          <Button key="back" onClick={handleCloseModal}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            className="!bg-[#0C469D] !text-white"
-            onClick={handleSubmit}
-            loading={isCreating || isUpdating}
-          >
-            {editData ? 'Update' : 'Save'}
-          </Button>,
-        ]}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="title"
-            label="Category Title"
-            rules={[
-              { required: true, message: 'Please input the category title!' },
-            ]}
-          >
-            <Input placeholder="Enter category title" />
-          </Form.Item>
-
-          <Form.Item label="Category Image">
-            <Upload {...uploadProps}>
-              {fileList.length >= 1 ? null : (
-                <div>
-                  <FaUpload className="text-gray-400 text-lg mb-1" />
-                  <div>Upload</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+            <Form.Item label="Category Image">
+              <Upload {...uploadProps}>
+                {fileList.length >= 1 ? null : (
+                  <div>
+                    <FaUpload className="text-gray-400 text-lg mb-1" />
+                    <div>Upload</div>
+                  </div>
+                )}
+              </Upload>
+            </Form.Item>
+          </Form>
+        </Modal>
+      </div>
+    </Spin>
   );
 }
 

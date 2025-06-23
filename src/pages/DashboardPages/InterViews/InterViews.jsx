@@ -53,7 +53,7 @@ function InterViews() {
           onClick={() => setFormModalOpen(true)}
           className="!flex !items-center !gap-2 !bg-[#0C469D] !text-white"
         >
-          Add Catgeory
+          Add New
         </Button>
       </div>
 
