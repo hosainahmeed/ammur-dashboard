@@ -204,7 +204,7 @@ function SingleThingstoKnow() {
           icon={<FaPlus />}
           onClick={showCreateModal}
         >
-          Add New
+          Add things to know
         </Button>
       </div>
 

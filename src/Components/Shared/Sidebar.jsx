@@ -75,6 +75,10 @@ const SideBar = () => {
               (item.key === 'categoriesManagement' &&
                 item.children?.some(
                   (child) => child.link === location.pathname
+                )) ||
+              (item.key === 'family-management' &&
+                item.children?.some(
+                  (child) => child.link === location.pathname
                 ));
 
             return (

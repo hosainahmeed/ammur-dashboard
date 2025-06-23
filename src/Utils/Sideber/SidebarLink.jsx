@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdAddHomeWork,  MdDashboard } from 'react-icons/md';
+import { MdAddHomeWork, MdDashboard } from 'react-icons/md';
 import { FaCog, FaUser } from 'react-icons/fa';
 import { BiSolidArchive } from 'react-icons/bi';
 import { GiBookmarklet, GiGiftOfKnowledge } from 'react-icons/gi';
@@ -30,6 +30,11 @@ export const SuperAdmin = [
         label: 'Sign Up Request',
         link: '/user/sign-up-request',
       },
+      {
+        key: 'manage-admins',
+        label: 'Manage Admins',
+        link: '/manage-admins',
+      },
     ],
   },
   {
@@ -51,6 +56,29 @@ export const SuperAdmin = [
     link: '/interviews',
   },
   {
+    key: 'family-management',
+    label: 'Family Management',
+    icon: MdAddHomeWork,
+    link: '/family-management',
+    children: [
+      {
+        key: 'add-family',
+        label: 'Add Family',
+        link: '/add-family',
+      },
+      {
+        key: 'family-directory',
+        label: 'Family Directory',
+        link: '/family-directory',
+      },
+      {
+        key: 'family-archive',
+        label: 'Family Archive',
+        link: '/family-archive',
+      },
+    ],
+  },
+  {
     key: 'events',
     label: 'Events',
     icon: RiCalendarEventFill,
@@ -68,24 +96,7 @@ export const SuperAdmin = [
     icon: SiLegacygames,
     link: '/legacy-tribute',
   },
-  {
-    key: 'family-archive',
-    label: 'Family Archive',
-    icon: BiSolidArchive,
-    link: '/family-archive',
-  },
-  {
-    key: 'manage-admins',
-    label: 'Manage Admins',
-    icon: RiAdminFill,
-    link: '/manage-admins',
-  },
-  {
-    key: 'add-family',
-    label: 'Add Family',
-    icon: MdAddHomeWork,
-    link: '/add-family',
-  },
+
   {
     key: 'settings',
     label: 'Settings',

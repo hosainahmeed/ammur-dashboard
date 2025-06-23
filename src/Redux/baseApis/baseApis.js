@@ -29,6 +29,7 @@ const baseApis = createApi({
     'interviewCategory',
     'event',
     'recipe',
+    'familyDirectory',
   ],
   endpoints: () => ({}),
 });

@@ -182,7 +182,7 @@ function ThingsToKnow() {
           icon={<FaPlus />}
           className="!flex !items-center !bg-[#0C469D] !gap-2"
         >
-          Add New
+          Add Catgeory
         </Button>
       </div>
 
