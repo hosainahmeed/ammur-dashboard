@@ -26,6 +26,7 @@ export const RecipeCard = ({ data }) => {
         .unwrap()
         .then((res) => {
           if (res?.success) {
+            toast.dismiss();
             toast.success(res?.message || 'Recipe deleted successfully');
           } else {
             toast.error(res?.message || 'Failed to delete recipe');

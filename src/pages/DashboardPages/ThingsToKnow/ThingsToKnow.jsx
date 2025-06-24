@@ -165,7 +165,7 @@ function ThingsToKnow() {
 
   return (
     <Spin spinning={isLoading}>
-      <div className="p-5 container mx-auto">
+      <div className="container mx-auto">
         <PageHeading title={'Things To Know'} />
 
         <div className="flex items-center justify-between mb-4">

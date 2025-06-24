@@ -219,6 +219,7 @@ function RecipeForm({
           .unwrap()
           .then((res) => {
             if (res?.success) {
+              toast.dismiss();
               toast.success(res?.message || 'Recipe created successfully');
               handleCancel();
               onSuccess?.();
@@ -230,6 +231,7 @@ function RecipeForm({
             .unwrap()
             .then((res) => {
               if (res?.success) {
+                toast.dismiss();
                 toast.success(res?.message || 'Recipe updated successfully');
                 handleCancel();
                 onSuccess?.();

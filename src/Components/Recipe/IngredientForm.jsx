@@ -42,6 +42,7 @@ function IngredientForm({ ingredients, setIngredients }) {
         .unwrap()
         .then((res) => {
           if (res?.success) {
+            toast.dismiss();
             toast.success(res?.message || 'Image uploaded successfully');
             setImageUrl(res?.data);
             setFileList([

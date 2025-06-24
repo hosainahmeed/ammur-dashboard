@@ -1,15 +1,15 @@
 import React from 'react';
 import { FaChevronRight } from 'react-icons/fa';
 import { IoIosLogOut } from 'react-icons/io';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { SuperAdmin } from '../../Utils/Sideber/SidebarLink';
-
+import { admin, SuperAdmin } from '../../Utils/Sideber/SidebarLink';
+import { userRole } from './Header';
+console.log(userRole);
 const SideBar = () => {
   const [selectedKey, setSelectedKey] = useState('dashboard');
   const [expandedKeys, setExpandedKeys] = useState([]);
   const location = useLocation();
-  const navigate = useNavigate();
   const contentRef = useRef({});
 
   useEffect(() => {
@@ -17,16 +17,27 @@ const SideBar = () => {
 
     let activeParent = null;
 
-    SuperAdmin.forEach((item) => {
-      if (item.link === currentPath) {
-        activeParent = item;
-      } else if (
-        item.children &&
-        item.children.some((child) => child.link === currentPath)
-      ) {
-        activeParent = item;
-      }
-    });
+    userRole === 'superAdmin'
+      ? SuperAdmin.forEach((item) => {
+          if (item.link === currentPath) {
+            activeParent = item;
+          } else if (
+            item.children &&
+            item.children.some((child) => child.link === currentPath)
+          ) {
+            activeParent = item;
+          }
+        })
+      : admin.forEach((item) => {
+          if (item.link === currentPath) {
+            activeParent = item;
+          } else if (
+            item.children &&
+            item.children.some((child) => child.link === currentPath)
+          ) {
+            activeParent = item;
+          }
+        });
 
     if (activeParent) {
       setSelectedKey(
@@ -53,12 +64,14 @@ const SideBar = () => {
     window.location.reload();
   };
 
+  const routers = userRole === 'superAdmin' ? SuperAdmin : admin;
+
   return (
     <div className="flex bg-[#0C469D]/10 pt-3 flex-col h-full">
       {/* Scrollable menu items */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="px-4 space-y-1 pb-4">
-          {SuperAdmin.map((item) => {
+          {routers.map((item) => {
             const isActive =
               selectedKey === item.key ||
               (item.key === 'settings' &&

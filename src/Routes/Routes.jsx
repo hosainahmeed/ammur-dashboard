@@ -32,7 +32,6 @@ import CreateNewArchive from '../Components/tables/FamilyArchive/CreateNewArchiv
 import CreateNewLegacy from '../Components/tables/legacy/CreateNewLegacy';
 import CategoryInterview from '../pages/DashboardPages/InterViews/CategoryInterview';
 import RequestUser from '../Components/tables/User/RequestUser';
-import FamilyDirectory from '../pages/DashboardPages/family-directory/FamilyDirectory';
 
 export const Routes = createBrowserRouter([
   {
@@ -74,10 +73,6 @@ export const Routes = createBrowserRouter([
       {
         path: '/things-to-know/:id',
         element: <ThingsToKnowSpecific />,
-      },
-      {
-        path: '/family-directory',
-        element: <FamilyDirectory />,
       },
       {
         path: '/dashboard/Settings/Terms&Condition',
