@@ -13,9 +13,7 @@ const SideBar = ({ userRole }) => {
 
   useEffect(() => {
     const currentPath = location.pathname;
-
     let activeParent = null;
-
     userRole === 'superAdmin'
       ? SuperAdmin.forEach((item) => {
           if (item.link === currentPath) {
@@ -50,7 +48,7 @@ const SideBar = ({ userRole }) => {
         setExpandedKeys([...expandedKeys, activeParent.key]);
       }
     }
-  }, []);
+  }, [userRole, location.pathname, expandedKeys]);
 
   const onParentClick = (key) => {
     setExpandedKeys((prev) =>

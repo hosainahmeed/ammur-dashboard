@@ -158,7 +158,7 @@ const AllUsers = ({ recentUser }) => {
         <div className="max-w-[400px]">
           <Form>
             <Form.Item>
-              <Input.Search
+              <Input
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search by name or email..."
                 allowClear

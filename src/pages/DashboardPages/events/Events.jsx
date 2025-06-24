@@ -14,6 +14,7 @@ import EventForm from './EventForm';
 import VideoModal from './VideoModal';
 import { FaRegCirclePlay } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
+import PageHeading from '../../../Components/Shared/PageHeading';
 
 function Events() {
   const { data, isLoading, error } = useGetEventQuery();
@@ -120,7 +121,7 @@ function Events() {
           </Button>
           <Popconfirm
             title="Are you sure to delete this event?"
-            placement='bottomRight'
+            placement="bottomRight"
             onConfirm={() => handleDelete(record.key)}
             okText="Yes"
             cancelText="No"
@@ -136,19 +137,17 @@ function Events() {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="bg-white flex items-center px-4 justify-between rounded-md shadow-md mb-4 py-2">
-        <h1 className="text-2xl font-semibold">Events</h1>
-        <Button
-        className='!bg-[#0C469D] !text-white'
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setEditingEvent(null);
-            setIsModalOpen(true);
-          }}
-        >
-          Add New Event
-        </Button>
-      </div>
+      <PageHeading title="Events" />
+      <Button
+        className="!bg-[#0C469D] !mb-3 !text-white"
+        icon={<PlusOutlined />}
+        onClick={() => {
+          setEditingEvent(null);
+          setIsModalOpen(true);
+        }}
+      >
+        Add New Event
+      </Button>
 
       <Table
         scroll={{ x: 1200 }}

@@ -3,9 +3,10 @@ import baseApis from '../../baseApis/baseApis';
 const timelineApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getTimeline: builder.query({
-      query: () => ({
+      query: ({ searchTerm }) => ({
         url: `/timelines`,
         method: 'GET',
+        params: { searchTerm: searchTerm },
       }),
       providesTags: ['timeline'],
     }),

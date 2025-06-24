@@ -9,6 +9,7 @@ import {
   Form,
   Input,
   Popconfirm,
+  Spin,
 } from 'antd';
 import {
   UserOutlined,
@@ -28,15 +29,18 @@ import {
   useUpdateUserStatusMutation,
 } from '../../../Redux/services/dashboard apis/userApis';
 import { imageUrl } from '../../../Utils/server';
+import { debounce } from 'lodash';
 
 const AdminsTable = () => {
   const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
+  const [searchedUsers, setSearchedUsers] = useState();
   const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
   const [selectAdmin, setSelectAdmin] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetailsModal, setUserDetailsModal] = useState(false);
   const { data: adminsData, isLoading: adminsLoading } = useGetAllUserQuery({
     role: 'admin',
+    searchTerm: searchedUsers,
   });
 
   const [updateUserStatus] = useUpdateUserStatusMutation();
@@ -178,17 +182,20 @@ const AdminsTable = () => {
     }
   };
 
-  const handleSearch = () => {};
+  const handleSearch = debounce((value) => {
+    setSearchedUsers(value);
+  }, 300);
   return (
-    <div className="admin-table">
+    <Spin spinning={adminsLoading}>
       <PageHeading title={'Admins Manage'} />
       <div className="flex !items-start justify-between">
         <div className="max-w-[400px] min-w-[400px]">
           <Form className="!w-full !h-fit">
             <Form.Item>
-              <Input.Search
+              <Input
+                loading={adminsLoading}
                 placeholder="Search by name"
-                onSearch={handleSearch}
+                onChange={(e) => handleSearch(e.target.value)}
                 allowClear
               />
             </Form.Item>
@@ -204,7 +211,6 @@ const AdminsTable = () => {
       </div>
       <Table
         columns={columns}
-        loading={adminsLoading}
         dataSource={adminsInfo}
         pagination={{
           position: ['bottomCenter'],
@@ -231,10 +237,7 @@ const AdminsTable = () => {
         className="user-details-modal"
       >
         <div className="flex flex-col items-center">
-          <Avatar
-            className="!w-24 !h-24"
-            src={imageUrl(selectedUser?.img)}
-          />
+          <Avatar className="!w-24 !h-24" src={imageUrl(selectedUser?.img)} />
           <h1 className="text-2xl font-bold">{selectedUser?.name}</h1>
           <div className="!w-full p-1 border-1 border-[var(--vg-green-high)] rounded-md">
             <div className="p-2 bg-[var(--bg-green-high)] !text-white flex items-center justify-center font-semibold text-base rounded-md">
@@ -257,7 +260,7 @@ const AdminsTable = () => {
           </div>
         </div>
       </Modal>
-    </div>
+    </Spin>
   );
 };
 

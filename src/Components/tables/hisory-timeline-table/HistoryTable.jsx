@@ -22,11 +22,15 @@ import {
 } from '../../../Redux/services/dashboard apis/timelineApis';
 import { imageUrl } from '../../../Utils/server';
 import CreatNewHistory from './CreatNewHistory';
+import debounce from 'debounce';
 
 function HistoryTable() {
+  const [search, setSearch] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
-  const { data, isLoading } = useGetTimelineQuery();
+  const { data, isLoading } = useGetTimelineQuery({
+    seachTerm: search,
+  });
   const [id, setId] = useState(null);
   const [deleteTimeline] = useDeleteTimelineMutation();
   const [createNewModal, setCreateNewModal] = useState(false);
@@ -65,7 +69,9 @@ function HistoryTable() {
       toast.error(error?.data?.message || 'Failed to delete timeline');
     }
   };
-
+  const handleSearch = debounce((value) => {
+    setSearch(value);
+  }, 300);
   const columns = [
     {
       title: 'Image',
@@ -165,7 +171,8 @@ function HistoryTable() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <Input.Search
+        <Input
+          onChange={(e) => handleSearch(e.target.value)}
           placeholder="Search by title"
           className="!w-[300px]"
           allowClear
@@ -191,7 +198,7 @@ function HistoryTable() {
         pagination={{ pageSize: 5 }}
         className="history-table"
         rowKey="key"
-        scroll={{ x: 1200}}
+        scroll={{ x: 1200 }}
         bordered
       />
 
