@@ -30,6 +30,8 @@ const baseApis = createApi({
     'event',
     'recipe',
     'familyDirectory',
+    'growthOverview',
+    'totalOverview',
   ],
   endpoints: () => ({}),
 });

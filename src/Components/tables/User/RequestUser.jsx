@@ -40,7 +40,24 @@ function RequestUser() {
   const updateUserStatusHandler = async (record) => {
     const id = record?.id;
     const data = {
-      approvalStatus: true,
+      approvalStatus: 'approved',
+    };
+    try {
+      await updateUserStatus({ id, data })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'User status updated successfully!');
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Something went wrong');
+    }
+  };
+  const declineUserStatusHandler = async (record) => {
+    const id = record?.id;
+    const data = {
+      approvalStatus: 'rejected',
     };
     try {
       await updateUserStatus({ id, data })
@@ -99,7 +116,7 @@ function RequestUser() {
       key: 'elderFamilyMember',
     },
     {
-      title: 'Joined',
+      title: 'Requested Date',
       dataIndex: 'joined',
       key: 'joined',
     },
@@ -123,7 +140,7 @@ function RequestUser() {
             onConfirm={() => updateUserStatusHandler(record)}
           >
             <Button
-              className="!bg-yellow-300"
+              className="!bg-green-300"
               disabled={
                 updateUserStatusLoading && selectedUser?.id === record.id
               }
@@ -134,6 +151,23 @@ function RequestUser() {
               Approve
             </Button>
           </Popconfirm>
+          <Popconfirm
+            placement="bottomRight"
+            title="Are you sure you want decline this user?"
+            onConfirm={() => declineUserStatusHandler(record)}
+          >
+            <Button
+              className="!bg-yellow-300"
+              disabled={
+                updateUserStatusLoading && selectedUser?.id === record.id
+              }
+              loading={
+                updateUserStatusLoading && selectedUser?.id === record.id
+              }
+            >
+              Decline
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -142,6 +176,7 @@ function RequestUser() {
     <div>
       <PageHeading title="Request User Manage" />
       <Table
+        scroll={{ x: 'max-content' }}
         columns={columnsRequestedUsers}
         dataSource={filteredRequestedUsers}
         rowKey="id"

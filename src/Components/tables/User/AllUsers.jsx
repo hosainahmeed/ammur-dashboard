@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Table,
   Space,
   Avatar,
   Button,
   Modal,
-  Tabs,
   Form,
   Input,
   Popconfirm,
@@ -14,6 +13,7 @@ import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { CgBlock } from 'react-icons/cg';
 import { IoIosMail } from 'react-icons/io';
 import toast from 'react-hot-toast';
+import debounce from 'lodash/debounce';
 import UserInformation from '../../page component/UserInformation';
 import {
   useGetAllUserQuery,
@@ -21,35 +21,29 @@ import {
 } from '../../../Redux/services/dashboard apis/userApis';
 
 const AllUsers = ({ recentUser }) => {
+  const [searchedUsers, setSearchedUsers] = useState('');
   const [userDetailsModal, setUserDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const { data: allUsersData, isLoading } = useGetAllUserQuery({
     role: 'member',
+    searchTerm: searchedUsers,
   });
   const [updateUserStatus] = useUpdateUserStatusMutation();
-  const [filteredUsers, setFilteredUsers] = useState([]);
 
-  const [activeTab, setActiveTab] = useState('1');
-
-  useEffect(() => {
-    if (allUsersData?.data) {
-      const users = allUsersData?.data?.map((user) => ({
-        key: user?._id || 'N/A',
-        id: user?._id || 'N/A',
-        name: user?.fullName || 'N/A',
-        contactNumber: user?.contactNo || 'N/A',
-        email: user?.email || 'N/A',
-        familySide: user?.familySide || 'N/A',
-        subscription: user?.subscription || 'N/A',
-        joined: user?.createdAt.split('T')[0] || 'N/A',
-        status: user?.status || 'N/A',
-        isBlocked: user?.isDeleted || 'N/A',
-        avatar: user?.img || null,
-        fullUser: user,
-      }));
-      setFilteredUsers(users);
-    }
-  }, [allUsersData]);
+  const users = allUsersData?.data?.map((user) => ({
+    key: user?._id || 'N/A',
+    id: user?._id || 'N/A',
+    name: user?.fullName || 'N/A',
+    contactNumber: user?.contactNo || 'N/A',
+    email: user?.email || 'N/A',
+    familySide: user?.familySide || 'N/A',
+    subscription: user?.subscription || 'N/A',
+    joined: user?.createdAt.split('T')[0] || 'N/A',
+    status: user?.status || 'N/A',
+    isBlocked: user?.isDeleted || 'N/A',
+    avatar: user?.img || null,
+    fullUser: user,
+  }));
 
   const blockUser = async (record) => {
     const id = record?.id;
@@ -69,7 +63,9 @@ const AllUsers = ({ recentUser }) => {
     }
   };
 
-  // Search handler for all user
+  const handleSearch = debounce((value) => {
+    setSearchedUsers(value);
+  }, 300);
 
   const columnsAllUsers = [
     {
@@ -162,7 +158,11 @@ const AllUsers = ({ recentUser }) => {
         <div className="max-w-[400px]">
           <Form>
             <Form.Item>
-              <Input.Search placeholder="Search here" allowClear />
+              <Input.Search
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Search by name or email..."
+                allowClear
+              />
             </Form.Item>
           </Form>
         </div>
@@ -170,7 +170,7 @@ const AllUsers = ({ recentUser }) => {
 
       <Table
         columns={columnsAllUsers}
-        dataSource={filteredUsers}
+        dataSource={users}
         rowKey="id"
         pagination={true}
         bordered

@@ -3,11 +3,12 @@ import baseApis from '../../baseApis/baseApis';
 export const userApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getAllUser: builder.query({
-      query: ({ role }) => ({
+      query: ({ role, searchTerm }) => ({
         url: '/users',
         method: 'GET',
         params: {
           role: role,
+          searchTerm,
         },
       }),
       providesTags: ['user'],
@@ -25,7 +26,12 @@ export const userApis = baseApis.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['user', 'requiestUser'],
+      invalidatesTags: [
+        'user',
+        'requiestUser',
+        'totalOverview',
+        'growthOverview',
+      ],
     }),
     deleteUser: builder.mutation({
       query: ({ id }) => ({

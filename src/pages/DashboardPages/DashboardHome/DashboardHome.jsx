@@ -6,6 +6,7 @@ import Loader from '../../../Components/Shared/Loaders/Loader';
 import { useGrowthOverviewQuery } from '../../../Redux/services/dashboard apis/totalOverviewApis';
 function DashboardHome() {
   const { data: growthData, isLoading } = useGrowthOverviewQuery();
+  console.log(growthData);
   const cardData = [
     {
       title: 'Total User',

@@ -7,12 +7,14 @@ const totalOverviewApis = baseApis.injectEndpoints({
         url: '/users/users-monthly',
         method: 'GET',
       }),
+      providesTags: ['totalOverview'],
     }),
     growthOverview: builder.query({
       query: () => ({
         url: '/users/all-users-admins',
         method: 'GET',
       }),
+      providesTags: ['growthOverview'],
     }),
   }),
 });
