@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   Space,
@@ -172,7 +172,10 @@ const AllUsers = ({ recentUser }) => {
         columns={columnsAllUsers}
         dataSource={users}
         rowKey="id"
-        pagination={true}
+        pagination={{
+          defaultPageSize: 10,
+          showSizeChanger: false,
+        }}
         bordered
         loading={isLoading}
       />

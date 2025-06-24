@@ -4,9 +4,8 @@ import { IoIosLogOut } from 'react-icons/io';
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { admin, SuperAdmin } from '../../Utils/Sideber/SidebarLink';
-import { userRole } from './Header';
-console.log(userRole);
-const SideBar = () => {
+
+const SideBar = ({ userRole }) => {
   const [selectedKey, setSelectedKey] = useState('dashboard');
   const [expandedKeys, setExpandedKeys] = useState([]);
   const location = useLocation();

@@ -10,7 +10,7 @@ import { imageUrl } from '../../Utils/server';
 
 export let userRole = '';
 
-function Header() {
+function Header({ setUserRole }) {
   const { data, isLoading, error } = useGetProfileDataQuery();
 
   const [notifications, setNotifications] = useState(
@@ -27,6 +27,7 @@ function Header() {
     if (user) {
       userRole = user?.role;
     }
+    setUserRole(user?.role);
   }, [user]);
 
   const handleSignOut = () => {
