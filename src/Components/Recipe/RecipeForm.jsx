@@ -94,7 +94,6 @@ function RecipeForm({
   const handleCancel = () => {
     setShowModal(false);
     resetForm();
-    setRecipeId(null);
   };
   const normFile = (e) => (Array.isArray(e) ? e : e?.fileList);
   const onChange = (info) => {
@@ -146,7 +145,6 @@ function RecipeForm({
             if (res?.success) {
               toast.success(res?.message || 'Recipe created successfully');
               handleCancel();
-              onSuccess?.();
             }
           });
       } else {
@@ -156,13 +154,12 @@ function RecipeForm({
             if (res?.success) {
               toast.success(res?.message || 'Recipe updated successfully');
               handleCancel();
-              onSuccess?.();
             }
           });
       }
     } catch (error) {
+      console.log(error)
       toast.error(error?.data?.message || 'Failed to process recipe');
-      console.error('Error:', error);
     } finally {
       setIsSubmitting(false);
     }

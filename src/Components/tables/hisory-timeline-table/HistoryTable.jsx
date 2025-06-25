@@ -177,7 +177,6 @@ function HistoryTable() {
           className="!w-[300px]"
           allowClear
         />
-        {/* <Link to={'/timeline/timeline-handle'}> */}
         <Button
           onClick={() => {
             setId(null);

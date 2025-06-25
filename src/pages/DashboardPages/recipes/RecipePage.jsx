@@ -4,6 +4,7 @@ import RecipeToolbar from '../../../Components/Recipe/RecipeToolbar';
 import { Button, Empty, Input, Spin } from 'antd';
 import { useGetRecipeQuery } from '../../../Redux/services/dashboard apis/recipeApis';
 import { RecipeCard } from '../../../Components/Recipe/RecipeCard';
+import PageHeading from '../../../Components/Shared/PageHeading';
 
 function RecipePage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,6 +16,7 @@ function RecipePage() {
   };
   return (
     <Spin spinning={recipeLoading}>
+      <PageHeading title="Recipe" />
       <div className="!w-full">
         <RecipeToolbar
           searchTerm={searchTerm}

@@ -48,7 +48,7 @@ const SideBar = ({ userRole }) => {
         setExpandedKeys([...expandedKeys, activeParent.key]);
       }
     }
-  }, [userRole, location.pathname, expandedKeys, location]);
+  }, [userRole, location.pathname, expandedKeys]);
 
   const onParentClick = (key) => {
     setExpandedKeys((prev) =>

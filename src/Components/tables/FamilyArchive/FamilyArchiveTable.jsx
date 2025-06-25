@@ -9,46 +9,33 @@ import {
   Tag,
   Image,
   Divider,
+  Spin,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { CiEdit } from 'react-icons/ci';
 import { FaEye, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
-
+import { Link, useLocation } from 'react-router-dom';
+import CreateNewArchive from './CreateNewArchive';
+import { useGetAllSubArchiveQuery } from '../../../Redux/services/dashboard apis/archiveApis';
 function FamilyArchiveTable() {
+  const location = useLocation();
+  const archiveId = location.state;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
+  const [createNewModal, setCreateNewModal] = useState(false);
+  const { data, isLoading } = useGetAllSubArchiveQuery(
+    { id: archiveId },
+    { skip: !archiveId }
+  );
+  console.log(data?.data);
 
-  const history = [
-    {
-      key: '1',
-      name: 'Theodore Moscicki',
-      description: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae
-          quod odio, in commodi blanditiis dolorum assumenda ipsam quasi ad
-          soluta iste similique! Odio iusto ratione vero recusandae, tempora
-          sint eos unde esse! Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Quisquam, voluptatum.`,
-      date: '2025-01-10',
-      family: 'Brown family',
-      banner:
-        'https://mbsbham.wordpress.com/wp-content/uploads/2015/03/family-archive.jpg',
-    },
-    {
-      key: '2',
-      name: 'Russell Veum',
-      description: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae
-          quod odio, in commodi blanditiis dolorum assumenda ipsam quasi ad
-          soluta iste similique! Odio iusto ratione vero recusandae, tempora
-          sint eos unde esse!`,
-      date: '2025-01-10',
-      family: 'Brown family',
-      banner:
-        'https://mbsbham.wordpress.com/wp-content/uploads/2015/03/family-archive.jpg',
-    },
-  ];
+  const archiveData = data?.data?.map((item) => ({
+    ...item,
+    key: item._id,
+  }));
+  const [id, setId] = useState(null);
 
   const showModal = (record) => {
     setSelectedHistory(record);
@@ -62,15 +49,15 @@ function FamilyArchiveTable() {
   const columns = [
     {
       title: 'Image',
-      dataIndex: 'banner',
-      key: 'banner',
+      dataIndex: 'img',
+      key: 'img',
       width: 200,
       render: (_, record) => (
         <div className="w-fit">
           <Image
             preview={false}
             className="w-28 h-16 rounded-md object-cover shadow-md"
-            src={record.banner}
+            src={record.img}
             alt="banner_image"
           />
         </div>
@@ -78,11 +65,11 @@ function FamilyArchiveTable() {
     },
     {
       title: 'Title',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'title',
+      key: 'title',
       width: 300,
       render: (_, record) => (
-        <h2 className="text-lg font-semibold">{record.name}</h2>
+        <h2 className="text-lg font-semibold">{record.title.slice(0, 15)}</h2>
       ),
     },
     {
@@ -96,8 +83,8 @@ function FamilyArchiveTable() {
     },
     {
       title: 'Family',
-      dataIndex: 'family',
-      key: 'family',
+      dataIndex: 'familyName',
+      key: 'familyName',
       render: (family) => (
         <Tag color="blue" className="text-nowrap">
           {family}
@@ -154,16 +141,18 @@ function FamilyArchiveTable() {
   ];
 
   return (
-    <div className="p-4">
+    <Spin spinning={isLoading}>
       <div className="flex items-center justify-between mb-4">
-        <Link to={'/family-archive/create-new'}>
-          <Button
-            icon={<FaPlus />}
-            className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
-          >
-            Add New Archive
-          </Button>
-        </Link>
+        <Button
+          onClick={() => {
+            setId(null);
+            setCreateNewModal(true);
+          }}
+          icon={<FaPlus />}
+          className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
+        >
+          Add New Archive
+        </Button>
         <Input.Search
           placeholder="Search by title"
           className="!w-[300px]"
@@ -173,13 +162,27 @@ function FamilyArchiveTable() {
 
       <Table
         columns={columns}
-        dataSource={history}
+        dataSource={archiveData}
         pagination={{ pageSize: 5 }}
         className="history-table"
         rowKey="key"
-        scroll={{ x: 1200}}
+        scroll={{ x: 1200 }}
         bordered
       />
+      <Modal
+        title={<span className="text-xl font-bold">Add New Archive</span>}
+        open={createNewModal}
+        onCancel={() => setCreateNewModal(false)}
+        footer={[
+          <Button key="back" onClick={() => setCreateNewModal(false)}>
+            Close
+          </Button>,
+        ]}
+        width={800}
+        centered
+      >
+        <CreateNewArchive id={id} />
+      </Modal>
 
       {/* History Detail Modal */}
       <Modal
@@ -198,8 +201,8 @@ function FamilyArchiveTable() {
           <div className="py-4">
             <div className="mb-6">
               <Image
-                src={selectedHistory.banner}
-                alt={selectedHistory.name}
+                src={selectedHistory.img}
+                alt={selectedHistory.title}
                 className="w-full h-64 object-cover rounded-lg shadow-md"
                 preview={false}
               />
@@ -213,10 +216,10 @@ function FamilyArchiveTable() {
             </div>
 
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {selectedHistory.name}
+              {selectedHistory.title}
             </h2>
             <h2 className="text-sm leading-none font-bold text-gray-800 mb-4">
-              {selectedHistory.family}
+              {selectedHistory.familyName}
             </h2>
 
             <Divider
@@ -237,7 +240,7 @@ function FamilyArchiveTable() {
           </div>
         )}
       </Modal>
-    </div>
+    </Spin>
   );
 }
 

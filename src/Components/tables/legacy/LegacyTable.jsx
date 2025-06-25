@@ -16,49 +16,30 @@ import { FaEye, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import { useGetLegacyQuery } from '../../../Redux/services/dashboard apis/lagecyApis';
+import {
+  useDeleteLegacyMutation,
+  useGetLegacyQuery,
+} from '../../../Redux/services/dashboard apis/lagecyApis';
 
 function LegacyTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const { data, isLoading } = useGetLegacyQuery();
+  const [deleteLegacyApi, { isLoading: isDeleting }] =
+    useDeleteLegacyMutation();
+
   const lagacyData = data?.data?.map((item) => {
     return {
-      id: item?._id,
+      key: item?._id,
       title: item?.title,
+      familyName: item?.familyName,
+      dateOfBirth: item?.dateOfBirth,
+      burial: item?.burial,
+      description: item?.description,
       img: item?.img,
       isDeleted: item?.isDeleted,
     };
   });
-
-  const history = [
-    {
-      key: '1',
-      name: 'Theodore Moscicki',
-      description: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae
-          quod odio, in commodi blanditiis dolorum assumenda ipsam quasi ad
-          soluta iste similique! Odio iusto ratione vero recusandae, tempora
-          sint eos unde esse! Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-          Quisquam, voluptatum.`,
-      dob: '1972-01-10',
-      dod: '1972-01-10',
-      family: 'Brown family',
-      banner: 'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
-    },
-    {
-      key: '2',
-      name: 'Russell Veum',
-      description: `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae
-          quod odio, in commodi blanditiis dolorum assumenda ipsam quasi ad
-          soluta iste similique! Odio iusto ratione vero recusandae, tempora
-          sint eos unde esse!`,
-      dob: '1972-01-10',
-      dod: '1972-01-10',
-      family: 'Brown family',
-      banner: 'https://dgmt.co.za/wp-content/uploads/2023/04/legacy_new2.jpg',
-    },
-  ];
 
   const showModal = (record) => {
     setSelectedHistory(record);
@@ -69,18 +50,32 @@ function LegacyTable() {
     setIsModalVisible(false);
   };
 
+  const deleteLegacy = async (id) => {
+    try {
+      await deleteLegacyApi(id)
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Legacy deleted successfully');
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Failed to delete legacy');
+    }
+  };
+
   const columns = [
     {
       title: 'Image',
-      dataIndex: 'banner',
-      key: 'banner',
+      dataIndex: 'img',
+      key: 'img',
       width: 200,
       render: (_, record) => (
         <div className="w-fit">
           <Image
             preview={false}
             className="w-28 h-16 rounded-md object-cover shadow-md"
-            src={record.banner}
+            src={record.img}
             alt="banner_image"
           />
         </div>
@@ -88,11 +83,11 @@ function LegacyTable() {
     },
     {
       title: 'Title',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'title',
+      key: 'title',
       width: 300,
       render: (_, record) => (
-        <h2 className="text-lg font-semibold">{record.name}</h2>
+        <h2 className="text-lg font-semibold">{record.title}</h2>
       ),
     },
     {
@@ -106,31 +101,31 @@ function LegacyTable() {
     },
     {
       title: 'Family',
-      dataIndex: 'family',
-      key: 'family',
-      render: (family) => (
+      dataIndex: 'familyName',
+      key: 'familyName',
+      render: (familyName) => (
         <Tag color="blue" className="text-nowrap">
-          {family}
+          {familyName}
         </Tag>
       ),
     },
     {
       title: 'Date of birth',
-      dataIndex: 'dob',
-      key: 'dob',
-      render: (dob) => (
+      dataIndex: 'dateOfBirth',
+      key: 'dateOfBirth',
+      render: (dateOfBirth) => (
         <Tag color="green" className="text-nowrap">
-          {dob}
+          {dateOfBirth}
         </Tag>
       ),
     },
     {
       title: 'RIP',
-      dataIndex: 'dod',
-      key: 'dod',
-      render: (dod) => (
+      dataIndex: 'burial',
+      key: 'burial',
+      render: (burial) => (
         <Tag color="red" className="text-nowrap">
-          {dod}
+          {burial}
         </Tag>
       ),
     },
@@ -141,11 +136,13 @@ function LegacyTable() {
       render: (_, record) => (
         <Space size="middle">
           <Button
+            size="small"
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<CiEdit />}
             title="Edit"
           />
           <Button
+            size="small"
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<FaEye />}
             title="View"
@@ -155,14 +152,16 @@ function LegacyTable() {
             placement="bottomRight"
             title="Confirm Deletion"
             description="Are you sure you want to delete this history item?"
+            loading={isDeleting}
             onConfirm={() => {
-              toast.success('Deleted successfully');
+              deleteLegacy(record.key);
             }}
             onCancel={() => console.log('Cancelled')}
             okText="Yes"
             cancelText="No"
           >
             <Button
+              size="small"
               className="!border-red-500 !text-red-500 hover:!bg-red-100 transition-all"
               icon={<DeleteOutlined />}
               title="Delete"
@@ -194,7 +193,7 @@ function LegacyTable() {
       <Table
         loading={isLoading}
         columns={columns}
-        dataSource={history}
+        dataSource={lagacyData}
         pagination={{ pageSize: 5 }}
         className="history-table"
         rowKey="key"
@@ -204,7 +203,7 @@ function LegacyTable() {
 
       {/* History Detail Modal */}
       <Modal
-        title={<span className="text-xl font-bold">History Details</span>}
+        title={<span className="text-xl font-bold">Legacy Details</span>}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={[
@@ -219,8 +218,8 @@ function LegacyTable() {
           <div className="py-4">
             <div className="mb-6">
               <Image
-                src={selectedHistory.banner}
-                alt={selectedHistory.name}
+                src={selectedHistory.img}
+                alt={selectedHistory.title}
                 className="w-full h-64 object-cover rounded-lg shadow-md"
                 preview={false}
               />
@@ -234,10 +233,10 @@ function LegacyTable() {
             </div>
 
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {selectedHistory.name}
+              {selectedHistory.title}
             </h2>
             <h2 className="text-sm leading-none font-bold text-gray-800 mb-4">
-              {selectedHistory.family}
+              {selectedHistory.familyName}
             </h2>
 
             <Divider

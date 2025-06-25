@@ -1,10 +1,11 @@
 import React from 'react';
-import { Table, Button, Popconfirm, Typography } from 'antd';
+import { Table, Button, Popconfirm, Typography, Spin } from 'antd';
 import { CiEdit } from 'react-icons/ci';
 import { MdDelete } from 'react-icons/md';
 import { imageUrl } from '../../../Utils/server';
 
 const FamilyTable = ({ families, onEdit, onDelete }) => {
+  const [loading, setLoading] = React.useState(false);
   const columns = [
     {
       title: 'SL No.',
@@ -46,18 +47,20 @@ const FamilyTable = ({ families, onEdit, onDelete }) => {
     },
   ];
   return (
-    <Table
-      columns={columns}
-      pagination={{ responsive: true }}
-      dataSource={families?.map((family, index) => ({
-        key: family._id,
-        img: family.img,
-        name: family.name,
-        index: index + 1,
-      }))}
-      scroll={{ x: 1200}}
-      bordered
-    />
+    <Spin spinning={loading}>
+      <Table
+        columns={columns}
+        pagination={{ responsive: true }}
+        dataSource={families?.map((family, index) => ({
+          key: family._id,
+          img: family.img,
+          name: family.name,
+          index: index + 1,
+        }))}
+        scroll={{ x: 1200 }}
+        bordered
+      />
+    </Spin>
   );
 };
 

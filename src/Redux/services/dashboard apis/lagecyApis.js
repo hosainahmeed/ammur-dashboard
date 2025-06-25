@@ -9,7 +9,14 @@ const legacyApis = baseApis.injectEndpoints({
       }),
       providesTags: ['Legacy'],
     }),
+    deleteLegacy: builder.mutation({
+      query: (id) => ({
+        url: `/legacies/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Legacy'],
+    }),
   }),
 });
 
-export const { useGetLegacyQuery } = legacyApis;
+export const { useGetLegacyQuery, useDeleteLegacyMutation } = legacyApis;

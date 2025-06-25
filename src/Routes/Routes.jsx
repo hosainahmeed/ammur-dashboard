@@ -19,10 +19,8 @@ import Subscription from '../pages/DashboardPages/Subscription/Subscription';
 import ThingsToKnow from '../pages/DashboardPages/ThingsToKnow/ThingsToKnow';
 import Profile from '../pages/DashboardPages/ProfilePages/Profile';
 import HistoryTimeline from '../pages/DashboardPages/history-timeline/HistoryTimeline';
-import CreatNewHistory from '../Components/tables/hisory-timeline-table/CreatNewHistory';
 import InterViews from '../pages/DashboardPages/InterViews/InterViews';
 import LegacyTribute from '../pages/DashboardPages/Legacy & tribute/LegacyTribute';
-import FamilyArchive from '../pages/DashboardPages/Family Archive/FamilyArchive';
 import Events from '../pages/DashboardPages/events/Events';
 import ManageAdmins from '../pages/DashboardPages/ManageAdmins/ManageAdmins';
 import AboutUs from '../pages/DashboardPages/about-us/AboutUs';
@@ -33,6 +31,7 @@ import CreateNewLegacy from '../Components/tables/legacy/CreateNewLegacy';
 import CategoryInterview from '../pages/DashboardPages/InterViews/CategoryInterview';
 import RequestUser from '../Components/tables/User/RequestUser';
 import CategoryArchive from '../pages/DashboardPages/Family Archive/CategoryArchive';
+import FamilyArchiveTable from '../Components/tables/FamilyArchive/FamilyArchiveTable';
 
 export const Routes = createBrowserRouter([
   {
@@ -59,10 +58,6 @@ export const Routes = createBrowserRouter([
         path: '/timeline',
         element: <HistoryTimeline />,
       },
-      // {
-      //   path: '/timeline/timeline-handle',
-      //   element: <CreatNewHistory />,
-      // },
       {
         path: '/subscription',
         element: <Subscription />,
@@ -123,6 +118,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/family-archive',
         element: <CategoryArchive />,
+      },
+      {
+        path: '/family-archive/:id',
+        element: <FamilyArchiveTable />,
       },
       {
         path: '/family-archive/create-new',

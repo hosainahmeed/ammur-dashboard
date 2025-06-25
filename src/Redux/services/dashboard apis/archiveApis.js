@@ -15,7 +15,7 @@ const archiveApis = baseApis.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      providesTags: ['archive'],
+      invalidatesTags: ['archive'],
     }),
     updateArchive: builder.mutation({
       query: ({ id, data }) => ({
@@ -32,6 +32,45 @@ const archiveApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['archive'],
     }),
+    //sub category
+    getAllSubArchive: builder.query({
+      query: ({ id }) => ({
+        url: '/archieves',
+        method: 'GET',
+        params: { archieveCategoryId: id },
+      }),
+      providesTags: ['archive', 'archiveSub'],
+    }),
+    createSubArchive: builder.mutation({
+      query: ({ data }) => ({
+        url: '/archieves/create-archieve',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['archive', 'archiveSub'],
+    }),
+    updateSubArchive: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/archieves/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['archive', 'archiveSub'],
+    }),
+    deleteSubArchive: builder.mutation({
+      query: ({ id }) => ({
+        url: `/archieves/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['archive', 'archiveSub'],
+    }),
+    getSingleSubArchive: builder.query({
+      query: ({ id }) => ({
+        url: `/archieves/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['archive', 'archiveSub'],
+    }),
   }),
 });
 
@@ -40,4 +79,10 @@ export const {
   useGetAllArchiveQuery,
   useUpdateArchiveMutation,
   useDeleteArchiveMutation,
+  //sub category
+  useGetAllSubArchiveQuery,
+  useCreateSubArchiveMutation,
+  useUpdateSubArchiveMutation,
+  useDeleteSubArchiveMutation,
+  useGetSingleSubArchiveQuery,
 } = archiveApis;
