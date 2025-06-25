@@ -17,7 +17,7 @@ const { Title, Text } = Typography;
 
 function RecipeForm({ showModal, setShowModal, recipeId }) {
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState(null);
+  const [fileList, setFileList] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [originalIngredients, setOriginalIngredients] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,6 +25,7 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
   const [updateRecipe] = useUpdateRecipeMutation();
 
   const { data: families, isLoading: familiesLoading } = useGetFamiliesQuery();
+
   const {
     data: recipe,
     isLoading: recipeLoading,
@@ -36,7 +37,7 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
 
   const resetForm = useCallback(() => {
     form.resetFields();
-    setFileList(null);
+    setFileList([]);
     setIngredients([]);
     setOriginalIngredients([]);
   }, [form]);
@@ -65,27 +66,34 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
         familyName,
       } = recipe.data;
 
-      form.setFieldsValue({
+      const formValues = {
         title,
         cookingTime: dayjs(cookingTime, 'HH:mm'),
         serving,
         description,
         familyName: familyName || '',
-      });
+      };
 
-      setFileList(
-        img
-          ? [
-              {
-                uid: '-1',
-                name: 'recipe-image.png',
-                status: 'done',
-                url: img,
-                thumbUrl: img,
-              },
-            ]
-          : []
-      );
+      const imageFileList = img
+        ? [
+            {
+              uid: '-1',
+              name: 'recipe-image.jpg',
+              status: 'done',
+              url: img,
+              thumbUrl: img,
+              response: { url: img },
+            },
+          ]
+        : [];
+
+      if (imageFileList.length > 0) {
+        formValues.upload = imageFileList;
+      }
+
+      form.setFieldsValue(formValues);
+
+      setFileList(imageFileList);
 
       const mappedIngredients = recipeIngredients.map((ingredient) => ({
         name: ingredient.name,
@@ -256,11 +264,17 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
             onChange={onChange}
             maxCount={1}
             onRemove={() => {
-              setFileList(null);
+              setFileList([]);
+              form.setFieldValue('upload', []);
               return true;
             }}
+            showUploadList={{
+              showPreviewIcon: true,
+              showRemoveIcon: true,
+              showDownloadIcon: false,
+            }}
           >
-            {fileList === null && (
+            {fileList.length === 0 && (
               <div>
                 <UploadOutlined
                   style={{ fontSize: '24px', color: '#072656' }}
