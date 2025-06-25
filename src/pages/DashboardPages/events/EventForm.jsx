@@ -62,8 +62,12 @@ export default function EventForm({ open, onCancel, event }) {
         formData.append(key, values[key])
       );
       formData.append('date', values.date.format('YYYY-MM-DD'));
-      if (imageFile) formData.append('image', imageFile);
-      if (videoFile) formData.append('video', videoFile);
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+      if (videoFile) {
+        formData.append('video', videoFile);
+      }
 
       if (event && event.key) {
         await updateEvent({ id: event.key, data: formData })
