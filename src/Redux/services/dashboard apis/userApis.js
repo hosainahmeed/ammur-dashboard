@@ -14,9 +14,10 @@ export const userApis = baseApis.injectEndpoints({
       providesTags: ['user'],
     }),
     requiestUser: builder.query({
-      query: () => ({
+      query: ({ searchTerm }) => ({
         url: '/users/sign-up-request',
         method: 'GET',
+        params: { searchTerm },
       }),
       providesTags: ['requiestUser'],
     }),

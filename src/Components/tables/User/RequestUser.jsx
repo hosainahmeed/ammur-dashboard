@@ -1,4 +1,14 @@
-import { Avatar, Button, Modal, Popconfirm, Space, Table } from 'antd';
+import {
+  Avatar,
+  Button,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Space,
+  Spin,
+  Table,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   useRequiestUserQuery,
@@ -9,13 +19,15 @@ import { PhoneOutlined, UserOutlined } from '@ant-design/icons';
 import { IoIosMail } from 'react-icons/io';
 import PageHeading from '../../Shared/PageHeading';
 import UserInformation from '../../page component/UserInformation';
+import debounce from 'debounce';
 
 function RequestUser() {
+  const [searchedUsers, setSearchedUsers] = useState('');
   const [userDetailsModal, setUserDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [filteredRequestedUsers, setFilteredRequestedUsers] = useState([]);
   const { data: requestedUserData, isLoading: requestedUsersLoading } =
-    useRequiestUserQuery();
+    useRequiestUserQuery({ searchTerm: searchedUsers });
   const [updateUserStatus, { isLoading: updateUserStatusLoading }] =
     useUpdateUserStatusMutation();
   useEffect(() => {
@@ -172,9 +184,23 @@ function RequestUser() {
       ),
     },
   ];
+  const handleSearch = debounce((value) => {
+    setSearchedUsers(value);
+  }, 300);
   return (
-    <div>
+    <Spin spinning={requestedUsersLoading}>
       <PageHeading title="Request User Manage" />
+      <div className="max-w-[400px]">
+        <Form>
+          <Form.Item>
+            <Input
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Search by name or email..."
+              allowClear
+            />
+          </Form.Item>
+        </Form>
+      </div>
       <Table
         scroll={{ x: 'max-content' }}
         columns={columnsRequestedUsers}
@@ -182,7 +208,6 @@ function RequestUser() {
         rowKey="id"
         pagination={true}
         bordered
-        loading={requestedUsersLoading}
       />
       <Modal
         centered
@@ -193,7 +218,7 @@ function RequestUser() {
       >
         {selectedUser && <UserInformation user={selectedUser} />}
       </Modal>
-    </div>
+    </Spin>
   );
 }
 

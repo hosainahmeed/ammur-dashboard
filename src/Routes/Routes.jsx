@@ -32,6 +32,7 @@ import CreateNewArchive from '../Components/tables/FamilyArchive/CreateNewArchiv
 import CreateNewLegacy from '../Components/tables/legacy/CreateNewLegacy';
 import CategoryInterview from '../pages/DashboardPages/InterViews/CategoryInterview';
 import RequestUser from '../Components/tables/User/RequestUser';
+import CategoryArchive from '../pages/DashboardPages/Family Archive/CategoryArchive';
 
 export const Routes = createBrowserRouter([
   {
@@ -121,7 +122,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/family-archive',
-        element: <FamilyArchive />,
+        element: <CategoryArchive />,
       },
       {
         path: '/family-archive/create-new',

@@ -1,16 +1,20 @@
 import React from 'react';
 import earningImage from '../../assets/icons/earning.svg';
 import { FaDollarSign } from 'react-icons/fa6';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 function EarningManage() {
   return (
     <div>
       <div className="relative w-full flex z-[999] overflow-hidden h-[250px] items-center justify-between bg-gradient-to-tr from-[#F6F6F6] via-white to-[var(--bg-green-low)]/70 p-12 rounded-xl">
         <div className="absolute top-0 -z-1 left-0 w-full h-full">
-          <img
-            className="w-full h-full object-contain object-right-bottom"
+          <LazyLoadImage
             src={earningImage}
-            alt=""
+            alt="Lazy Loaded Image"
+            effect="blur"
+            width={600}
+            height={400}
+            className="w-full h-full object-contain object-right-bottom"
           />
         </div>
         <div className="flex flex-col items-start">
