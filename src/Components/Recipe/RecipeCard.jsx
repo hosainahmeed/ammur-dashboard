@@ -33,7 +33,8 @@ export const RecipeCard = ({ data }) => {
           }
         });
     } catch (error) {
-      console.log(error);
+      toast.dismiss();
+      toast.error(error?.data?.message || 'Failed to delete recipe');
     }
   };
 

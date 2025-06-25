@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { Form, Input, Button, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import toast from 'react-hot-toast';
-import {
-  useCreateCategoryMutation,
-  useUpdateCategoryMutation,
-} from '../../../Redux/services/dashboard apis/interviewApis';
 import { imageUrl } from '../../../Utils/server';
+import {
+  useCreateArchiveMutation,
+  useUpdateArchiveMutation,
+} from '../../../Redux/services/dashboard apis/archiveApis';
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -19,9 +19,8 @@ const getBase64 = (file) =>
 const CategoryForm = ({ initialValues, onSuccess }) => {
   const [form] = Form.useForm();
   const [createCategory, { isLoading: isCreating }] =
-    useCreateCategoryMutation();
-  const [updateCategory, { isLoading: isUpading }] =
-    useUpdateCategoryMutation();
+    useCreateArchiveMutation();
+  const [updateCategory, { isLoading: isUpading }] = useUpdateArchiveMutation();
 
   useEffect(() => {
     if (initialValues) {

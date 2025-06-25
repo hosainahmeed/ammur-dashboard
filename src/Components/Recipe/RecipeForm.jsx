@@ -24,7 +24,6 @@ function RecipeForm({
   setRecipeId,
   onSuccess,
 }) {
-  console.log(recipeId);
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [ingredients, setIngredients] = useState([]);

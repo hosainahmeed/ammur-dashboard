@@ -1,41 +1,45 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import PageHeading from '../../../Components/Shared/PageHeading';
-import { Button, Empty, Modal } from 'antd';
+import { Button, Empty, Modal, Spin } from 'antd';
 import { FaPlus } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
-import {
-  useDeleteInterviewMutation,
-  useGetAllInterviewQuery,
-} from '../../../Redux/services/dashboard apis/interviewApis';
 import ArchiveGrid from './ArchiveGrid';
 import CategoryForm from './CategoryForm';
+import {
+  useDeleteArchiveMutation,
+  useGetAllArchiveQuery,
+} from '../../../Redux/services/dashboard apis/archiveApis';
 
 function CategoryArchive() {
   const location = useLocation();
   const id = location.state;
-  const { data: interviewCategory } = useGetAllInterviewQuery(id);
+  const { data: archiveCategory, isLoading } = useGetAllArchiveQuery(id);
   const [editData, setEditData] = useState(null);
-  const videoRefs = useRef({});
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [deleteInterview] = useDeleteInterviewMutation();
+  const [deleteArchive] = useDeleteArchiveMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleEdit = (interview) => {
-    setEditData(interview);
+  const handleEdit = (archive) => {
+    setEditData(archive);
+    setIsModalOpen(true);
   };
 
   const handleDelete = async (id) => {
     try {
-      const res = await deleteInterview(id).unwrap();
-      if (res?.success) toast.success(res.message);
+      await deleteArchive({ id })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Archive deleted successfully');
+          }
+        });
     } catch (err) {
-      toast.error(err?.data?.message || 'Failed to delete interview');
+      toast.error(err?.data?.message || 'Failed to delete archive');
     }
   };
-
+  console.log(archiveCategory?.data);
   return (
-    <div className="p-5  rounded-md container mx-auto">
+    <Spin spinning={isLoading}>
       <PageHeading title="Archive Category" />
       <Button
         type="primary"
@@ -46,14 +50,11 @@ function CategoryArchive() {
         Add New Category
       </Button>
 
-      {interviewCategory?.data?.length > 0 ? (
+      {archiveCategory?.data?.length > 0 ? (
         <ArchiveGrid
-          data={interviewCategory.data}
+          data={archiveCategory.data}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          videoRefs={videoRefs}
-          isVideoPlaying={isVideoPlaying}
-          setIsVideoPlaying={setIsVideoPlaying}
         />
       ) : (
         <Empty
@@ -79,7 +80,7 @@ function CategoryArchive() {
           }}
         />
       </Modal>
-    </div>
+    </Spin>
   );
 }
 

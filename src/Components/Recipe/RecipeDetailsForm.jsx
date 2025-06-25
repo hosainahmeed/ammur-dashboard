@@ -11,7 +11,6 @@ const { Text } = Typography;
 
 function RecipeDetailsForm({ families, familiesLoading, recipeData }) {
   const [form] = Form.useForm();
-  console.log(recipeData?.familyName);
   useEffect(() => {
     if (recipeData) {
       form.setFieldsValue({

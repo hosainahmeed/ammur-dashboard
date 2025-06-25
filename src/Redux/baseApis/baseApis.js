@@ -32,6 +32,7 @@ const baseApis = createApi({
     'familyDirectory',
     'growthOverview',
     'totalOverview',
+    'archive',
   ],
   endpoints: () => ({}),
 });

@@ -11,7 +11,6 @@ function IngredientForm({ ingredients, setIngredients }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [fileList, setFileList] = useState([]);
   const [uploadImage, { isLoading }] = useUploadImageMutation();
-  console.log(imageUrl);
 
   const handleAdd = () => {
     if (!ingredientName.trim()) {
