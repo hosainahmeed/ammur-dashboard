@@ -10,32 +10,37 @@ import {
   Image,
   Divider,
   Spin,
+  Breadcrumb,
+  ConfigProvider,
+  Alert,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { CiEdit } from 'react-icons/ci';
 import { FaEye, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import { MdDescription } from 'react-icons/md';
 import toast from 'react-hot-toast';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CreateNewArchive from './CreateNewArchive';
 import { useGetAllSubArchiveQuery } from '../../../Redux/services/dashboard apis/archiveApis';
 function FamilyArchiveTable() {
   const location = useLocation();
-  const archiveId = location.state;
+  const { id, title } = location.state;
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const [createNewModal, setCreateNewModal] = useState(false);
   const { data, isLoading } = useGetAllSubArchiveQuery(
-    { id: archiveId },
-    { skip: !archiveId }
+    { id: id },
+    { skip: !id }
   );
-  console.log(data?.data);
+  const navigate = useNavigate();
 
   const archiveData = data?.data?.map((item) => ({
     ...item,
     key: item._id,
   }));
-  const [id, setId] = useState(null);
+  const [archiveId, setArchiveId] = useState(null);
+  const [editId, setEditId] = useState(null);
 
   const showModal = (record) => {
     setSelectedHistory(record);
@@ -69,7 +74,7 @@ function FamilyArchiveTable() {
       key: 'title',
       width: 300,
       render: (_, record) => (
-        <h2 className="text-lg font-semibold">{record.title.slice(0, 15)}</h2>
+        <h2 className="text-lg font-semibold">{record?.title?.slice(0, 15)}</h2>
       ),
     },
     {
@@ -78,7 +83,7 @@ function FamilyArchiveTable() {
       key: 'description',
       width: 500,
       render: (_, record) => (
-        <p className="text-gray-700">{record.description.slice(0, 150)}...</p>
+        <p className="text-gray-700">{record?.description?.slice(0, 150)}...</p>
       ),
     },
     {
@@ -108,6 +113,10 @@ function FamilyArchiveTable() {
       render: (_, record) => (
         <Space size="middle">
           <Button
+            onClick={() => {
+              setEditId(record._id);
+              setCreateNewModal(true);
+            }}
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<CiEdit />}
             title="Edit"
@@ -142,10 +151,34 @@ function FamilyArchiveTable() {
 
   return (
     <Spin spinning={isLoading}>
+      <Alert
+        className="!mb-4"
+        description={
+          <Breadcrumb
+            items={[
+              {
+                title: (
+                  <span
+                    className="cursor-pointer leading-0 hover:text-blue-500 transition-all"
+                    onClick={() => navigate('/family-archive')}
+                  >
+                    Family Archive
+                  </span>
+                ),
+              },
+              {
+                title: <span>{title}</span>,
+              },
+            ]}
+          />
+        }
+        type="info"
+      />
+
       <div className="flex items-center justify-between mb-4">
         <Button
           onClick={() => {
-            setId(null);
+            setArchiveId(id);
             setCreateNewModal(true);
           }}
           icon={<FaPlus />}
@@ -165,23 +198,26 @@ function FamilyArchiveTable() {
         dataSource={archiveData}
         pagination={{ pageSize: 5 }}
         className="history-table"
-        rowKey="key"
+        rowKey="id"
         scroll={{ x: 1200 }}
         bordered
       />
       <Modal
         title={<span className="text-xl font-bold">Add New Archive</span>}
         open={createNewModal}
-        onCancel={() => setCreateNewModal(false)}
-        footer={[
-          <Button key="back" onClick={() => setCreateNewModal(false)}>
-            Close
-          </Button>,
-        ]}
+        onCancel={() => {
+          setCreateNewModal(false);
+          setEditId(null);
+        }}
+        footer={null}
         width={800}
         centered
       >
-        <CreateNewArchive id={id} />
+        <CreateNewArchive
+          setCreateNewModal={setCreateNewModal}
+          archiveId={archiveId}
+          id={editId}
+        />
       </Modal>
 
       {/* History Detail Modal */}
@@ -189,11 +225,7 @@ function FamilyArchiveTable() {
         title={<span className="text-xl font-bold">History Details</span>}
         open={isModalVisible}
         onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Close
-          </Button>,
-        ]}
+        footer={null}
         width={800}
         centered
       >

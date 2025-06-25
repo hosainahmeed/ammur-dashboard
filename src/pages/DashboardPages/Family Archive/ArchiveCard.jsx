@@ -25,7 +25,10 @@ const ArchiveCard = ({ item, onEdit, onDelete }) => {
         >
           <Button type="text" icon={<FaTrash />} danger />
         </Popconfirm>,
-        <Link to={`/family-archive/${item?._id}`} state={item?._id}>
+        <Link
+          to={`/family-archive/${item?._id}`}
+          state={{ id: item?._id, title: item?.title }}
+        >
           <Button
             type="text"
             icon={<GoArrowUpRight />}

@@ -37,7 +37,6 @@ function CategoryArchive() {
       toast.error(err?.data?.message || 'Failed to delete archive');
     }
   };
-  console.log(archiveCategory?.data);
   return (
     <Spin spinning={isLoading}>
       <PageHeading title="Archive Category" />

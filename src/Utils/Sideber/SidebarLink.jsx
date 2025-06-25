@@ -119,6 +119,11 @@ export const SuperAdmin = [
         link: '/dashboard/Settings/PrivacyPolicy',
       },
       {
+        key: 'notification',
+        label: 'Notification',
+        link: '/dashboard/Settings/Notification',
+      },
+      {
         key: 'profile',
         label: 'Profile',
         link: '/dashboard/Settings/profile',

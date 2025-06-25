@@ -34,14 +34,14 @@ function HistoryTable() {
   const [id, setId] = useState(null);
   const [deleteTimeline] = useDeleteTimelineMutation();
   const [createNewModal, setCreateNewModal] = useState(false);
-
+console.log(id)
   const history =
     data?.data?.map((item) => ({
-      key: item._id,
+      id: item._id,
       name: item.title,
       description: item.description,
       date: item.date,
-      banner: item.img,
+      img: item.img,
     })) || [];
 
   const showModal = (record) => {
@@ -55,7 +55,7 @@ function HistoryTable() {
 
   const handleDelete = async (record) => {
     try {
-      await deleteTimeline({ id: record.key })
+      await deleteTimeline({ id: record.id })
         .unwrap()
         .then((res) => {
           if (res?.success) {
@@ -75,15 +75,15 @@ function HistoryTable() {
   const columns = [
     {
       title: 'Image',
-      dataIndex: 'banner',
-      key: 'banner',
+      dataIndex: 'img',
+      key: 'img',
       width: 200,
       render: (_, record) => (
         <div className="w-fit">
           <Image
             preview={false}
-            className="w-28 h-16 rounded-md object-cover shadow-md"
-            src={imageUrl(record.banner)}
+            className="w-28 max-h-16 rounded-md object-cover shadow-md"
+            src={imageUrl(record.img)}
             alt="banner_image"
           />
         </div>
@@ -131,17 +131,15 @@ function HistoryTable() {
       width: 200,
       render: (_, record) => (
         <Space size="middle">
-          {/* <Link to={`/timeline/timeline-handle`} state={record.key}> */}
           <Button
             onClick={() => {
               setCreateNewModal(true);
-              setId(record.key);
+              setId(record.id);
             }}
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<CiEdit />}
             title="Edit"
           />
-          {/* </Link> */}
           <Button
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<FaEye />}
@@ -196,7 +194,7 @@ function HistoryTable() {
         loading={isLoading}
         pagination={{ pageSize: 5 }}
         className="history-table"
-        rowKey="key"
+        rowKey="id"
         scroll={{ x: 1200 }}
         bordered
       />

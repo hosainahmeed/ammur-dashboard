@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Avatar, Badge, Button, Dropdown, Image, Menu, Spin } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import logo from '../../assets/icons/brand.svg';
 import { IoMdNotificationsOutline } from 'react-icons/io';
-import Notify from '../Notify_components/Notify';
 import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
 import { imageUrl } from '../../Utils/server';
+import { useGetNotificationQuery } from '../../Redux/services/dashboard apis/notificationApis';
 
 export let userRole = '';
 
 function Header({ setUserRole }) {
+  const navigate = useNavigate();
   const { data, isLoading, error } = useGetProfileDataQuery();
-
-  const [notifications, setNotifications] = useState(
-    Array.from({ length: 5 }).map((_, i) => ({
-      id: i,
-      message: `Notification ${i + 1}`,
-      date: '2025-04-24 • 09:20 AM',
-    }))
+  const { data: notificationData } = useGetNotificationQuery(
+    {
+      userId: data?.data?._id,
+      role: data?.data?.role,
+    },
+    { skip: !data || !data?.data?._id }
   );
 
   const user = data?.data;
@@ -32,13 +32,19 @@ function Header({ setUserRole }) {
 
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
-    window.location.href = '/login';
+    navigate('/login');
   };
 
-  const handleRemoveNotification = (index) => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter((_, i) => i !== index)
-    );
+  const showNotification = () => {
+    if (!data?.data?._id) {
+      return;
+    }
+    navigate('/dashboard/Settings/Notification', {
+      state: {
+        userId: data?.data?._id,
+        role: data?.data?.role,
+      },
+    });
   };
 
   const menu = (
@@ -61,19 +67,6 @@ function Header({ setUserRole }) {
       <Menu.Item key="4" icon={<LogoutOutlined />} onClick={handleSignOut}>
         Log out
       </Menu.Item>
-    </Menu>
-  );
-
-  const notification = (
-    <Menu className="!w-[500px]">
-      {notifications.map((notif, i) => (
-        <Notify
-          key={notif.id}
-          i={i}
-          user={user}
-          onRemove={handleRemoveNotification}
-        />
-      ))}
     </Menu>
   );
 
@@ -100,15 +93,12 @@ function Header({ setUserRole }) {
         Family legacy
       </div>
       <div className="flex items-center gap-4 text-2xl">
-        <Dropdown
-          overlay={notification}
-          trigger={['click']}
-          placement="bottomRight"
+        <Badge
+          onClick={() => showNotification()}
+          count={notificationData?.data?.length}
         >
-          <Badge count={notifications.length}>
-            <Button shape="circle" icon={<IoMdNotificationsOutline />} />
-          </Badge>
-        </Dropdown>
+          <Button shape="circle" icon={<IoMdNotificationsOutline />} />
+        </Badge>
         <div className="flex items-center gap-3">
           <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
             <Avatar

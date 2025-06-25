@@ -32,6 +32,7 @@ import CategoryInterview from '../pages/DashboardPages/InterViews/CategoryInterv
 import RequestUser from '../Components/tables/User/RequestUser';
 import CategoryArchive from '../pages/DashboardPages/Family Archive/CategoryArchive';
 import FamilyArchiveTable from '../Components/tables/FamilyArchive/FamilyArchiveTable';
+import AllNotificationPage from '../pages/DashboardPages/AllNotificationPage/AllNotificationPage';
 
 export const Routes = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/things-to-know/:id',
         element: <ThingsToKnowSpecific />,
+      },
+      {
+        path: '/dashboard/Settings/Notification',
+        element: <AllNotificationPage />,
       },
       {
         path: '/dashboard/Settings/Terms&Condition',
