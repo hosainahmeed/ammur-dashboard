@@ -32,13 +32,6 @@ const familiesApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['families'],
     }),
-    getSingleRecipe: builder.query({
-      query: ({ id }) => ({
-        url: `/recipes/${id}`,
-        method: 'GET',
-      }),
-      providesTags: ['recipe'],
-    }),
   }),
 });
 export const {
@@ -46,5 +39,4 @@ export const {
   useDeleteFamilyMutation,
   useUpdateFamilyMutation,
   useCreateFamilyMutation,
-  useGetSingleRecipeQuery,
 } = familiesApis;

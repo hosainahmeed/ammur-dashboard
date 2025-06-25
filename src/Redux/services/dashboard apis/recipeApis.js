@@ -32,6 +32,13 @@ const recipeApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['recipe'],
     }),
+    getSingleRecipe: builder.query({
+      query: ({ id }) => ({
+        url: `/recipes/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['recipe'],
+    }),
   }),
 });
 
@@ -40,4 +47,5 @@ export const {
   useCreateRecipeMutation,
   useUpdateRecipeMutation,
   useDeleteRecipeMutation,
+  useGetSingleRecipeQuery,
 } = recipeApis;

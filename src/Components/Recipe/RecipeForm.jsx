@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Form, Button, Typography, Spin, Upload } from 'antd';
-import {
-  useGetFamiliesQuery,
-  useGetSingleRecipeQuery,
-} from '../../Redux/services/dashboard apis/familiesApis';
+import { useGetFamiliesQuery } from '../../Redux/services/dashboard apis/familiesApis';
 import {
   useCreateRecipeMutation,
+  useGetSingleRecipeQuery,
   useUpdateRecipeMutation,
 } from '../../Redux/services/dashboard apis/recipeApis';
 import toast from 'react-hot-toast';
@@ -17,29 +15,30 @@ import IngredientList from './IngredientList';
 import { UploadOutlined } from '@ant-design/icons';
 const { Title, Text } = Typography;
 
-function RecipeForm({
-  showModal,
-  setShowModal,
-  recipeId,
-  setRecipeId,
-  onSuccess,
-}) {
+function RecipeForm({ showModal, setShowModal, recipeId }) {
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState([]);
+  const [fileList, setFileList] = useState(null);
   const [ingredients, setIngredients] = useState([]);
+  const [originalIngredients, setOriginalIngredients] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createRecipe] = useCreateRecipeMutation();
   const [updateRecipe] = useUpdateRecipeMutation();
+
   const { data: families, isLoading: familiesLoading } = useGetFamiliesQuery();
-  const { data: recipe, isLoading: recipeLoading } = useGetSingleRecipeQuery(
+  const {
+    data: recipe,
+    isLoading: recipeLoading,
+    refetch: refetchRecipe,
+  } = useGetSingleRecipeQuery(
     { id: recipeId },
-    { skip: !recipeId }
+    { skip: !recipeId || !showModal }
   );
 
   const resetForm = useCallback(() => {
     form.resetFields();
-    setFileList([]);
+    setFileList(null);
     setIngredients([]);
+    setOriginalIngredients([]);
   }, [form]);
 
   useEffect(() => {
@@ -49,7 +48,13 @@ function RecipeForm({
   }, [showModal, resetForm]);
 
   useEffect(() => {
-    if (recipe?.data) {
+    if (showModal && recipeId) {
+      refetchRecipe();
+    }
+  }, [showModal, recipeId, refetchRecipe]);
+
+  useEffect(() => {
+    if (recipe?.data && showModal) {
       const {
         title,
         cookingTime,
@@ -57,7 +62,7 @@ function RecipeForm({
         description,
         img,
         ingredients: recipeIngredients,
-        family,
+        familyName,
       } = recipe.data;
 
       form.setFieldsValue({
@@ -65,7 +70,7 @@ function RecipeForm({
         cookingTime: dayjs(cookingTime, 'HH:mm'),
         serving,
         description,
-        familyName: family?.name || '',
+        familyName: familyName || '',
       });
 
       setFileList(
@@ -76,28 +81,46 @@ function RecipeForm({
                 name: 'recipe-image.png',
                 status: 'done',
                 url: img,
+                thumbUrl: img,
               },
             ]
           : []
       );
 
-      setIngredients(
-        recipeIngredients.map((i) => ({
-          name: i.name,
-          img: i.img,
-          id: i._id,
-        }))
-      );
+      const mappedIngredients = recipeIngredients.map((ingredient) => ({
+        name: ingredient.name,
+        img: ingredient.img,
+        id: ingredient._id || Date.now() + Math.random(),
+      }));
+
+      setIngredients(mappedIngredients);
+      setOriginalIngredients(mappedIngredients);
     }
-  }, [recipe, form]);
+  }, [recipe, form, showModal]);
 
   const handleCancel = () => {
     setShowModal(false);
     resetForm();
   };
+
   const normFile = (e) => (Array.isArray(e) ? e : e?.fileList);
+
   const onChange = (info) => {
     setFileList(info.fileList);
+  };
+
+  const getRemovedIngredients = () => {
+    if (!recipeId) return [];
+
+    const currentIngredientNames = ingredients.map((ing) => ing.name);
+    const removedIngredients = originalIngredients.filter(
+      (originalIng) => !currentIngredientNames.includes(originalIng.name)
+    );
+
+    return removedIngredients.map((ing) => ({
+      name: ing.name,
+      img: ing.img,
+    }));
   };
 
   const handleAddRecipe = async () => {
@@ -126,6 +149,13 @@ function RecipeForm({
         serving: values.serving,
         ingredients: formattedIngredients,
       };
+
+      if (recipeId) {
+        const removedIngredients = getRemovedIngredients();
+        if (removedIngredients.length > 0) {
+          data.removeIngredients = removedIngredients;
+        }
+      }
 
       formData.append('data', JSON.stringify(data));
 
@@ -158,12 +188,13 @@ function RecipeForm({
           });
       }
     } catch (error) {
-      console.log(error)
+      console.log('Recipe operation error:', error);
       toast.error(error?.data?.message || 'Failed to process recipe');
     } finally {
       setIsSubmitting(false);
     }
   };
+
   if (recipeId && recipeLoading) {
     return (
       <Modal
@@ -195,6 +226,7 @@ function RecipeForm({
       width={700}
       centered
       closable={false}
+      destroyOnClose={true}
       bodyStyle={{ padding: '24px', maxHeight: '80vh', overflow: 'auto' }}
       footer={[
         <Button key="cancel" onClick={handleCancel} disabled={isSubmitting}>
@@ -223,8 +255,12 @@ function RecipeForm({
             fileList={fileList}
             onChange={onChange}
             maxCount={1}
+            onRemove={() => {
+              setFileList(null);
+              return true;
+            }}
           >
-            {fileList.length === 0 && (
+            {fileList === null && (
               <div>
                 <UploadOutlined
                   style={{ fontSize: '24px', color: '#072656' }}
