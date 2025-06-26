@@ -22,16 +22,17 @@ import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CreateNewArchive from './CreateNewArchive';
 import { useGetAllSubArchiveQuery } from '../../../Redux/services/dashboard apis/archiveApis';
+import UpdateArchive from './UpdateArchive';
 function FamilyArchiveTable() {
   const location = useLocation();
-  const { id, title } = location.state;
-
+  const { id: categoryId, title } = location.state;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const [createNewModal, setCreateNewModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const { data, isLoading } = useGetAllSubArchiveQuery(
-    { id: id },
-    { skip: !id }
+    { id: categoryId },
+    { skip: !categoryId }
   );
   const navigate = useNavigate();
 
@@ -39,7 +40,6 @@ function FamilyArchiveTable() {
     ...item,
     key: item._id,
   }));
-  const [archiveId, setArchiveId] = useState(null);
   const [editId, setEditId] = useState(null);
 
   const showModal = (record) => {
@@ -61,7 +61,7 @@ function FamilyArchiveTable() {
         <div className="w-fit">
           <Image
             preview={false}
-            className="w-28 h-16 rounded-md object-cover shadow-md"
+            className="w-28 max-h-16 rounded-md object-cover shadow-md"
             src={record.img}
             alt="banner_image"
           />
@@ -83,7 +83,7 @@ function FamilyArchiveTable() {
       key: 'description',
       width: 500,
       render: (_, record) => (
-        <p className="text-gray-700">{record?.description?.slice(0, 150)}...</p>
+        <div dangerouslySetInnerHTML={{ __html: record.description }} />
       ),
     },
     {
@@ -114,8 +114,8 @@ function FamilyArchiveTable() {
         <Space size="middle">
           <Button
             onClick={() => {
-              setEditId(record._id);
-              setCreateNewModal(true);
+              setEditModal(true);
+              setEditId(record.key);
             }}
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<CiEdit />}
@@ -178,7 +178,6 @@ function FamilyArchiveTable() {
       <div className="flex items-center justify-between mb-4">
         <Button
           onClick={() => {
-            setArchiveId(id);
             setCreateNewModal(true);
           }}
           icon={<FaPlus />}
@@ -207,15 +206,27 @@ function FamilyArchiveTable() {
         open={createNewModal}
         onCancel={() => {
           setCreateNewModal(false);
+        }}
+        footer={null}
+        width={800}
+        centered
+      >
+        <CreateNewArchive setCreateNewModal={setCreateNewModal} />
+      </Modal>
+      <Modal
+        title={<span className="text-xl font-bold">Edit Archive</span>}
+        open={editModal}
+        onCancel={() => {
+          setEditModal(false);
           setEditId(null);
         }}
         footer={null}
         width={800}
         centered
       >
-        <CreateNewArchive
+        <UpdateArchive
           setCreateNewModal={setCreateNewModal}
-          archiveId={archiveId}
+          archiveId={categoryId}
           id={editId}
         />
       </Modal>
@@ -235,7 +246,7 @@ function FamilyArchiveTable() {
               <Image
                 src={selectedHistory.img}
                 alt={selectedHistory.title}
-                className="w-full h-64 object-cover rounded-lg shadow-md"
+                className="w-full max-h-64 object-cover rounded-lg shadow-md"
                 preview={false}
               />
             </div>
@@ -265,9 +276,11 @@ function FamilyArchiveTable() {
             </Divider>
 
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-700 whitespace-pre-line">
-                {selectedHistory.description}
-              </p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: selectedHistory.description,
+                }}
+              />
             </div>
           </div>
         )}

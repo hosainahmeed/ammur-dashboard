@@ -11,21 +11,32 @@ import {
   ConfigProvider,
   Select,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FaImage, FaCalendarAlt } from 'react-icons/fa';
 import { MdTitle, MdDescription } from 'react-icons/md';
+import dayjs from 'dayjs';
 import JoditComponent from '../../Shared/JoditComponent';
-import { useCreateSubArchiveMutation } from '../../../Redux/services/dashboard apis/archiveApis';
+import {
+  useUpdateSubArchiveMutation,
+  useGetSingleSubArchiveQuery,
+} from '../../../Redux/services/dashboard apis/archiveApis';
 import { useGetFamiliesQuery } from '../../../Redux/services/dashboard apis/familiesApis';
 import { Typography } from 'antd';
 import { useLocation } from 'react-router-dom';
 
 const { Text } = Typography;
 
-function CreateNewArchive({ setCreateNewModal }) {
+function UpdateArchive({ archiveId, id, setEditModal }) {
   const location = useLocation();
-  const state = location.state;
+  console.log(location);
+  const { data: singleArchive, isLoading: singleArchiveLoading } =
+    useGetSingleSubArchiveQuery(
+      { id: id },
+      {
+        skip: !id,
+      }
+    );
 
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
@@ -34,13 +45,49 @@ function CreateNewArchive({ setCreateNewModal }) {
   const [content, setContent] = useState('');
 
   // API hooks
-  const [createSubArchive, { isLoading: createLoading }] =
-    useCreateSubArchiveMutation();
+  const [updateSubArchive, { isLoading: updateLoading }] =
+    useUpdateSubArchiveMutation();
   const { data: families, isLoading: familiesLoading } = useGetFamiliesQuery(
     {}
   );
 
-  const isLoading = createLoading;
+  const isLoading = updateLoading || singleArchiveLoading;
+  const isEditMode = !!id;
+
+  // Populate form when editing
+  useEffect(() => {
+    if (isEditMode && singleArchive?.data) {
+      const archiveData = singleArchive.data;
+
+      form.setFieldsValue({
+        name: archiveData.title,
+        date: archiveData.date ? dayjs(archiveData.date, 'DD MMM YYYY') : null,
+        familyName: archiveData.familyName,
+      });
+
+      setContent(archiveData.description || '');
+      setDescription(archiveData.description || '');
+
+      // Set existing image
+      if (archiveData.img) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'archive-image',
+            status: 'done',
+            url: archiveData.img,
+          },
+        ]);
+      }
+    } else if (!isEditMode) {
+      // Reset form for create mode
+      form.resetFields();
+      setContent('');
+      setDescription('');
+      setFileList([]);
+      setFile(null);
+    }
+  }, [singleArchive, form, isEditMode]);
 
   const handleFileChange = ({ fileList }) => {
     setFileList(fileList);
@@ -48,20 +95,28 @@ function CreateNewArchive({ setCreateNewModal }) {
   };
 
   const onFinish = async (values) => {
+    if (!file && !isEditMode) {
+      toast.error('Please upload an archive image');
+      return;
+    }
+
     if (!description || description.trim() === '') {
       toast.error('Please enter a description');
       return;
     }
 
     const formData = new FormData();
-
+    if (archiveId === null) {
+      toast.error('Please select an archive category');
+      return;
+    }
     try {
       const data = {
         title: values.name,
         date: values.date.format('YYYY-MM-DD'),
         description: description,
         familyName: values.familyName,
-        archieveCategoryId: state?.id,
+        archieveCategoryId: archiveId,
       };
 
       if (file) {
@@ -70,19 +125,21 @@ function CreateNewArchive({ setCreateNewModal }) {
 
       formData.append('data', JSON.stringify(data));
 
-      await createSubArchive({ data: formData })
-        .unwrap()
-        .then((res) => {
-          if (res?.success) {
-            toast.success(res?.message || 'Archive created successfully!');
-            onReset();
-          }
-        });
+      if (isEditMode) {
+        await updateSubArchive({ id, data: formData })
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              toast.success(res?.message || 'Archive updated successfully!');
+              onReset();
+            }
+          });
+      }
     } catch (error) {
       const errorMessage =
         error?.data?.errorSources?.[0]?.message ||
         error?.data?.message ||
-        `Failed to create archive`;
+        `Failed to update archive`;
       toast.error(errorMessage);
     }
   };
@@ -92,14 +149,15 @@ function CreateNewArchive({ setCreateNewModal }) {
     setFileList([]);
     setDescription('');
     setContent('');
-    if (setCreateNewModal) {
-      setCreateNewModal(false);
+    // setFile(null);
+    if (setEditModal) {
+      setEditModal(false);
     }
   };
 
   return (
     <Card bordered={true}>
-      <Spin spinning={isLoading} tip={'Creating archive...'}>
+      <Spin spinning={isLoading} tip={'Updating archive...'}>
         <div className="max-w-screen-xl mx-auto">
           <Form
             form={form}
@@ -114,7 +172,8 @@ function CreateNewArchive({ setCreateNewModal }) {
                   label={
                     <span className="form-label flex items-center">
                       <FaImage className="label-icon mr-2" />
-                      Archive Image
+                      Archive Image{' '}
+                      {!isEditMode && <span className="text-red-500">*</span>}
                     </span>
                   }
                   name="img"
@@ -213,6 +272,7 @@ function CreateNewArchive({ setCreateNewModal }) {
                 loading={familiesLoading}
                 placeholder="Select Family"
                 optionFilterProp="children"
+                showSearch
               >
                 {families?.data?.map((family) => (
                   <Select.Option key={family._id} value={family.name}>
@@ -262,7 +322,7 @@ function CreateNewArchive({ setCreateNewModal }) {
                 size="large"
                 type="primary"
               >
-                {isLoading ? 'Creating...' : 'Create Archive'}
+                {isLoading ? 'Updating...' : 'Update Archive'}
               </Button>
             </div>
           </Form>
@@ -272,4 +332,4 @@ function CreateNewArchive({ setCreateNewModal }) {
   );
 }
 
-export default CreateNewArchive;
+export default UpdateArchive;

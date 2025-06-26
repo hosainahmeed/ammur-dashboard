@@ -45,17 +45,15 @@ function InterViews() {
 
   return (
     <div className="p-5  rounded-md container mx-auto">
-      <div className="flex justify-between items-center mb-6 ">
         <PageHeading title="InterViews/Subcategories" />
         <Button
           type="primary"
           icon={<FaPlus />}
           onClick={() => setFormModalOpen(true)}
-          className="!flex !items-center !gap-2 !bg-[#0C469D] !text-white"
+          className="!flex !mb-3 !items-center !gap-2 !bg-[#0C469D] !text-white"
         >
           Add New
         </Button>
-      </div>
 
       {interviewCategory?.data?.length > 0 ? (
         <InterviewGrid
