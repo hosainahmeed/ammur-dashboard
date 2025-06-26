@@ -23,13 +23,10 @@ import {
 } from '../../../Redux/services/dashboard apis/archiveApis';
 import { useGetFamiliesQuery } from '../../../Redux/services/dashboard apis/familiesApis';
 import { Typography } from 'antd';
-import { useLocation } from 'react-router-dom';
 
 const { Text } = Typography;
 
 function UpdateArchive({ archiveId, id, setEditModal }) {
-  const location = useLocation();
-  console.log(location);
   const { data: singleArchive, isLoading: singleArchiveLoading } =
     useGetSingleSubArchiveQuery(
       { id: id },

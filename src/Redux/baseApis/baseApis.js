@@ -34,6 +34,7 @@ const baseApis = createApi({
     'totalOverview',
     'archive',
     'archiveSub',
+    'legacy',
   ],
   endpoints: () => ({}),
 });

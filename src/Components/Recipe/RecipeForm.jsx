@@ -196,7 +196,6 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
           });
       }
     } catch (error) {
-      console.log('Recipe operation error:', error);
       toast.error(error?.data?.message || 'Failed to process recipe');
     } finally {
       setIsSubmitting(false);

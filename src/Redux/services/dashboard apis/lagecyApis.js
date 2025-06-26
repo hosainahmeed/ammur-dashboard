@@ -7,16 +7,28 @@ const legacyApis = baseApis.injectEndpoints({
         url: '/legacies',
         method: 'GET',
       }),
-      providesTags: ['Legacy'],
+      providesTags: ['legacy'],
+    }),
+    createLegacy: builder.mutation({
+      query: (data) => ({
+        url: '/legacies/create-legacy',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['legacy'],
     }),
     deleteLegacy: builder.mutation({
       query: (id) => ({
         url: `/legacies/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Legacy'],
+      invalidatesTags: ['legacy'],
     }),
   }),
 });
 
-export const { useGetLegacyQuery, useDeleteLegacyMutation } = legacyApis;
+export const {
+  useGetLegacyQuery,
+  useDeleteLegacyMutation,
+  useCreateLegacyMutation,
+} = legacyApis;

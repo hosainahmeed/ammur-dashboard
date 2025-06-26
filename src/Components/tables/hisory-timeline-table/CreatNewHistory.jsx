@@ -36,7 +36,8 @@ function CreatNewHistory({ id, setCreateNewModal }) {
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
   const [createTimeline, { isLoading }] = useCreateTimelineMutation();
-  const [updateTimeline] = useUpdateTimelineMutation();
+  const [updateTimeline, { isLoading: updateLoading }] =
+    useUpdateTimelineMutation();
 
   useEffect(() => {
     if (id === null) {
@@ -99,6 +100,7 @@ function CreatNewHistory({ id, setCreateNewModal }) {
               setFileList([]);
               setDescription('');
               setContent('');
+              setCreateNewModal(false);
             }
           });
       } else {
@@ -258,12 +260,12 @@ function CreatNewHistory({ id, setCreateNewModal }) {
 
               <Button
                 htmlType="submit"
-                loading={isLoading}
+                loading={isLoading || updateLoading}
                 className="submit-button"
                 size="large"
                 type="primary"
               >
-                {isLoading
+                {isLoading || updateLoading
                   ? id
                     ? 'Updating...'
                     : 'Creating...'

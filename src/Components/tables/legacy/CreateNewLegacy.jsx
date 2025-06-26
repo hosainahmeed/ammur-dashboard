@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   Button,
   Card,
@@ -9,229 +8,266 @@ import {
   Row,
   Col,
   Select,
+  Switch,
+  Typography,
 } from 'antd';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { FaImage, FaCalendarAlt } from 'react-icons/fa';
+import { FaImage, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import JoditComponent from '../../Shared/JoditComponent';
 import PageHeading from '../../Shared/PageHeading';
-import './legacy.css';
+import { useGetFamiliesQuery } from '../../../Redux/services/dashboard apis/familiesApis';
+import { useCreateLegacyMutation } from '../../../Redux/services/dashboard apis/lagecyApis';
+
+const { Text } = Typography;
 
 function CreateNewLegacy() {
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
   const [fileList, setFileList] = useState([]);
-  const [description, setDescription] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selcetFamily, setSelectFamily] = useState(null);
-  const initialData = {
-    name: 'name',
-    description: `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatum autem quia ipsum possimus quisquam ratione laborum ipsa, in aliquid magnam aspernatur.`,
-  };
+  const [content, setContent] = useState('');
+  const [selectedFamily, setSelectedFamily] = useState(null);
+  const [isAlive, setIsAlive] = useState(true);
+
+  const { data: families, isLoading: familiesLoading } = useGetFamiliesQuery();
+  const [createLegacyApi, { isLoading: isCreating }] =
+    useCreateLegacyMutation();
+
   const handleFileChange = ({ fileList }) => {
     setFileList(fileList);
     setFile(fileList.length ? fileList[0].originFileObj : null);
   };
 
+  const handleFamilyChange = (value) => {
+    setSelectedFamily(value);
+    form.setFieldsValue({ family: value });
+  };
+
+  const handleStatusChange = (checked) => {
+    setIsAlive(checked);
+    if (checked) {
+      form.setFieldsValue({ burial: '' });
+    }
+  };
+
   const onFinish = async (values) => {
     if (!file) {
-      toast.error('Please upload a category image');
+      toast.error('Please upload a legacy image');
       return;
     }
 
-    setIsSubmitting(true);
+    if (!selectedFamily) {
+      toast.error('Please select a family');
+      return;
+    }
+
+    if (!content.trim()) {
+      toast.error('Please enter a description');
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('category_image', file);
-    formData.append('family_name', file);
-    formData.append('dob', values.date.format('YYYY-MM-DD'));
-    formData.append('dod', values.date.format('YYYY-MM-DD'));
-    formData.append('description', description);
+    formData.append('title', values.title);
+    formData.append('familyName', selectedFamily);
+    formData.append('dateOfBirth', values.dateOfBirth.format('YYYY-MM-DD'));
+    formData.append('description', content);
+
+    if (!isAlive && values.burial) {
+      formData.append('burial', values.burial);
+    }
+    formData.append('file', file, file.name);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success('History created successfully!');
-      form.resetFields();
-      setFileList([]);
-      setDescription('');
+      await createLegacyApi(formData)
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Legacy created successfully');
+            form.resetFields();
+            setFileList([]);
+            setFile(null);
+            setContent('');
+            setSelectedFamily(null);
+            setIsAlive(true);
+          }
+        });
     } catch (error) {
-      toast.error('Failed to create history');
-    } finally {
-      setIsSubmitting(false);
+      toast.error(error?.data?.message || 'Failed to create legacy');
     }
   };
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
-  };
+
   return (
-    <div className="history-form-container">
-      <div className="page-header">
-        <PageHeading title="Create New Legacy" />
-      </div>
-
-      <Card className="form-card">
-        <div className="max-w-screen-xl mx-auto">
-          <Form
-            form={form}
-            onFinish={(values) => {
-              const selectedValue = form.getFieldValue('family');
-              const updatedValues = { ...values, selected: selectedValue };
-              onFinish(updatedValues);
-            }}
-            initialValues={initialData}
-            layout="vertical"
-            requiredMark={false}
-          >
-            <Row gutter={[24, 16]}>
-              <Col xs={24} md={12}>
-                <Form.Item
-                  label={
-                    <span className="form-label">
-                      <FaImage className="label-icon" /> Image
-                    </span>
-                  }
-                  name="category_image"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please upload a timeline image',
-                    },
-                  ]}
-                >
-                  <Upload
-                    beforeUpload={() => false}
-                    onChange={handleFileChange}
-                    listType="picture-card"
-                    maxCount={1}
-                    accept="image/*"
-                    fileList={fileList}
-                    className="image-uploader"
-                  >
-                    {fileList.length === 0 && (
-                      <div className="upload-content">
-                        <FaImage className="upload-icon" />
-                        <p className="upload-text">Upload Timeline Image</p>
-                      </div>
-                    )}
-                  </Upload>
-                </Form.Item>
-              </Col>
-
-              <Col xs={24} md={13}>
-                <Form.Item
-                  label={
-                    <span className="form-label">
-                      <FaCalendarAlt className="label-icon" /> Date of Birth
-                    </span>
-                  }
-                  name="dob"
-                  rules={[{ required: true, message: 'Please select a date' }]}
-                >
-                  <DatePicker
-                    placeholder="Select event date"
-                    className="custom-datepicker"
-                    suffixIcon={<FaCalendarAlt className="text-gray-400" />}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={11}>
-                <Form.Item
-                  label={
-                    <span className="form-label">
-                      <FaCalendarAlt className="label-icon" /> RIP
-                    </span>
-                  }
-                  name="dod"
-                  rules={[{ required: true, message: 'Please select a date' }]}
-                >
-                  <DatePicker
-                    placeholder="Select event date"
-                    className="custom-datepicker"
-                    suffixIcon={<FaCalendarAlt className="text-gray-400" />}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col xs={24} md={12}>
-                <Form.Item
-                  label={<span className="form-label">Title</span>}
-                  name="name"
-                  rules={[{ required: true, message: 'Please enter a title' }]}
-                >
-                  <Input
-                    placeholder="Enter timeline event title"
-                    className="custom-input"
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
-                <Form.Item
-                  label={<span className="form-label">Select Family</span>}
-                  name="family"
-                  rules={[{ required: true, message: 'Please select a date' }]}
-                >
-                  <Select
-                    defaultValue="lucy"
-                    style={{ width: '100%', height: 42 }}
-                    onChange={handleChange}
-                    options={[
-                      { value: 'jack', label: 'Jack' },
-                      { value: 'lucy', label: 'Lucy' },
-                      { value: 'Yiminghe', label: 'yiminghe' },
-                      { value: 'disabled', label: 'Disabled', disabled: true },
-                    ]}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-
+    <>
+      <Form
+        form={form}
+        onFinish={onFinish}
+        layout="vertical"
+        requiredMark={false}
+        className="h-[calc(100vh-200px)] ::-webkit-scrollbar-none overflow-y-scroll overflow-x-hidden"
+      >
+        <Row gutter={[24, 16]}>
+          <Col xs={24} md={24}>
             <Form.Item
-              label={<span className="form-label">Description</span>}
-              name="description"
+              label={
+                <span className="form-label">
+                  <FaImage className="label-icon" /> Legacy Image
+                </span>
+              }
+              name="legacy_image"
               rules={[
-                { required: true, message: 'Please enter a description' },
+                {
+                  required: true,
+                  message: 'Please upload a legacy image',
+                },
               ]}
             >
-              <div className="description-editor">
-                <JoditComponent
-                  value={description}
-                  onChange={setDescription}
-                  config={{
-                    height: 200,
-                    buttons:
-                      'bold,italic,underline,ul,ol,font,fontsize,align,link,undo,redo',
-                  }}
+              <Upload
+                beforeUpload={() => false}
+                onChange={handleFileChange}
+                listType="picture-card"
+                maxCount={1}
+                accept="image/*"
+                fileList={fileList}
+              >
+                {fileList.length === 0 && (
+                  <div className="upload-content">
+                    <FaImage className="upload-icon" />
+                    <p className="upload-text">Upload Legacy Image</p>
+                  </div>
+                )}
+              </Upload>
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={24}>
+            <Form.Item
+              label={
+                <span className="form-label">
+                  <FaCalendarAlt className="label-icon" /> Date of Birth
+                </span>
+              }
+              name="dateOfBirth"
+              rules={[
+                { required: true, message: 'Please select date of birth' },
+              ]}
+            >
+              <DatePicker
+                placeholder="Select date of birth"
+                className="custom-datepicker"
+                style={{ width: '100%' }}
+                suffixIcon={<FaCalendarAlt className="text-gray-400" />}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={24}>
+            <Form.Item
+              label={<span className="form-label">Title</span>}
+              name="title"
+              rules={[{ required: true, message: 'Please enter a title' }]}
+            >
+              <Input
+                placeholder="Enter legacy title (e.g., John Doe's Legacy)"
+                className="custom-input"
+              />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={24}>
+            <Form.Item
+              label={<span className="form-label">Select Family</span>}
+              name="family"
+              rules={[{ required: true, message: 'Please select a family' }]}
+            >
+              <Select
+                allowClear
+                loading={familiesLoading}
+                placeholder="Select Family"
+                optionFilterProp="children"
+                onChange={handleFamilyChange}
+                value={selectedFamily}
+              >
+                {families?.data?.map((fam) => (
+                  <Select.Option key={fam._id} value={fam.name}>
+                    {fam.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={24}>
+            <Form.Item
+              label={<span className="form-label">Status</span>}
+              name="status"
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Switch
+                  checked={isAlive}
+                  onChange={handleStatusChange}
+                  checkedChildren="Alive"
+                  unCheckedChildren="Deceased"
                 />
+                <Text type={isAlive ? 'success' : 'secondary'}>
+                  {isAlive ? 'Person is alive' : 'Person is dead'}
+                </Text>
               </div>
             </Form.Item>
+          </Col>
 
-            <div className="form-actions">
-              <Button
-                htmlType="submit"
-                loading={isSubmitting}
-                className="submit-button"
-                size="large"
+          {!isAlive && (
+            <Col xs={24} md={24}>
+              <Form.Item
+                label={
+                  <span className="form-label">
+                    <FaMapMarkerAlt className="label-icon" /> Burial Place
+                  </span>
+                }
+                name="burial"
+                rules={[
+                  {
+                    required: !isAlive,
+                    message: 'Please enter burial place for deceased person',
+                  },
+                ]}
               >
-                {isSubmitting ? 'Creating...' : 'Create New Legacy'}
-              </Button>
+                <Input
+                  placeholder="Enter burial place (e.g., Cemetery of the Lost Souls)"
+                  className="custom-input"
+                />
+              </Form.Item>
+            </Col>
+          )}
+        </Row>
 
-              <Button
-                onClick={() => {
-                  form.resetFields();
-                  setFileList([]);
-                  setDescription('');
-                }}
-                className="reset-button"
-                size="large"
-              >
-                Clear Form
-              </Button>
-            </div>
-          </Form>
+        <Form.Item
+          label={<span className="form-label">Description</span>}
+          name="description"
+          validateStatus={!content ? 'error' : ''}
+          help={!content ? 'Please enter a description' : ''}
+        >
+          <JoditComponent setContent={setContent} content={content} />
+        </Form.Item>
+
+        <div className="form-actions">
+          <Button
+            htmlType="submit"
+            loading={isCreating}
+            className="submit-button"
+            size="large"
+            type="primary"
+          >
+            {isCreating ? 'Creating Legacy...' : 'Create New Legacy'}
+          </Button>
         </div>
-      </Card>
-    </div>
+      </Form>
+    </>
   );
 }
 

@@ -20,7 +20,7 @@ import ThingsToKnow from '../pages/DashboardPages/ThingsToKnow/ThingsToKnow';
 import Profile from '../pages/DashboardPages/ProfilePages/Profile';
 import HistoryTimeline from '../pages/DashboardPages/history-timeline/HistoryTimeline';
 import InterViews from '../pages/DashboardPages/InterViews/InterViews';
-import LegacyTribute from '../pages/DashboardPages/Legacy & tribute/LegacyTribute';
+import LegacyTable from '../Components/tables/legacy/LegacyTable';
 import Events from '../pages/DashboardPages/events/Events';
 import ManageAdmins from '../pages/DashboardPages/ManageAdmins/ManageAdmins';
 import AboutUs from '../pages/DashboardPages/about-us/AboutUs';
@@ -114,11 +114,7 @@ export const Routes = createBrowserRouter([
       },
       {
         path: '/legacy-tribute',
-        element: <LegacyTribute />,
-      },
-      {
-        path: '/family-legacy/create-new',
-        element: <CreateNewLegacy />,
+        element: <LegacyTable />,
       },
       {
         path: '/family-archive',

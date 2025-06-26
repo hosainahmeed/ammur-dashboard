@@ -1,17 +1,36 @@
 import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
+import { useUpdateAdminMutation } from '../../../Redux/services/dashboard apis/adminApis';
 
 function UpdateAdminInformatio({ adminData, closeModal }) {
-  console.log(adminData);
+  const [updateAdmin, { isLoading }] = useUpdateAdminMutation();
   const [form] = Form.useForm();
   const initialData = {
-    fullName:adminData?.name,
-    email: 'hosain@gmail.com',
+    fullName: adminData?.name,
+    email: adminData?.email,
     phoneNumber: adminData?.contactNumber,
   };
-  const onFinish = (values) => {
-    console.log('Form values:', values);
+  const onFinish = async (values) => {
+    const data = {
+      fullName: values?.fullName,
+      contactNo: values?.phoneNumber,
+    };
+    try {
+      await updateAdmin({
+        id: adminData?.key,
+        data,
+      })
+        .unwrap()
+        .then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Admin updated successfully');
+            closeModal();
+          }
+        });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Failed to update admin');
+    }
   };
 
   const onCancel = () => {
@@ -86,14 +105,10 @@ function UpdateAdminInformatio({ adminData, closeModal }) {
             Cancel
           </Button>
           <Button
-            onClick={() => {
-              toast.success('Update successfully');
-              closeModal();
-            }}
             className="!w-full !h-10 !text-white !bg-[var(--bg-green-high)]"
             htmlType="submit"
           >
-            Save
+            {isLoading ? 'Updating...' : 'Update'}
           </Button>
         </div>
       </Form>

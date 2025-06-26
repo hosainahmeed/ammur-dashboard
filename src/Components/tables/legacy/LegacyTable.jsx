@@ -9,6 +9,7 @@ import {
   Tag,
   Image,
   Divider,
+  Spin,
 } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { CiEdit } from 'react-icons/ci';
@@ -20,11 +21,14 @@ import {
   useDeleteLegacyMutation,
   useGetLegacyQuery,
 } from '../../../Redux/services/dashboard apis/lagecyApis';
+import PageHeading from '../../Shared/PageHeading';
+import CreateNewLegacy from './CreateNewLegacy';
 
 function LegacyTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const { data, isLoading } = useGetLegacyQuery();
+  const [createLegacyModal, setCreateLegacyModal] = useState();
   const [deleteLegacyApi, { isLoading: isDeleting }] =
     useDeleteLegacyMutation();
 
@@ -74,7 +78,7 @@ function LegacyTable() {
         <div className="w-fit">
           <Image
             preview={false}
-            className="w-28 h-16 rounded-md object-cover shadow-md"
+            className="w-28 max-h-16 rounded-md object-cover shadow-md"
             src={record.img}
             alt="banner_image"
           />
@@ -173,16 +177,16 @@ function LegacyTable() {
   ];
 
   return (
-    <div className="p-4">
+    <Spin spinning={isLoading}>
+      <PageHeading title="Legacy" />
       <div className="flex items-center justify-between mb-4">
-        <Link to={'/family-legacy/create-new'}>
-          <Button
-            icon={<FaPlus />}
-            className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
-          >
-            Add New Legacy
-          </Button>
-        </Link>
+        <Button
+          onClick={() => setCreateLegacyModal(true)}
+          icon={<FaPlus />}
+          className="!h-10 !bg-[#0C469D] !text-white !px-6 !flex items-center"
+        >
+          Add New Legacy
+        </Button>
         <Input.Search
           placeholder="Search by title"
           className="!w-[300px]"
@@ -191,7 +195,6 @@ function LegacyTable() {
       </div>
 
       <Table
-        loading={isLoading}
         columns={columns}
         dataSource={lagacyData}
         pagination={{ pageSize: 5 }}
@@ -200,6 +203,16 @@ function LegacyTable() {
         scroll={{ x: 1200 }}
         bordered
       />
+
+      <Modal
+        open={createLegacyModal}
+        onCancel={() => setCreateLegacyModal(false)}
+        footer={null}
+        width={800}
+        centered
+      >
+        <CreateNewLegacy />
+      </Modal>
 
       {/* History Detail Modal */}
       <Modal
@@ -257,7 +270,7 @@ function LegacyTable() {
           </div>
         )}
       </Modal>
-    </div>
+    </Spin>
   );
 }
 

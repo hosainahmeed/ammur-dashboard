@@ -21,4 +21,4 @@ const adminApis = baseApis.injectEndpoints({
   }),
 });
 
-export const { useCreateAdminsMutation } = adminApis;
+export const { useCreateAdminsMutation, useUpdateAdminMutation } = adminApis;

@@ -34,7 +34,6 @@ function HistoryTable() {
   const [id, setId] = useState(null);
   const [deleteTimeline] = useDeleteTimelineMutation();
   const [createNewModal, setCreateNewModal] = useState(false);
-console.log(id)
   const history =
     data?.data?.map((item) => ({
       id: item._id,
