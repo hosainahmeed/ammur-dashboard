@@ -13,6 +13,7 @@ import RecipeDescription from './RecipeDescription';
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
 import { UploadOutlined } from '@ant-design/icons';
+import JoditComponent from '../Shared/JoditComponent';
 const { Title, Text } = Typography;
 
 function RecipeForm({ showModal, setShowModal, recipeId }) {
@@ -23,9 +24,8 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createRecipe] = useCreateRecipeMutation();
   const [updateRecipe] = useUpdateRecipeMutation();
-
+  const [description, setDescription] = useState('');
   const { data: families, isLoading: familiesLoading } = useGetFamiliesQuery();
-
   const {
     data: recipe,
     isLoading: recipeLoading,
@@ -73,6 +73,7 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
         description,
         familyName: familyName || '',
       };
+      setDescription(description);
 
       const imageFileList = img
         ? [
@@ -153,7 +154,7 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
         title: values.title,
         familyName: values.familyName,
         cookingTime: formattedCookingTime,
-        description: values.description,
+        description: description,
         serving: values.serving,
         ingredients: formattedIngredients,
       };
@@ -230,7 +231,7 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
       }
       maskStyle={{ backdropFilter: 'blur(2px)' }}
       onCancel={handleCancel}
-      width={700}
+      width={1000}
       centered
       closable={false}
       destroyOnClose={true}
@@ -288,7 +289,8 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
           families={families}
           familiesLoading={familiesLoading}
         />
-        <RecipeDescription />
+        {/* <RecipeDescription /> */}
+
         <IngredientForm
           ingredients={ingredients}
           setIngredients={setIngredients}
@@ -297,6 +299,16 @@ function RecipeForm({ showModal, setShowModal, recipeId }) {
           ingredients={ingredients}
           setIngredients={setIngredients}
         />
+        <Form.Item
+          label={
+            <span className="form-label flex items-center">Description</span>
+          }
+          name="description"
+          validateStatus={!description ? 'error' : ''}
+          help={!description ? 'Please enter a description' : ''}
+        >
+          <JoditComponent setContent={setDescription} content={description} />
+        </Form.Item>
       </Form>
     </Modal>
   );

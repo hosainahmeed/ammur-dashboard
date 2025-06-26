@@ -23,12 +23,15 @@ import {
 } from '../../../Redux/services/dashboard apis/lagecyApis';
 import PageHeading from '../../Shared/PageHeading';
 import CreateNewLegacy from './CreateNewLegacy';
+import UpdateLagecy from './UpdateLagecy';
 
 function LegacyTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const { data, isLoading } = useGetLegacyQuery();
-  const [createLegacyModal, setCreateLegacyModal] = useState();
+  const [createLegacyModal, setCreateLegacyModal] = useState(false);
+  const [updateLegacyModal, setUpdateLegacyModal] = useState(false);
+  const [updateLegacyData, setUpdateLegacyData] = useState(null);
   const [deleteLegacyApi, { isLoading: isDeleting }] =
     useDeleteLegacyMutation();
 
@@ -100,7 +103,9 @@ function LegacyTable() {
       key: 'description',
       width: 400,
       render: (_, record) => (
-        <p className="text-gray-700">{record.description.slice(0, 150)}...</p>
+        <p
+          dangerouslySetInnerHTML={{ __html: record.description.slice(0, 150) }}
+        />
       ),
     },
     {
@@ -124,7 +129,7 @@ function LegacyTable() {
       ),
     },
     {
-      title: 'RIP',
+      title: 'Burial',
       dataIndex: 'burial',
       key: 'burial',
       render: (burial) => (
@@ -144,6 +149,10 @@ function LegacyTable() {
             className="!bg-[#0C469D] !text-white hover:!bg-[#0C469D]/90 transition-all"
             icon={<CiEdit />}
             title="Edit"
+            onClick={() => {
+              setUpdateLegacyModal(true);
+              setUpdateLegacyData(record);
+            }}
           />
           <Button
             size="small"
@@ -155,7 +164,7 @@ function LegacyTable() {
           <Popconfirm
             placement="bottomRight"
             title="Confirm Deletion"
-            description="Are you sure you want to delete this history item?"
+            description="Are you sure you want to delete this legacy?"
             loading={isDeleting}
             onConfirm={() => {
               deleteLegacy(record.key);
@@ -213,6 +222,15 @@ function LegacyTable() {
       >
         <CreateNewLegacy />
       </Modal>
+      <Modal
+        open={updateLegacyModal}
+        onCancel={() => setUpdateLegacyModal(false)}
+        footer={null}
+        width={800}
+        centered
+      >
+        <UpdateLagecy setUpdateLegacyModal={setUpdateLegacyModal} updateLegacyData={updateLegacyData} />
+      </Modal>
 
       {/* History Detail Modal */}
       <Modal
@@ -231,8 +249,8 @@ function LegacyTable() {
           <div className="py-4">
             <div className="mb-6">
               <Image
-                src={selectedHistory.img}
-                alt={selectedHistory.title}
+                src={selectedHistory?.img}
+                alt={selectedHistory?.title}
                 className="w-full h-64 object-cover rounded-lg shadow-md"
                 preview={false}
               />
@@ -241,15 +259,15 @@ function LegacyTable() {
             <div className="flex items-center gap-3 mb-4">
               <FaCalendarAlt className="text-gray-500 text-lg" />
               <span className="text-gray-600 font-medium">
-                {selectedHistory.date}
+                {selectedHistory?.dateOfBirth}
               </span>
             </div>
 
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {selectedHistory.title}
+              {selectedHistory?.title}
             </h2>
             <h2 className="text-sm leading-none font-bold text-gray-800 mb-4">
-              {selectedHistory.familyName}
+              {selectedHistory?.familyName}
             </h2>
 
             <Divider
@@ -263,9 +281,11 @@ function LegacyTable() {
             </Divider>
 
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-gray-700 whitespace-pre-line">
-                {selectedHistory.description}
-              </p>
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: selectedHistory?.description,
+                }}
+              />
             </div>
           </div>
         )}

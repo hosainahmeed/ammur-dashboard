@@ -10,16 +10,18 @@ import {
   Select,
   Typography,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FaImage, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import JoditComponent from '../../Shared/JoditComponent';
 import { useGetFamiliesQuery } from '../../../Redux/services/dashboard apis/familiesApis';
-import { useCreateLegacyMutation } from '../../../Redux/services/dashboard apis/lagecyApis';
+import { useUpdateLegacyMutation } from '../../../Redux/services/dashboard apis/lagecyApis';
+import dayjs from 'dayjs';
 
 const { Text } = Typography;
 
-function CreateNewLegacy() {
+function UpdateLagecy({ updateLegacyData, setUpdateLegacyModal }) {
+  console.log(updateLegacyData);
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
   const [fileList, setFileList] = useState([]);
@@ -27,13 +29,37 @@ function CreateNewLegacy() {
   const [selectedFamily, setSelectedFamily] = useState(null);
 
   const { data: families, isLoading: familiesLoading } = useGetFamiliesQuery();
-  const [createLegacyApi, { isLoading: isCreating }] =
-    useCreateLegacyMutation();
+  const [updateLegacyApi, { isLoading: isUpdating }] =
+    useUpdateLegacyMutation();
 
   const handleFileChange = ({ fileList }) => {
     setFileList(fileList);
     setFile(fileList.length ? fileList[0].originFileObj : null);
   };
+
+  useEffect(() => {
+    if (updateLegacyData) {
+      form.setFieldsValue({
+        title: updateLegacyData?.title,
+        family: updateLegacyData?.familyName,
+        dateOfBirth: dayjs(updateLegacyData?.dateOfBirth),
+        burial: updateLegacyData?.burial,
+      });
+      setContent(updateLegacyData?.description);
+      setSelectedFamily(updateLegacyData?.familyName);
+
+      if (updateLegacyData?.img) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'existing-image',
+            status: 'done',
+            url: updateLegacyData.img,
+          },
+        ]);
+      }
+    }
+  }, [updateLegacyData, form]);
 
   const handleFamilyChange = (value) => {
     setSelectedFamily(value);
@@ -41,44 +67,33 @@ function CreateNewLegacy() {
   };
 
   const onFinish = async (values) => {
-    if (!file) {
-      toast.error('Please upload a legacy image');
-      return;
-    }
-
-    if (!selectedFamily) {
-      toast.error('Please select a family');
-      return;
-    }
-
-    if (!content.trim()) {
-      toast.error('Please enter a description');
-      return;
-    }
-
     const formData = new FormData();
     formData.append('title', values.title);
     formData.append('familyName', selectedFamily);
     formData.append('dateOfBirth', values.dateOfBirth.format('YYYY-MM-DD'));
+    formData.append('burial', values.burial);
     formData.append('description', content);
 
-    formData.append('file', file, file.name);
+    if (file) {
+      formData.append('file', file, file.name);
+    }
 
     try {
-      await createLegacyApi(formData)
+      await updateLegacyApi({ id: updateLegacyData?.key, data: formData })
         .unwrap()
         .then((res) => {
           if (res?.success) {
-            toast.success(res?.message || 'Legacy created successfully');
+            toast.success(res?.message || 'Legacy updated successfully');
             form.resetFields();
             setFileList([]);
             setFile(null);
             setContent('');
             setSelectedFamily(null);
+            setUpdateLegacyModal(false);
           }
         });
     } catch (error) {
-      toast.error(error?.data?.message || 'Failed to create legacy');
+      toast.error(error?.data?.message || 'Failed to update legacy');
     }
   };
 
@@ -100,12 +115,6 @@ function CreateNewLegacy() {
                 </span>
               }
               name="legacy_image"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please upload a legacy image',
-                },
-              ]}
             >
               <Upload
                 beforeUpload={() => false}
@@ -217,12 +226,12 @@ function CreateNewLegacy() {
         <div className="form-actions">
           <Button
             htmlType="submit"
-            loading={isCreating}
+            loading={isUpdating}
             className="submit-button"
             size="large"
             type="primary"
           >
-            {isCreating ? 'Creating Legacy...' : 'Create New Legacy'}
+            {isUpdating ? 'Updating Legacy...' : 'Update Legacy'}
           </Button>
         </div>
       </Form>
@@ -230,4 +239,4 @@ function CreateNewLegacy() {
   );
 }
 
-export default CreateNewLegacy;
+export default UpdateLagecy;

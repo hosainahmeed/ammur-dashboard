@@ -4,12 +4,14 @@ import { IoIosLogOut } from 'react-icons/io';
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { admin, SuperAdmin } from '../../Utils/Sideber/SidebarLink';
+import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
 
 const SideBar = ({ userRole }) => {
   const [selectedKey, setSelectedKey] = useState('dashboard');
   const [expandedKeys, setExpandedKeys] = useState([]);
   const location = useLocation();
   const contentRef = useRef({});
+  const { data } = useGetProfileDataQuery();
 
   useEffect(() => {
     const currentPath = location.pathname;
@@ -142,6 +144,10 @@ const SideBar = ({ userRole }) => {
                         <Link
                           key={child.key}
                           to={child.link}
+                          state={{
+                            userId: data?.data?._id,
+                            role: data?.data?.role,
+                          }}
                           className={`block px-3 py-2 text-sm rounded-md transition-colors duration-150 ${
                             selectedKey === child.key
                               ? 'bg-[#0C469D] text-white shadow-md'

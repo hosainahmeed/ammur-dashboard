@@ -130,7 +130,7 @@ function FamilyArchiveTable() {
           <Popconfirm
             placement="bottomRight"
             title="Confirm Deletion"
-            description="Are you sure you want to delete this history item?"
+            description="Are you sure you want to delete this archive?"
             onConfirm={() => {
               toast.success('Deleted successfully');
             }}
