@@ -93,9 +93,6 @@ export const RecipeCard = ({ data }) => {
                 <UserOutlined /> Serves: {data?.serving}
               </div>
               <div>Family: {data?.familyName}</div>
-              <div>
-                <strong>Description:</strong> {data?.description}...
-              </div>
             </Space>
           }
         />
@@ -111,7 +108,7 @@ export const RecipeCard = ({ data }) => {
         maskStyle={{ backdropFilter: 'blur(2px)' }}
         destroyOnClose
       >
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div className='flex flex-col items-start gap-4'>
           <img
             src={imageUrl(data?.img)}
             alt={data?.title}
@@ -125,11 +122,9 @@ export const RecipeCard = ({ data }) => {
           <div>
             <Space direction="vertical" size={16}>
               <div>
-                <Text strong>{data?.title}</Text>
+                <h1 className='text-2xl font-bold'>{data?.title}</h1>
               </div>
-              <div>
-                <Text>{data?.description}</Text>
-              </div>
+              <div dangerouslySetInnerHTML={{ __html: data?.description }} />
               <div>
                 <Text strong>
                   <ClockCircleOutlined /> Cooking Time:
@@ -150,11 +145,11 @@ export const RecipeCard = ({ data }) => {
           </div>
         </div>
 
-        <div style={{ marginTop: '24px' }}>
+        <div className="mt-4">
           <h1 className="mb-3">Ingredients:</h1>
           <div>
             {data?.ingredients?.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+              <div className="text-center py-10">
                 <Text type="secondary">No ingredients found.</Text>
               </div>
             ) : (
