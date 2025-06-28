@@ -101,6 +101,10 @@ function CreatNewHistory({ id, setCreateNewModal }) {
               setDescription('');
               setContent('');
               setCreateNewModal(false);
+            }else{
+              toast.error(
+                res?.data?.errorSources[0]?.message || 'Failed to create history timeline'
+              );
             }
           });
       } else {
@@ -189,7 +193,7 @@ function CreatNewHistory({ id, setCreateNewModal }) {
                     label={
                       <span className="form-label flex items-center">
                         <FaCalendarAlt className="label-icon mr-2" />
-                        Event Date (Required)
+                        History Date (Required)
                       </span>
                     }
                     name="date"
@@ -198,7 +202,7 @@ function CreatNewHistory({ id, setCreateNewModal }) {
                     ]}
                   >
                     <DatePicker
-                      placeholder="Select event date"
+                      placeholder="Select history date"
                       className="w-full custom-datepicker"
                       suffixIcon={<FaCalendarAlt className="text-gray-400" />}
                       style={{ height: '40px' }}

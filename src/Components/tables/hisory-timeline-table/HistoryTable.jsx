@@ -94,7 +94,7 @@ function HistoryTable() {
       key: 'name',
       width: 300,
       render: (_, record) => (
-        <h2 className="text-lg font-semibold">{record.name}</h2>
+        <h2 className="text-lg font-semibold">{record.name.slice(0, 20)}</h2>
       ),
     },
     {
@@ -215,7 +215,7 @@ function HistoryTable() {
           <div className="py-4">
             <div className="mb-6">
               <Image
-                src={selectedHistory.banner}
+                src={selectedHistory.img}
                 alt={selectedHistory.name}
                 className="w-full h-64 object-cover rounded-lg shadow-md"
                 preview={false}
