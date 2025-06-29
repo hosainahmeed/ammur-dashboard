@@ -69,7 +69,7 @@ function IngredientForm({ ingredients, setIngredients }) {
       },
     ]);
     await uploadImageHandler(file);
-    return false; // prevent auto upload by Ant Design
+    return false;
   };
 
   return (

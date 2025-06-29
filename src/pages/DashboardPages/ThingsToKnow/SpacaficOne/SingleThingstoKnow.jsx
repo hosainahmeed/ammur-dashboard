@@ -35,7 +35,6 @@ function SingleThingstoKnow() {
 
   const { data } = useSingleThingsToKnowQuery({ id: id });
   const [deleteSubCategory] = useDeleteSubCategoryMutation();
-  console.log(data);
   const [updateSubCategory, { isLoading: isUpdating }] =
     useUpdateSubCategoryMutation();
   const [createSubCategory, { isLoading: isCreating }] =
