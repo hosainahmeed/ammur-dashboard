@@ -61,7 +61,7 @@ function CreateNewLegacy() {
     formData.append('familyName', selectedFamily);
     formData.append('dateOfBirth', values.dateOfBirth.format('YYYY-MM-DD'));
     formData.append('description', content);
-
+    formData.append('burial', values.burial);
     formData.append('file', file, file.name);
 
     try {
