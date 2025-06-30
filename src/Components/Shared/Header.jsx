@@ -13,16 +13,8 @@ export let userRole = '';
 function Header({ setUserRole }) {
   const navigate = useNavigate();
   const { data, isLoading, error } = useGetProfileDataQuery();
-  const { data: notificationData } = useGetNotificationQuery(
-    {
-      userId: data?.data?._id,
-      role: data?.data?.role,
-    },
-    { skip: !data || !data?.data?._id }
-  );
-
+  const { data: notificationData } = useGetNotificationQuery();
   const user = data?.data;
-
   useEffect(() => {
     if (user) {
       userRole = user?.role;
@@ -86,6 +78,10 @@ function Header({ setUserRole }) {
     );
   }
 
+  const unreadCount =
+    notificationData?.data?.filter((notif) => !notif.isRead)
+      .length || 0;
+
   return (
     <div className="px-10 shadow-md mb-1 !z-[999] h-16 flex justify-between items-center">
       <div className="flex items-center gap-2 font-semibold">
@@ -95,7 +91,7 @@ function Header({ setUserRole }) {
       <div className="flex items-center gap-4 text-2xl">
         <Badge
           onClick={() => showNotification()}
-          count={notificationData?.data?.length}
+          count={unreadCount}
         >
           <Button shape="circle" icon={<IoMdNotificationsOutline />} />
         </Badge>

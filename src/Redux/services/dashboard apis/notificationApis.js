@@ -3,18 +3,16 @@ import baseApis from '../../baseApis/baseApis';
 const notificationApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getNotification: builder.query({
-      query: ({ userId, role }) => ({
+      query: () => ({
         url: '/notifications',
         method: 'GET',
-        params: { userId, role },
       }),
       providesTags: ['notification'],
     }),
     markAsRead: builder.mutation({
-      query: ({ id, data }) => ({
+      query: (id) => ({
         url: `/notifications/${id}/read`,
         method: 'POST',
-        body: data,
       }),
       invalidatesTags: ['notification'],
     }),

@@ -11,7 +11,6 @@ import {
 } from 'react-icons/fa';
 import { CiSettings } from 'react-icons/ci';
 import { Button, Card, Spin, Badge } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
 import {
   useGetNotificationQuery,
   useMarkAsReadMutation,
@@ -19,9 +18,7 @@ import {
 import toast from 'react-hot-toast';
 
 const AllNotificationPage = () => {
-  const location = useLocation();
-  const { userId, role } = location.state;
-  const { data, isLoading, error } = useGetNotificationQuery({ userId, role });
+  const { data, isLoading, error } = useGetNotificationQuery();
   const [markAsReadApis, { isLoading: markAsReadLoading }] =
     useMarkAsReadMutation();
   const notifications = useMemo(() => data?.data || [], [data]);
@@ -64,48 +61,60 @@ const AllNotificationPage = () => {
     return (
       <div style={style}>
         <div
-          className={`px-6 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-            !item.isRead ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+          className={`px-6 flex justify-between py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+            !item?.isRead ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
           }`}
         >
           <div className="flex items-start gap-4">
             <div
               className={`text-xl flex-shrink-0 ${
-                !item.isRead ? 'text-blue-600' : 'text-gray-400'
+                !item?.isRead ? 'text-blue-600' : 'text-gray-400'
               }`}
             >
-              {renderIcon(item.type)}
+              {renderIcon(item?.type)}
             </div>
 
             <div className="flex-grow min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h3
                   className={`font-medium truncate ${
-                    !item.isRead ? 'text-gray-900' : 'text-gray-600'
+                    !item?.isRead ? 'text-gray-900' : 'text-gray-600'
                   }`}
                 >
-                  {item.title}
+                  {item?.title}
                 </h3>
-                {!item.isRead && (
+                {!item?.isRead && (
                   <Badge size="small" color="blue" className="flex-shrink-0" />
                 )}
               </div>
 
               <p
                 className={`text-sm line-clamp-2 mb-2 ${
-                  !item.isRead ? 'text-gray-700' : 'text-gray-500'
+                  !item?.isRead ? 'text-gray-700' : 'text-gray-500'
                 }`}
               >
-                {item.message}
+                {item?.message}
               </p>
 
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-400">
-                  {formatTime(item.createdAt)}
+                  {formatTime(item?.createdAt)}
                 </span>
               </div>
             </div>
           </div>
+          {item?.isRead !== true && (
+            <div>
+              <Button
+                size="small"
+                type="link"
+                className="text-blue-500 hover:text-blue-600 p-0 h-auto"
+                onClick={() => markAsRead(item?._id)}
+              >
+                {markAsReadLoading ? 'Marking as read...' : 'Mark as read'}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -124,19 +133,18 @@ const AllNotificationPage = () => {
     );
   }
   const markAsRead = async (id) => {
-    const data = {
-      userId: userId,
-    };
     try {
-      await markAsReadApis({ id, data })
+      await markAsReadApis(id)
         .unwrap()
         .then((res) => {
           if (res?.success) {
-          toast.success(res?.message || 'Notification marked as read');
+            toast.success(res?.message || 'Notification marked as read');
           }
         });
     } catch (error) {
-      toast.error(error?.data?.message || 'Failed to mark notification as read');
+      toast.error(
+        error?.data?.message || 'Failed to mark notification as read'
+      );
     }
   };
   return (
@@ -156,14 +164,6 @@ const AllNotificationPage = () => {
                 />
               )}
             </div>
-            <Button
-              size="small"
-              type="link"
-              className="text-blue-500 hover:text-blue-600 p-0 h-auto"
-              onClick={() => markAsRead(userId)}
-            >
-              {markAsReadLoading ? 'Marking as read...' : 'Mark as read'}
-            </Button>
           </div>
 
           <div className="mt-2 text-sm text-gray-500">
