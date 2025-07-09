@@ -24,18 +24,21 @@ import {
   useUpdateThingsToKnowMutation,
 } from '../../../Redux/services/dashboard apis/thingsToKnowApis';
 import { imageUrl } from '../../../Utils/server';
+import debounce from 'debounce';
 
 function ThingsToKnow() {
   const [form] = Form.useForm();
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
   const [fileList, setFileList] = useState([]);
+  const [search, setSearch] = useState('');
 
   const {
     data: categories = [],
     isLoading,
-    isError,
-  } = useGetThingsToKnowQuery();
+  } = useGetThingsToKnowQuery({
+    searchTerm: search,
+  });
   const [createCategory, { isLoading: isCreating }] =
     useCreateThingsToKnowMutation();
   const [updateCategory, { isLoading: isUpdating }] =
@@ -85,6 +88,10 @@ function ThingsToKnow() {
       toast.error(err?.data?.message || 'Failed to delete category');
     }
   };
+
+  const handleSearch = debounce((value) => {
+    setSearch(value);
+  }, 300);
 
   const handleSubmit = async () => {
     try {
@@ -173,6 +180,7 @@ function ThingsToKnow() {
             placeholder="Search by title"
             className="!w-[300px]"
             allowClear
+            onChange={(e) => handleSearch(e.target.value)}
           />
           <Button
             onClick={() => setShowModal(true)}

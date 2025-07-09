@@ -25,7 +25,7 @@ const AboutUs = () => {
       await setDescription({ description: content })
         .unwrap()
         .then((res) => {
-          console.log(res)
+          console.log(res);
           if (res?.success) {
             toast.success(res?.message || 'About us updated successfully !');
           }
@@ -68,6 +68,7 @@ const AboutUs = () => {
           height: 40,
         }}
         className="max-w-48 sidebar-button-black"
+        loading={isSubmitting}
       >
         {isSubmitting ? 'Submitting...' : 'Submit'}
       </Button>

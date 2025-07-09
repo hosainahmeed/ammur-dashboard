@@ -29,7 +29,7 @@ function HistoryTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState(null);
   const { data, isLoading } = useGetTimelineQuery({
-    seachTerm: search,
+    searchTerm: search,
   });
   const [id, setId] = useState(null);
   const [deleteTimeline] = useDeleteTimelineMutation();

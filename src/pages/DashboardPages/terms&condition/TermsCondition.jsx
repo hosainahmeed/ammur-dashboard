@@ -69,6 +69,7 @@ const TermsCondition = () => {
           height: 40,
         }}
         className="max-w-48 sidebar-button-black"
+        loading={isSubmitting}
       >
         {isSubmitting ? 'Submitting...' : 'Submit'}
       </Button>

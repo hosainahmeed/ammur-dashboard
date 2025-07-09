@@ -4,9 +4,10 @@ const thingsToKnowApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     //category
     getThingsToKnow: builder.query({
-      query: () => ({
+      query: ({ searchTerm }) => ({
         url: '/things-categories',
         method: 'GET',
+        params: { searchTerm: searchTerm },
       }),
       providesTags: ['thingsToKnow'],
     }),
