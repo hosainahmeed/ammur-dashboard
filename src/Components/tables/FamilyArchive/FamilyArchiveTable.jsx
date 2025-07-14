@@ -34,11 +34,17 @@ function FamilyArchiveTable() {
     { id: categoryId },
     { skip: !categoryId }
   );
+
+  console.log(data)
   const navigate = useNavigate();
 
   const archiveData = data?.data?.map((item) => ({
-    ...item,
     key: item._id,
+    img: item?.img,
+    title: item?.title,
+    description: item?.description,
+    familyName: item?.familyName,
+    date: item?.date,
   }));
   const [editId, setEditId] = useState(null);
 
