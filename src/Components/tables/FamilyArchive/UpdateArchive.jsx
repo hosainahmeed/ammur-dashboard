@@ -55,10 +55,10 @@ function UpdateArchive({ archiveId, id, setEditModal }) {
   useEffect(() => {
     if (isEditMode && singleArchive?.data) {
       const archiveData = singleArchive.data;
-
+      console.log(archiveData?.date);
       form.setFieldsValue({
         name: archiveData.title,
-        date: archiveData.date ? dayjs(archiveData.date, 'DD MMM YYYY') : null,
+        date: dayjs(archiveData?.date),
         familyName: archiveData.familyName,
       });
 
@@ -286,12 +286,10 @@ function UpdateArchive({ archiveId, id, setEditModal }) {
                   label={
                     <span className="form-label flex items-center">
                       <MdDescription className="label-icon mr-2" />
-                      Description <span className="text-red-500">*</span>
+                      Description
                     </span>
                   }
                   name="description"
-                  validateStatus={!description ? 'error' : ''}
-                  help={!description ? 'Please enter a description' : ''}
                 >
                   <JoditComponent
                     setContent={setDescription}

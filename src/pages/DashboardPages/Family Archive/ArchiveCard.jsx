@@ -1,12 +1,11 @@
 import React from 'react';
 import { Button, Card, Popconfirm } from 'antd';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import { imageUrl } from '../../../Utils/server';
 import { Link } from 'react-router-dom';
 import { GoArrowUpRight } from 'react-icons/go';
 
 const ArchiveCard = ({ item, onEdit, onDelete }) => {
-  console.log(item);
   return (
     <Card
       className="h-full flex flex-col rounded-lg overflow-hidden hover:shadow-md"
