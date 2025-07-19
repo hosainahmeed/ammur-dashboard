@@ -33,6 +33,7 @@ import RequestUser from '../Components/tables/User/RequestUser';
 import CategoryArchive from '../pages/DashboardPages/Family Archive/CategoryArchive';
 import FamilyArchiveTable from '../Components/tables/FamilyArchive/FamilyArchiveTable';
 import AllNotificationPage from '../pages/DashboardPages/AllNotificationPage/AllNotificationPage';
+import UploadImage from '../pages/DashboardPages/UploadImage/UploadImage.jsx';
 
 export const Routes = createBrowserRouter([
   {
@@ -88,6 +89,10 @@ export const Routes = createBrowserRouter([
         element: <Profile />,
       },
       {
+        path: '/dashboard/Settings/upload-image',
+        element: <UploadImage />,
+      },
+      {
         path: '/dashboard/Settings/contact-us',
         element: <Contact />,
       },
@@ -95,6 +100,7 @@ export const Routes = createBrowserRouter([
         path: '/dashboard/Settings/about-us',
         element: <AboutUs />,
       },
+      
       {
         path: '/add-family',
         element: <AddFamily />,

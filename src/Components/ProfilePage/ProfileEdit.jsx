@@ -27,9 +27,9 @@ const ProfileEdit = ({ image, data }) => {
       await setProfileUpdate({ data: formData, id: data?._id })
         .unwrap()
         .then((res) => {
-          if (res?.data?.success) {
+          if (res?.success) {
             toast.dismiss();
-            toast.success(res?.data?.message || 'Profile updated successfully');
+            toast.success(res?.message || 'Profile updated successfully');
           }
         });
     } catch (error) {
