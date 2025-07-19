@@ -99,6 +99,11 @@ export const SuperAdmin = [
     link: '/dashboard/Settings/profile',
     children: [
       {
+        key: 'upload-image',
+        label: 'Generate Image',
+        link: '/dashboard/Settings/upload-image',
+      },
+      {
         key: 'contact-us',
         label: 'Contact Us',
         link: '/dashboard/Settings/contact-us',
@@ -216,6 +221,11 @@ export const admin = [
     icon: FaCog,
     link: '/dashboard/Settings/profile',
     children: [
+      {
+        key: 'upload-image',
+        label: 'Generate Image',
+        link: '/dashboard/Settings/upload-image',
+      },
       {
         key: 'contact-us',
         label: 'Contact Us',

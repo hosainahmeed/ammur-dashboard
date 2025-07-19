@@ -9,7 +9,6 @@ import {
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
 import RecipeDetailsForm from './RecipeDetailsForm';
-import RecipeDescription from './RecipeDescription';
 import IngredientForm from './IngredientForm';
 import IngredientList from './IngredientList';
 import { UploadOutlined } from '@ant-design/icons';
